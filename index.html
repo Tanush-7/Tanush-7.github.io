@@ -4,15 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tanush R</title>
-<meta name="description" content="Tanush R — Senior Associate, Bengaluru. I run AI/ML delivery programs, and I'm learning to build the systems myself.">
+<meta name="description" content="Tanush R — Senior Associate, Bengaluru. I run AI, data and cloud delivery programs, and I'm learning to build the systems myself.">
 <style>
   :root {
-    --bg: #0a0a0a;
-    --text: #ededed;
-    --muted: #8a8a8a;
-    --faint: #525252;
-    --line: #2b2b2b;
-    --accent: #2dd4bf;
+    --bg: #FDFBF7;
+    --surface: #FFFFFF;
+    --text: #211D18;
+    --muted: #6F6659;
+    --faint: #A89E8D;
+    --line: #E7DECB;
+    --bronze: #A67C3D;
+    --sand: #C9A96A;
+    --sandlight: #EFE6D0;
+    --green: #1E4D40;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -23,133 +27,123 @@
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .serif { font-family: Georgia, "Times New Roman", serif; }
 
-  /* ---- nav: quiet text links, no buttons ---- */
+  /* ---- sticky nav ---- */
   nav {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(253, 251, 247, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 20px 0;
+    padding: 16px 0;
   }
-  nav .wordmark { font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text); text-decoration: none; }
-  nav .wordmark span { color: var(--faint); font-weight: 400; }
-  nav .links a {
-    color: var(--muted); text-decoration: none; font-size: 0.9rem; margin-left: 22px;
-  }
-  nav .links a:hover { color: var(--text); }
+  nav .wordmark { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; color: var(--text); text-decoration: none; }
+  nav .wordmark span { color: var(--bronze); }
+  nav .links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; margin-left: 22px; }
+  nav .links a:hover { color: var(--bronze); }
 
-  /* ---- hero: name as H1 + one factual sentence ---- */
-  header.hero { padding: 96px 0 72px; }
+  /* ---- hero ---- */
+  header.hero { padding: 76px 0 44px; }
   .kicker {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.78rem; color: var(--faint); letter-spacing: 0.04em;
+    font-size: 0.78rem; color: var(--bronze); letter-spacing: 0.14em; text-transform: uppercase;
     margin-bottom: 20px;
   }
   .kicker .dot {
     display: inline-block; width: 7px; height: 7px; border-radius: 50%;
-    background: var(--accent); margin-right: 8px;
-    animation: pulse 2.4s ease-in-out infinite;
+    background: var(--green); margin-right: 8px;
   }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
   h1 {
-    font-size: clamp(2.6rem, 7vw, 4rem);
-    font-weight: 650; letter-spacing: -0.035em; line-height: 1.05;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(3rem, 9vw, 4.8rem);
+    font-weight: 600; letter-spacing: -0.03em; line-height: 1.02;
     margin-bottom: 20px;
   }
-  .hero-line { font-size: 1.12rem; color: var(--muted); max-width: 56ch; }
-  .hero-line strong { color: var(--text); font-weight: 500; font-style: italic; }
+  .hero-line { font-size: 1.14rem; color: var(--muted); max-width: 58ch; }
+  .hero-line strong { color: var(--text); font-weight: 600; }
+  .rotator-line { font-size: 1.05rem; color: var(--muted); margin-top: 14px; }
+  .rotator { color: var(--bronze); font-weight: 600; transition: opacity 0.4s ease; }
+  .rotator.fade { opacity: 0; }
 
-  /* ---- sections: uppercase micro-labels, vast whitespace ---- */
-  section { padding: 56px 0; border-top: 1px dashed var(--line); }
-  h2 {
-    font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.12em; color: var(--faint); margin-bottom: 8px;
+  /* ---- social row ---- */
+  .social-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  .social-btn {
+    border: 1.5px solid var(--bronze); color: var(--text);
+    padding: 9px 18px; border-radius: 999px;
+    text-decoration: none; font-weight: 600; font-size: 0.95rem;
+    transition: background 0.18s ease, color 0.18s ease;
   }
+  .social-btn:hover { background: var(--bronze); color: #fff; }
 
-  /* ---- the index: title + date + one-liner, the signature flourish is the row hover ---- */
-  .index { list-style: none; }
-  .index li { border-bottom: 1px dashed var(--line); }
-  .index li:last-child { border-bottom: none; }
-  .index a.row {
-    display: flex; align-items: baseline; gap: 16px;
-    padding: 20px 12px; margin: 0 -12px; border-radius: 10px;
-    text-decoration: none; color: var(--text);
-    transition: opacity 0.18s ease;
+  /* ---- sections ---- */
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  section h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.7rem; font-weight: 600; letter-spacing: -0.02em;
+    margin-bottom: 8px;
   }
-  /* spotlight: hovering the list dims every row except the one under the cursor */
-  .index:hover .row { opacity: 0.38; }
-  .index .row:hover { opacity: 1; }
-  .index .row.plain { transition: opacity 0.18s ease; }
-  .index .title { font-weight: 600; font-size: 1.02rem; letter-spacing: -0.01em; white-space: nowrap; }
-  .index .desc { color: var(--muted); font-size: 0.94rem; flex: 1; }
-  .index .date {
+  .sec-sub { color: var(--muted); margin-bottom: 28px; max-width: 60ch; }
+  .goal-line {
+    margin-top: 24px; padding: 14px 18px; border-radius: 12px;
+    background: var(--sandlight); color: var(--text); font-size: 0.98rem;
+  }
+  .goal-line strong { color: var(--bronze); }
+
+  /* ---- project cards ---- */
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; padding: 22px;
+    transition: border-color 0.18s ease, transform 0.18s ease;
+  }
+  .card:hover { border-color: var(--sand); transform: translateY(-2px); }
+  .card.featured { grid-column: 1 / -1; }
+  .card h3 { font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 6px; }
+  .card p { color: var(--muted); font-size: 0.96rem; margin-bottom: 14px; }
+  .card .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .card .tag {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.76rem; color: var(--faint); white-space: nowrap;
-    font-variant-numeric: tabular-nums;
+    font-size: 0.72rem; color: var(--bronze);
+    border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px;
   }
-  .index .arrow {
-    color: var(--accent); font-size: 1rem; line-height: 1;
-    opacity: 0; transform: translateX(-6px);
-    transition: opacity 0.18s ease, transform 0.18s ease;
-  }
-  .index a.row:hover .arrow { opacity: 1; transform: translateX(0); }
-  .index .row.plain { cursor: default; }
-  .index .row.plain:hover { background: none; }
-  .status {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.72rem; color: var(--accent);
-    border: 1px solid rgba(45, 212, 191, 0.35); border-radius: 999px;
-    padding: 2px 10px; white-space: nowrap;
-  }
-  .status.dim { color: var(--faint); border-color: var(--line); }
+  .card .tag.live { color: var(--green); border-color: rgba(30, 77, 64, 0.35); }
+  .card a { color: var(--bronze); font-weight: 600; text-decoration: none; margin-right: 18px; font-size: 0.95rem; }
+  .card a:hover { text-decoration: underline; }
 
-  /* ---- about: short, factual ---- */
-  .about p { color: var(--muted); margin-bottom: 16px; max-width: 60ch; }
+  /* ---- about / now ---- */
+  .about p { color: var(--muted); margin-bottom: 16px; max-width: 62ch; }
   .about p strong { color: var(--text); font-weight: 600; }
 
-  /* ---- certs: quiet inline list ---- */
+  /* ---- certs ---- */
   .certs { list-style: none; }
   .certs li {
-    padding: 10px 0; border-bottom: 1px dashed var(--line);
+    padding: 12px 0; border-bottom: 1px solid var(--line);
     display: flex; justify-content: space-between; gap: 16px;
-    font-size: 0.95rem;
+    font-size: 0.97rem;
   }
   .certs li:last-child { border-bottom: none; }
-  .certs .org { color: var(--faint); font-size: 0.88rem; }
+  .certs .org { color: var(--muted); font-size: 0.88rem; text-align: right; }
+  .credly-note { margin-top: 20px; color: var(--muted); font-size: 0.95rem; }
+  .credly-note a { color: var(--bronze); font-weight: 600; text-decoration: none; }
+  .credly-note a:hover { text-decoration: underline; }
 
-  /* ---- footer: frictionless contact, ends quietly ---- */
-  footer { padding: 40px 0 56px; }
-  footer .row {
-    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-    font-size: 0.92rem;
-  }
-  footer a { color: var(--muted); text-decoration: none; margin-right: 20px; }
-  footer a:hover { color: var(--accent); }
-  footer .quiet { color: var(--faint); font-size: 0.85rem; }
-
-  /* ---- halftone divider: one quiet row of fading dots, the page's signature ---- */
-  .dots-rule {
-    height: 14px;
-    background-image: radial-gradient(circle, var(--faint) 1.2px, transparent 1.7px);
-    background-size: 11px 14px;
-    background-repeat: repeat-x;
-    background-position: center;
-    -webkit-mask-image: linear-gradient(to right, transparent, black 25%, black 75%, transparent);
-    mask-image: linear-gradient(to right, transparent, black 25%, black 75%, transparent);
-  }
-
-  /* ---- journey map: white band, sand branches, big circle left ---- */
+  /* ---- branches: white band, sand branches, big circle left ---- */
   .journey-band {
     width: 100vw; position: relative; left: 50%; right: 50%;
     margin-left: -50vw; margin-right: -50vw;
-    background: #FDFBF6; color: #2B2520;
-    padding: 64px 0 72px; border-top: none;
+    background: #FFFFFF; color: #2B2520;
+    padding: 64px 0 72px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
   }
   .journey-inner { max-width: 980px; margin: 0 auto; padding: 0 24px; }
   .journey-band h2 {
-    font-size: 1.55rem; font-weight: 650; text-transform: none;
-    letter-spacing: -0.02em; color: #2B2520; margin-bottom: 10px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.7rem; font-weight: 600; letter-spacing: -0.02em; color: #2B2520; margin-bottom: 10px;
   }
-  .journey-sub { color: #7A7060; font-size: 1rem; margin-bottom: 32px; max-width: 60ch; }
+  .journey-sub { color: #7A7060; font-size: 1rem; margin-bottom: 32px; max-width: 62ch; }
   .journey-svg { width: 100%; height: auto; display: block; }
   .journey-svg text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif; }
   .journey-stack { display: none; }
@@ -165,168 +159,96 @@
   }
   .j-node strong { display: block; color: #2B2520; font-size: 1rem; }
   .j-node span { color: #7A7060; font-size: 0.92rem; }
+
+  /* ---- footer / contact ---- */
+  footer { padding: 48px 0 64px; }
+  footer .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.95rem; }
+  footer a { color: var(--bronze); font-weight: 600; text-decoration: none; margin-right: 20px; }
+  footer a:hover { text-decoration: underline; }
+  footer .quiet { color: var(--faint); font-size: 0.88rem; }
+
   @media (max-width: 680px) {
     .journey-svg { display: none; }
     .journey-stack { display: block; }
   }
-
-  @media (max-width: 560px) {
-    header.hero { padding: 64px 0 52px; }
-    .index a.row { flex-wrap: wrap; gap: 6px 12px; }
-    .index .arrow { display: none; }
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; }
+    .card.featured { grid-column: auto; }
+    header.hero { padding: 56px 0 36px; }
+    nav .links a { margin-left: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rotator { transition: none; }
+    html { scroll-behavior: auto; }
   }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <nav>
+<nav>
+  <div class="wrap nav-inner">
     <a class="wordmark" href="#">tanush<span>.tech</span></a>
     <div class="links">
-      <a href="#index">Index</a>
-      <a href="#map">Map</a>
+      <a href="#projects">Projects</a>
       <a href="#about">About</a>
+      <a href="#map">Map</a>
       <a href="#contact">Contact</a>
     </div>
-  </nav>
+  </div>
+</nav>
+
+<div class="wrap">
 
   <header class="hero">
-    <div class="kicker"><span class="dot"></span>Bengaluru, India — building in public</div>
-    <h1>Tanush R</h1>
+    <div class="kicker"><span class="dot"></span>Bengaluru, India · Building in public</div>
+    <h1>Tanush R.</h1>
     <p class="hero-line">
-      <strong>Senior Associate.</strong> I run AI/ML and data
-      engineering delivery programs — and I'm learning to build the systems myself,
-      from Python zero to production RAG.
+      <strong>Senior Associate.</strong> I run AI, data and cloud delivery programs,
+      and I'm learning to build the systems myself — from Python zero to production RAG.
+      I also write about the business behind technology and health.
     </p>
+    <p class="rotator-line">Currently exploring <span class="rotator" id="rotator">AI systems</span>.</p>
+    <div class="social-row">
+      <a class="social-btn" href="https://www.linkedin.com/in/tanush-r/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="social-btn" href="https://x.com/tanushR_" target="_blank" rel="noopener">X ↗</a>
+      <a class="social-btn" href="https://github.com/Tanush-7" target="_blank" rel="noopener">GitHub ↗</a>
+      <a class="social-btn" href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly ↗</a>
+    </div>
   </header>
 
-  <section class="journey-band" id="map">
-    <div class="journey-inner">
-      <h2>Who I am, what I do, where I'm headed</h2>
-      <p class="journey-sub">One picture, for anyone arriving from X, YouTube or LinkedIn.</p>
-
-      <svg class="journey-svg" viewBox="0 0 1000 700" role="img" aria-label="Map of Tanush R: who I am, what I do, where I am headed">
-        <defs>
-          <linearGradient id="sandGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#E7D6B0"/>
-            <stop offset="100%" stop-color="#C9A96A"/>
-          </linearGradient>
-        </defs>
-        <g fill="none" stroke="#D8C7A5" stroke-width="3" stroke-linecap="round">
-          <path d="M 265 350 C 430 350, 470 130, 620 130"/>
-          <path d="M 265 350 C 430 350, 470 185, 620 185"/>
-          <path d="M 265 350 C 430 350, 470 240, 620 240"/>
-          <path d="M 265 350 C 430 350, 470 350, 620 350"/>
-          <path d="M 265 350 C 430 350, 470 405, 620 405"/>
-          <path d="M 265 350 C 430 350, 470 515, 620 515"/>
-          <path d="M 265 350 C 430 350, 470 570, 620 570"/>
-          <path d="M 265 350 C 430 350, 470 625, 620 625"/>
-        </g>
-        <circle cx="150" cy="350" r="115" fill="url(#sandGrad)"/>
-        <circle cx="150" cy="350" r="100" fill="none" stroke="#FDFBF6" stroke-width="1.5" opacity="0.6"/>
-        <text x="150" y="345" text-anchor="middle" font-size="30" font-weight="650" fill="#2B2520">Tanush R</text>
-        <text x="150" y="372" text-anchor="middle" font-size="14" fill="#5A5142">AI, Tech &amp;</text>
-        <text x="150" y="392" text-anchor="middle" font-size="14" fill="#5A5142">Bengaluru</text>
-        <g>
-          <text x="650" y="85" font-size="13" letter-spacing="3" font-weight="700" fill="#A67C3D">WHO I AM</text>
-          <circle cx="620" cy="130" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
-          <text x="650" y="136" font-size="18" font-weight="600" fill="#2B2520">Senior Associate</text>
-          <text x="650" y="158" font-size="14" fill="#7A7060">Bengaluru, India</text>
-          <circle cx="620" cy="185" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
-          <text x="650" y="191" font-size="18" font-weight="600" fill="#2B2520">AI, data &amp; cloud programs</text>
-          <text x="650" y="213" font-size="14" fill="#7A7060">7+ years delivering tech programs</text>
-          <circle cx="620" cy="240" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
-          <text x="650" y="246" font-size="18" font-weight="600" fill="#2B2520">Teams that ship AI systems</text>
-          <text x="650" y="268" font-size="14" fill="#7A7060">Delivery side, going hands-on</text>
-          <text x="650" y="305" font-size="13" letter-spacing="3" font-weight="700" fill="#A67C3D">WHAT I DO</text>
-          <circle cx="620" cy="350" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
-          <text x="650" y="356" font-size="18" font-weight="600" fill="#2B2520">Creator — AI, tech &amp; health</text>
-          <text x="650" y="378" font-size="14" fill="#7A7060">The business of health, explained</text>
-          <circle cx="620" cy="405" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
-          <text x="650" y="411" font-size="18" font-weight="600" fill="#2B2520">Business models &amp; margins</text>
-          <text x="650" y="433" font-size="14" fill="#7A7060">Unit economics, operations, no hype</text>
-          <text x="650" y="470" font-size="13" letter-spacing="3" font-weight="700" fill="#A67C3D">WHAT I'M BUILDING TOWARD</text>
-          <circle cx="620" cy="515" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
-          <text x="650" y="521" font-size="18" font-weight="600" fill="#2B2520">Senior AI program leadership</text>
-          <text x="650" y="543" font-size="14" fill="#7A7060">The next role I'm building toward</text>
-          <circle cx="620" cy="570" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
-          <text x="650" y="576" font-size="18" font-weight="600" fill="#2B2520">Hands-on AI engineering</text>
-          <text x="650" y="598" font-size="14" fill="#7A7060">Python → APIs → production RAG</text>
-          <circle cx="620" cy="625" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
-          <a href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener"><text x="650" y="631" font-size="18" font-weight="600" fill="#2B2520">Certifications, verified on Credly ↗</text></a>
-          <text x="650" y="653" font-size="14" fill="#7A7060">Verified badges, updated as I earn them</text>
-        </g>
-      </svg>
-
-      <div class="journey-stack">
-        <div class="j-group">
-          <div class="j-head">Who I am</div>
-          <div class="j-node"><span class="j-dot"></span><div><strong>Senior Associate</strong><span>Bengaluru, India</span></div></div>
-          <div class="j-node"><span class="j-dot"></span><div><strong>AI, data &amp; cloud programs</strong><span>7+ years delivering tech programs</span></div></div>
-          <div class="j-node"><span class="j-dot"></span><div><strong>Teams that ship AI systems</strong><span>Delivery side, going hands-on</span></div></div>
-        </div>
-        <div class="j-group">
-          <div class="j-head">What I do</div>
-          <div class="j-node"><span class="j-dot"></span><div><strong>Creator — AI, tech &amp; health</strong><span>The business of health, explained</span></div></div>
-          <div class="j-node"><span class="j-dot"></span><div><strong>Business models &amp; margins</strong><span>Unit economics, operations, no hype</span></div></div>
-        </div>
-        <div class="j-group">
-          <div class="j-head">What I'm building toward</div>
-          <div class="j-node"><span class="j-dot"></span><div><strong>Senior AI program leadership</strong><span>The next role I'm building toward</span></div></div>
-          <div class="j-node"><span class="j-dot"></span><div><strong>Hands-on AI engineering</strong><span>Python → APIs → production RAG</span></div></div>
-          <a class="j-node" href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener"><span class="j-dot"></span><div><strong>Certifications, verified on Credly ↗</strong><span>Verified badges, updated as I earn them</span></div></a>
-        </div>
+  <section id="projects">
+    <h2>Projects</h2>
+    <p class="sec-sub">Best work first. Everything here is live or in the open, with code linked.</p>
+    <div class="cards">
+      <div class="card featured">
+        <h3>CarScope India</h3>
+        <p>Live car-price comparison for the Indian market. Compare prices across the market instead of visiting listing after listing.</p>
+        <div class="tags"><span class="tag live">● Live</span><span class="tag">TypeScript</span></div>
+        <a href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener">Visit ↗</a>
+        <a href="https://github.com/Tanush-7/india-car-market" target="_blank" rel="noopener">Code ↗</a>
+      </div>
+      <div class="card">
+        <h3>Workout Tracker</h3>
+        <p>A workout tracker that runs in the browser. Log sessions, keep the habit visible.</p>
+        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
+        <a href="https://tanush-7.github.io/workout-tracker/" target="_blank" rel="noopener">Visit ↗</a>
+        <a href="https://github.com/Tanush-7/workout-tracker" target="_blank" rel="noopener">Code ↗</a>
+      </div>
+      <div class="card">
+        <h3>tanush.tech — earlier version</h3>
+        <p>An earlier build of this personal site, kept in the open.</p>
+        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML</span></div>
+        <a href="https://tanush-7.github.io/tanush-tech/" target="_blank" rel="noopener">Visit ↗</a>
+        <a href="https://github.com/Tanush-7/tanush-tech" target="_blank" rel="noopener">Code ↗</a>
+      </div>
+      <div class="card">
+        <h3>This site</h3>
+        <p>The site you're reading — design, branches map, and project index, all in one HTML file.</p>
+        <div class="tags"><span class="tag">HTML</span></div>
+        <a href="https://github.com/Tanush-7/Tanush-7.github.io" target="_blank" rel="noopener">Code ↗</a>
       </div>
     </div>
-  </section>
-
-  <section id="index">
-    <h2>Index</h2>
-    <ul class="index">
-      <li>
-        <a class="row" href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener">
-          <span class="title">CarScope India</span>
-          <span class="desc">Live car-price comparison for the Indian market.</span>
-          <span class="date">Oct 2026</span>
-          <span class="arrow">→</span>
-        </a>
-      </li>
-      <li>
-        <div class="row plain">
-          <span class="title">YouTube</span>
-          <span class="desc">Weekly builds and explainers. Format pick in progress.</span>
-          <span class="status dim">planned</span>
-        </div>
-      </li>
-      <li>
-        <div class="row plain">
-          <span class="title">LinkedIn</span>
-          <span class="desc">Building in public: a delivery manager learning AI from zero.</span>
-          <span class="status dim">planned</span>
-        </div>
-      </li>
-      <li>
-        <div class="row plain">
-          <span class="title">X</span>
-          <span class="desc">@tanushR_ — quiet for now.</span>
-          <span class="status dim">paused</span>
-        </div>
-      </li>
-      <li>
-        <div class="row plain">
-          <span class="title">WhatsApp community</span>
-          <span class="desc">A quiet circle for people following the build. Growing slowly.</span>
-          <span class="status dim">planned</span>
-        </div>
-      </li>
-      <li>
-        <div class="row plain">
-          <span class="title">tanush.tech</span>
-          <span class="desc">This site. The public log of the build.</span>
-          <span class="status">live</span>
-        </div>
-      </li>
-    </ul>
+    <p class="goal-line"><strong>Target:</strong> 20 more builds before the year ends.</p>
   </section>
 
   <section id="about">
@@ -350,24 +272,164 @@
     <h2>Certifications</h2>
     <ul class="certs">
       <li>PMP <span class="org">Project Management Professional</span></li>
-      <li>PSM I <span class="org">Professional Scrum Master</span></li>
       <li>AWS Cloud Practitioner <span class="org">Amazon Web Services</span></li>
+      <li>PSM I <span class="org">Professional Scrum Master</span></li>
       <li>Claude Certified Architect <span class="org">Foundations + Professional</span></li>
       <li>Google Professional Data Engineer <span class="org">in progress</span></li>
     </ul>
+    <p class="credly-note">Full verified list, always current: <a href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly profile ↗</a>. Pendo, PMI GenAI, AWS Partner and AWS Educate credentials also held.</p>
   </section>
 
-  <div class="dots-rule" aria-hidden="true"></div>
+</div>
 
+  <section class="journey-band" id="map">
+    <div class="journey-inner">
+      <h2>Branches</h2>
+      <p class="journey-sub">What I like, what it's produced, where I am, where I'm going, and the far-distant goal.</p>
+
+      <svg class="journey-svg" viewBox="0 0 1000 1130" role="img" aria-label="Branches of Tanush R: what I like, what has come out of it, where I am, where I am heading, and the far-distant end goal">
+        <defs>
+          <linearGradient id="sandGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#E7D6B0"/>
+            <stop offset="100%" stop-color="#C9A96A"/>
+          </linearGradient>
+        </defs>
+        <g fill="none" stroke="#D8C7A5" stroke-width="3" stroke-linecap="round">
+          <path d="M 265 520 C 430 520, 470 130, 620 130"/>
+          <path d="M 265 520 C 430 520, 470 185, 620 185"/>
+          <path d="M 265 520 C 430 520, 470 240, 620 240"/>
+          <path d="M 265 520 C 430 520, 470 355, 620 355"/>
+          <path d="M 265 520 C 430 520, 470 410, 620 410"/>
+          <path d="M 265 520 C 430 520, 470 465, 620 465"/>
+          <path d="M 265 520 C 430 520, 470 580, 620 580"/>
+          <path d="M 265 520 C 430 520, 470 635, 620 635"/>
+          <path d="M 265 520 C 430 520, 470 690, 620 690"/>
+          <path d="M 265 520 C 430 520, 470 805, 620 805"/>
+          <path d="M 265 520 C 430 520, 470 860, 620 860"/>
+          <path d="M 265 520 C 430 520, 470 915, 620 915"/>
+          <path d="M 265 520 C 430 520, 470 1030, 620 1030"/>
+          <path d="M 265 520 C 430 520, 470 1085, 620 1085"/>
+        </g>
+        <circle cx="150" cy="520" r="115" fill="url(#sandGrad)"/>
+        <circle cx="150" cy="520" r="100" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.6"/>
+        <text x="150" y="515" text-anchor="middle" font-size="30" font-weight="650" fill="#2B2520">Tanush R</text>
+        <text x="150" y="542" text-anchor="middle" font-size="14" fill="#5A5142">AI, Tech &amp;</text>
+        <text x="150" y="562" text-anchor="middle" font-size="14" fill="#5A5142">Bengaluru</text>
+        <g>
+          <text x="650" y="85" font-size="13" letter-spacing="3" font-weight="700" fill="#A67C3D">WHAT I LIKE</text>
+          <circle cx="620" cy="130" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="136" font-size="18" font-weight="600" fill="#2B2520">AI, tech &amp; the business of health</text>
+          <text x="650" y="158" font-size="14" fill="#7A7060">The ideas I keep coming back to</text>
+          <circle cx="620" cy="185" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="191" font-size="18" font-weight="600" fill="#2B2520">Business models, margins &amp; operations</text>
+          <text x="650" y="213" font-size="14" fill="#7A7060">How things actually make money and run</text>
+          <circle cx="620" cy="240" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="246" font-size="18" font-weight="600" fill="#2B2520">Building in public</text>
+          <text x="650" y="268" font-size="14" fill="#7A7060">Learning out loud, week by week</text>
+          <text x="650" y="310" font-size="13" letter-spacing="3" font-weight="700" fill="#A67C3D">WHAT HAS COME OUT OF IT</text>
+          <circle cx="620" cy="355" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="361" font-size="18" font-weight="600" fill="#2B2520">CarScope India</text>
+          <text x="650" y="383" font-size="14" fill="#7A7060">Live car-price comparison, built and shipped</text>
+          <circle cx="620" cy="410" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="416" font-size="18" font-weight="600" fill="#2B2520">tanush.tech — this site</text>
+          <text x="650" y="438" font-size="14" fill="#7A7060">The public log of the build</text>
+          <circle cx="620" cy="465" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="471" font-size="18" font-weight="600" fill="#2B2520">Certifications: PMP, AWS, PSM I</text>
+          <text x="650" y="493" font-size="14" fill="#7A7060">Verified on Credly, and counting</text>
+          <text x="650" y="535" font-size="13" letter-spacing="3" font-weight="700" fill="#A67C3D">WHERE I AM</text>
+          <circle cx="620" cy="580" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="586" font-size="18" font-weight="600" fill="#2B2520">Senior Associate, Bengaluru</text>
+          <text x="650" y="608" font-size="14" fill="#7A7060">Running AI, data and cloud programs</text>
+          <circle cx="620" cy="635" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="641" font-size="18" font-weight="600" fill="#2B2520">7+ years delivering tech programs</text>
+          <text x="650" y="663" font-size="14" fill="#7A7060">Across IT and BPO</text>
+          <circle cx="620" cy="690" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="696" font-size="18" font-weight="600" fill="#2B2520">26-week AI sprint, in progress</text>
+          <text x="650" y="718" font-size="14" fill="#7A7060">Python, APIs, AWS, then production RAG</text>
+          <text x="650" y="760" font-size="13" letter-spacing="3" font-weight="700" fill="#A67C3D">WHERE I'M HEADING</text>
+          <circle cx="620" cy="805" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="811" font-size="18" font-weight="600" fill="#2B2520">Senior AI program leadership</text>
+          <text x="650" y="833" font-size="14" fill="#7A7060">The next role I'm building toward</text>
+          <circle cx="620" cy="860" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="866" font-size="18" font-weight="600" fill="#2B2520">Hands-on AI engineering</text>
+          <text x="650" y="888" font-size="14" fill="#7A7060">Python → APIs → production RAG</text>
+          <circle cx="620" cy="915" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="921" font-size="18" font-weight="600" fill="#2B2520">20 more builds before the year ends</text>
+          <text x="650" y="943" font-size="14" fill="#7A7060">Small, shipped, and public</text>
+          <text x="650" y="985" font-size="13" letter-spacing="3" font-weight="700" fill="#A67C3D">END GOAL, FAR DISTANT</text>
+          <circle cx="620" cy="1030" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="1036" font-size="18" font-weight="600" fill="#2B2520">Senior AI leadership, with a public body of work</text>
+          <text x="650" y="1058" font-size="14" fill="#7A7060">Proof first, titles second</text>
+          <circle cx="620" cy="1085" r="11" fill="#C9A96A" stroke="#fff" stroke-width="3"/>
+          <text x="650" y="1091" font-size="18" font-weight="600" fill="#2B2520">A creator platform people trust</text>
+          <text x="650" y="1113" font-size="14" fill="#7A7060">On AI, tech and the business of health</text>
+        </g>
+      </svg>
+
+      <div class="journey-stack">
+        <div class="j-group">
+          <div class="j-head">What I like</div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>AI, tech &amp; the business of health</strong><span>The ideas I keep coming back to</span></div></div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>Business models, margins &amp; operations</strong><span>How things actually make money and run</span></div></div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>Building in public</strong><span>Learning out loud, week by week</span></div></div>
+        </div>
+        <div class="j-group">
+          <div class="j-head">What has come out of it</div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>CarScope India</strong><span>Live car-price comparison, built and shipped</span></div></div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>tanush.tech — this site</strong><span>The public log of the build</span></div></div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>Certifications: PMP, AWS, PSM I</strong><span>Verified on Credly, and counting</span></div></div>
+        </div>
+        <div class="j-group">
+          <div class="j-head">Where I am</div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>Senior Associate, Bengaluru</strong><span>Running AI, data and cloud programs</span></div></div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>7+ years delivering tech programs</strong><span>Across IT and BPO</span></div></div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>26-week AI sprint, in progress</strong><span>Python, APIs, AWS, then production RAG</span></div></div>
+        </div>
+        <div class="j-group">
+          <div class="j-head">Where I'm heading</div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>Senior AI program leadership</strong><span>The next role I'm building toward</span></div></div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>Hands-on AI engineering</strong><span>Python → APIs → production RAG</span></div></div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>20 more builds before the year ends</strong><span>Small, shipped, and public</span></div></div>
+        </div>
+        <div class="j-group">
+          <div class="j-head">End goal, far distant</div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>Senior AI leadership, with a public body of work</strong><span>Proof first, titles second</span></div></div>
+          <div class="j-node"><span class="j-dot"></span><div><strong>A creator platform people trust</strong><span>On AI, tech and the business of health</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<div class="wrap">
   <footer id="contact">
     <div class="row">
       <div>
+        <a href="https://www.linkedin.com/in/tanush-r/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="https://x.com/tanushR_" target="_blank" rel="noopener">X ↗</a>
         <a href="https://github.com/Tanush-7" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly ↗</a>
       </div>
       <div class="quiet">tanush.tech — one week at a time.</div>
     </div>
   </footer>
-
 </div>
+
+<script>
+  (function () {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var words = ['AI systems', 'data platforms', 'the business of health'];
+    var el = document.getElementById('rotator');
+    if (!el) return;
+    var i = 0;
+    setInterval(function () {
+      el.classList.add('fade');
+      setTimeout(function () {
+        i = (i + 1) % words.length;
+        el.textContent = words[i];
+        el.classList.remove('fade');
+      }, 400);
+    }, 2800);
+  })();
+</script>
 </body>
 </html>
