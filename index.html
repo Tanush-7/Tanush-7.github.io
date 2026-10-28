@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tanush R</title>
+<meta name="description" content="Tanush R — Technical Delivery Manager at PwC, Bengaluru. I run AI/ML delivery programs, and I'm learning to build the systems myself.">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --text: #ededed;
+    --muted: #8a8a8a;
+    --faint: #525252;
+    --line: #2b2b2b;
+    --accent: #2dd4bf;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- nav: quiet text links, no buttons ---- */
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 0;
+  }
+  nav .wordmark { font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text); text-decoration: none; }
+  nav .wordmark span { color: var(--faint); font-weight: 400; }
+  nav .links a {
+    color: var(--muted); text-decoration: none; font-size: 0.9rem; margin-left: 22px;
+  }
+  nav .links a:hover { color: var(--text); }
+
+  /* ---- hero: name as H1 + one factual sentence ---- */
+  header.hero { padding: 96px 0 72px; }
+  .kicker {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78rem; color: var(--faint); letter-spacing: 0.04em;
+    margin-bottom: 20px;
+  }
+  .kicker .dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); margin-right: 8px;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 4rem);
+    font-weight: 650; letter-spacing: -0.035em; line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .hero-line { font-size: 1.12rem; color: var(--muted); max-width: 56ch; }
+  .hero-line strong { color: var(--text); font-weight: 500; font-style: italic; }
+
+  /* ---- sections: uppercase micro-labels, vast whitespace ---- */
+  section { padding: 56px 0; border-top: 1px dashed var(--line); }
+  h2 {
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--faint); margin-bottom: 8px;
+  }
+
+  /* ---- the index: title + date + one-liner, the signature flourish is the row hover ---- */
+  .index { list-style: none; }
+  .index li { border-bottom: 1px dashed var(--line); }
+  .index li:last-child { border-bottom: none; }
+  .index a.row {
+    display: flex; align-items: baseline; gap: 16px;
+    padding: 20px 12px; margin: 0 -12px; border-radius: 10px;
+    text-decoration: none; color: var(--text);
+    transition: opacity 0.18s ease;
+  }
+  /* spotlight: hovering the list dims every row except the one under the cursor */
+  .index:hover .row { opacity: 0.38; }
+  .index .row:hover { opacity: 1; }
+  .index .row.plain { transition: opacity 0.18s ease; }
+  .index .title { font-weight: 600; font-size: 1.02rem; letter-spacing: -0.01em; white-space: nowrap; }
+  .index .desc { color: var(--muted); font-size: 0.94rem; flex: 1; }
+  .index .date {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.76rem; color: var(--faint); white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .index .arrow {
+    color: var(--accent); font-size: 1rem; line-height: 1;
+    opacity: 0; transform: translateX(-6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .index a.row:hover .arrow { opacity: 1; transform: translateX(0); }
+  .index .row.plain { cursor: default; }
+  .index .row.plain:hover { background: none; }
+  .status {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.72rem; color: var(--accent);
+    border: 1px solid rgba(45, 212, 191, 0.35); border-radius: 999px;
+    padding: 2px 10px; white-space: nowrap;
+  }
+  .status.dim { color: var(--faint); border-color: var(--line); }
+
+  /* ---- about: short, factual ---- */
+  .about p { color: var(--muted); margin-bottom: 16px; max-width: 60ch; }
+  .about p strong { color: var(--text); font-weight: 600; }
+
+  /* ---- certs: quiet inline list ---- */
+  .certs { list-style: none; }
+  .certs li {
+    padding: 10px 0; border-bottom: 1px dashed var(--line);
+    display: flex; justify-content: space-between; gap: 16px;
+    font-size: 0.95rem;
+  }
+  .certs li:last-child { border-bottom: none; }
+  .certs .org { color: var(--faint); font-size: 0.88rem; }
+
+  /* ---- footer: frictionless contact, ends quietly ---- */
+  footer { padding: 40px 0 56px; }
+  footer .row {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    font-size: 0.92rem;
+  }
+  footer a { color: var(--muted); text-decoration: none; margin-right: 20px; }
+  footer a:hover { color: var(--accent); }
+  footer .quiet { color: var(--faint); font-size: 0.85rem; }
+
+  /* ---- halftone divider: one quiet row of fading dots, the page's signature ---- */
+  .dots-rule {
+    height: 14px;
+    background-image: radial-gradient(circle, var(--faint) 1.2px, transparent 1.7px);
+    background-size: 11px 14px;
+    background-repeat: repeat-x;
+    background-position: center;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 25%, black 75%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 25%, black 75%, transparent);
+  }
+
+  @media (max-width: 560px) {
+    header.hero { padding: 64px 0 52px; }
+    .index a.row { flex-wrap: wrap; gap: 6px 12px; }
+    .index .arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a class="wordmark" href="#">tanush<span>.tech</span></a>
+    <div class="links">
+      <a href="#index">Index</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="kicker"><span class="dot"></span>Bengaluru, India — building in public</div>
+    <h1>Tanush R</h1>
+    <p class="hero-line">
+      <strong>Technical Delivery Manager at PwC.</strong> I run AI/ML and data
+      engineering delivery programs — and I'm learning to build the systems myself,
+      from Python zero to production RAG.
+    </p>
+  </header>
+
+  <section id="index">
+    <h2>Index</h2>
+    <ul class="index">
+      <li>
+        <a class="row" href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener">
+          <span class="title">CarScope India</span>
+          <span class="desc">Live car-price comparison for the Indian market.</span>
+          <span class="date">Oct 2026</span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <div class="row plain">
+          <span class="title">YouTube</span>
+          <span class="desc">Weekly builds and explainers. Format pick in progress.</span>
+          <span class="status dim">planned</span>
+        </div>
+      </li>
+      <li>
+        <div class="row plain">
+          <span class="title">LinkedIn</span>
+          <span class="desc">Building in public: a delivery manager learning AI from zero.</span>
+          <span class="status dim">planned</span>
+        </div>
+      </li>
+      <li>
+        <div class="row plain">
+          <span class="title">X</span>
+          <span class="desc">@tanushR_ — quiet for now.</span>
+          <span class="status dim">paused</span>
+        </div>
+      </li>
+      <li>
+        <div class="row plain">
+          <span class="title">WhatsApp community</span>
+          <span class="desc">A quiet circle for people following the build. Growing slowly.</span>
+          <span class="status dim">planned</span>
+        </div>
+      </li>
+      <li>
+        <div class="row plain">
+          <span class="title">tanush.tech</span>
+          <span class="desc">This site. The public log of the build.</span>
+          <span class="status">live</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section id="about">
+    <h2>About</h2>
+    <div class="about">
+      <p>
+        <strong>7+ years</strong> delivering technology programs across IT and BPO —
+        currently <strong>Senior Associate / Technical Delivery Manager at PwC</strong>, Bengaluru.
+        I manage the teams that ship AI, data and cloud systems.
+      </p>
+      <p>
+        Coordination alone is getting automated. So I'm becoming someone who can
+        <strong>both run the program and build the system</strong> — a 26-week
+        hands-on sprint: Python, APIs, AWS, then a production-grade RAG system
+        with real evaluation. This site is the public log.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Certifications</h2>
+    <ul class="certs">
+      <li>PMP <span class="org">Project Management Professional</span></li>
+      <li>PSM I <span class="org">Professional Scrum Master</span></li>
+      <li>AWS Cloud Practitioner <span class="org">Amazon Web Services</span></li>
+      <li>Claude Certified Architect <span class="org">Foundations + Professional</span></li>
+      <li>Google Professional Data Engineer <span class="org">in progress</span></li>
+    </ul>
+  </section>
+
+  <div class="dots-rule" aria-hidden="true"></div>
+
+  <footer id="contact">
+    <div class="row">
+      <div>
+        <a href="https://github.com/Tanush-7" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+      <div class="quiet">tanush.tech — one week at a time.</div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
