@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goals — Tanush R</title>
+<meta name="description" content="Tanush R's personal goals, tracked in the open — fitness, building, and the training plan behind them.">
+<style>
+  :root {
+    --bg: #FDFBF7;
+    --surface: #FFFFFF;
+    --text: #211D18;
+    --muted: #6F6659;
+    --faint: #A89E8D;
+    --line: #E7DECB;
+    --bronze: #A67C3D;
+    --sand: #C9A96A;
+    --sandlight: #EFE6D0;
+    --green: #1E4D40;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .serif { font-family: Georgia, "Times New Roman", serif; }
+
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(253, 251, 247, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; }
+  nav .wordmark { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; color: var(--text); text-decoration: none; }
+  nav .wordmark span { color: var(--bronze); }
+  nav .links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; margin-left: 22px; }
+  nav .links a:hover { color: var(--bronze); }
+  nav .links a.active { color: var(--bronze); font-weight: 600; }
+
+  header.hero { padding: 64px 0 36px; }
+  .kicker {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78rem; color: var(--bronze); letter-spacing: 0.14em; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .kicker .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 8px; }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.4rem, 7vw, 3.6rem);
+    font-weight: 600; letter-spacing: -0.03em; line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  .hero-line { font-size: 1.08rem; color: var(--muted); max-width: 58ch; }
+  .updated { margin-top: 14px; font-size: 0.85rem; color: var(--faint); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+  section { padding: 48px 0; border-top: 1px solid var(--line); }
+  section h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.7rem; font-weight: 600; letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .sec-sub { color: var(--muted); margin-bottom: 28px; max-width: 60ch; }
+
+  .goal-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; padding: 22px; margin-bottom: 16px;
+  }
+  .goal-card .top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .goal-card h3 { font-family: Georgia, "Times New Roman", serif; font-size: 1.2rem; font-weight: 600; }
+  .goal-card .status {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.72rem;
+    color: var(--green); border: 1px solid rgba(30,77,64,0.35);
+    border-radius: 999px; padding: 2px 10px; white-space: nowrap;
+  }
+  .goal-card .status.soon { color: var(--bronze); border-color: var(--line); }
+  .goal-card p { color: var(--muted); font-size: 0.95rem; margin-bottom: 14px; }
+  .bar { height: 8px; background: var(--sandlight); border-radius: 999px; overflow: hidden; margin-bottom: 8px; }
+  .bar > div { height: 100%; background: linear-gradient(90deg, var(--sand), var(--bronze)); border-radius: 999px; width: 0; transition: width 0.8s ease; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+  details.day {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; margin-bottom: 12px; overflow: hidden;
+  }
+  details.day summary {
+    cursor: pointer; padding: 18px 22px; list-style: none;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  details.day summary::-webkit-details-marker { display: none; }
+  details.day summary:hover { background: #FFFEFB; }
+  details.day summary .d-name { font-weight: 700; font-size: 1rem; }
+  details.day summary .d-name .today {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.68rem; font-weight: 400;
+    color: #fff; background: var(--green); border-radius: 999px; padding: 2px 9px; margin-left: 8px; vertical-align: 2px;
+  }
+  details.day summary .d-meta { color: var(--muted); font-size: 0.85rem; text-align: right; }
+  details.day summary .d-chev { color: var(--bronze); font-size: 1.1rem; }
+  details.day[open] summary .d-chev { transform: rotate(180deg); }
+  details.day .d-body { padding: 4px 22px 20px; border-top: 1px solid var(--line); }
+  .ex { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px dashed var(--line); font-size: 0.95rem; }
+  .ex:last-child { border-bottom: none; }
+  .ex .rx { color: var(--bronze); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.82rem; white-space: nowrap; }
+  .ex .grp { color: var(--faint); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 14px; margin-bottom: 2px; font-weight: 700; }
+
+  .rules { background: var(--sandlight); border-radius: 16px; padding: 22px; margin-top: 24px; }
+  .rules h3 { font-family: Georgia, "Times New Roman", serif; font-size: 1.15rem; margin-bottom: 10px; }
+  .rules ul { margin-left: 18px; color: var(--text); font-size: 0.95rem; }
+  .rules li { margin-bottom: 8px; }
+  .rules li strong { color: var(--bronze); }
+
+  footer { padding: 48px 0 64px; border-top: 1px solid var(--line); }
+  footer .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.95rem; }
+  footer a { color: var(--bronze); font-weight: 600; text-decoration: none; margin-right: 20px; }
+  footer a:hover { text-decoration: underline; }
+  footer .quiet { color: var(--faint); font-size: 0.88rem; }
+
+  @media (max-width: 640px) {
+    nav .links a { margin-left: 14px; }
+    header.hero { padding: 48px 0 28px; }
+    details.day summary .d-meta { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="wordmark" href="index.html">tanush<span>.tech</span></a>
+    <div class="links">
+      <a href="index.html#projects">Projects</a>
+      <a href="goals.html" class="active">Goals</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#map">Map</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker"><span class="dot"></span>Tracked in the open</div>
+    <h1>Goals</h1>
+    <p class="hero-line">What I'm working toward, with the numbers visible. Updated as the work happens — the training block day counts itself.</p>
+    <p class="updated" id="updatedLine">Last updated —</p>
+  </header>
+
+  <section id="tracking">
+    <h2>Live tracking</h2>
+    <p class="sec-sub">The goals that matter right now, and exactly where each one stands.</p>
+    <div id="goalCards"></div>
+  </section>
+
+  <section id="plan">
+    <h2>Training plan</h2>
+    <p class="sec-sub">The 4-week body-recomposition block behind the fitness goal: 26 Oct – 22 Nov 2026. Morning sessions, 60–90 minutes. Tap a day to see the session.</p>
+    <div id="dayCards"></div>
+
+    <div class="rules">
+      <h3>Block rules</h3>
+      <ul>
+        <li><strong>Effort:</strong> strength at RPE 7–8 (2–3 reps in reserve). Zone 2 at a pace where full sentences are possible.</li>
+        <li><strong>Running rule:</strong> run only at pain 0–2/10, with no change in gait and no worse morning after. At 3+/10, sharp, or worsening — swap running for incline walking.</li>
+        <li><strong>Fueling:</strong> eat before strength and run days. Fasted only for Thursday/Saturday Zone 2 and the Sunday walk.</li>
+        <li><strong>Daily targets:</strong> 2,000–2,100 kcal · 150–160 g protein · 8,000–12,000 steps.</li>
+        <li><strong>Weeks 2–4:</strong> run intervals lengthen (2 min → 3/2 → 4/2), an extra set on the big lifts in week 3, Zone 2 builds to 45–50 min, then a deload week with plank retests.</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<div class="wrap">
+  <footer>
+    <div class="row">
+      <div>
+        <a href="https://www.linkedin.com/in/tanush-r/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="https://x.com/tanushR_" target="_blank" rel="noopener">X ↗</a>
+        <a href="https://github.com/Tanush-7" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly ↗</a>
+      </div>
+      <div class="quiet">tanush.tech — one week at a time.</div>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   GOALS DATA — update these numbers as the work happens.
+   Everything on this page renders from here.
+   ============================================================ */
+const DATA = {
+  updated: "29 Oct 2026",
+  goals: [
+    {
+      name: "Body recomposition",
+      desc: "Cut the waist while keeping muscle. Strength 4x/week, Zone 2 + run-walk, 150–160 g protein daily.",
+      type: "weight", start: 87.0, current: 87.0, target: 78.0, unit: "kg",
+      status: "In progress", statusClass: ""
+    },
+    {
+      name: "4-week training block",
+      desc: "26 Oct – 22 Nov 2026. Base week → build → peak volume → deload and retest.",
+      type: "block", startDate: "2026-10-26", totalDays: 28,
+      status: "In progress", statusClass: ""
+    },
+    {
+      name: "26-week FDE sprint",
+      desc: "Python foundations → APIs → AWS → a production-grade RAG system with real evaluation.",
+      type: "sprint", startDate: "2026-10-14", totalWeeks: 26,
+      status: "In progress", statusClass: ""
+    },
+    {
+      name: "Google Professional Data Engineer",
+      desc: "First cert of the sprint, on the firm-sponsored track.",
+      type: "milestone", status: "In progress", statusClass: ""
+    },
+    {
+      name: "20 builds before the year ends",
+      desc: "Small, shipped, and public. This goals page counts as one.",
+      type: "count", done: 1, target: 20,
+      status: "In progress", statusClass: ""
+    },
+    {
+      name: "HYROX Bengaluru 2027 — Mixed Doubles",
+      desc: "19–23 May 2027, BIEC. One team entry for two athletes. Tickets aren't on sale yet — watching.",
+      type: "milestone", status: "Waiting on tickets", statusClass: "soon"
+    }
+  ]
+};
+
+const DAYS = [
+  { id: "mon", name: "Monday", title: "Lower strength + short Zone 2", dur: "~75 min", groups: [
+    ["Warm-up", [["Bike or RowErg", "5 min"], ["Bodyweight squat", "2 × 8"], ["Glute bridge", "2 × 10"]]],
+    ["Main work", [["Hack squat", "3 × 6–8"], ["Dumbbell Romanian deadlift", "3 × 8–10"], ["Leg curl", "2 × 10–12"], ["Low step-up", "2 × 8 /side"], ["Standing calf raise", "3 × 10–12"], ["Bent-knee soleus raise", "2 × 12"]]],
+    ["Finisher", [["Incline treadmill walk, Zone 2", "15 min"], ["Calf stretch", "2 × 30s /side"], ["Couch stretch", "60s /side"]]]
+  ]},
+  { id: "tue", name: "Tuesday", title: "Run intervals + drills + durability + core", dur: "~70 min", groups: [
+    ["Warm-up + drills", [["Walk", "8 min"], ["Wall-lean march", "2 × 20s /side"], ["A-march", "2 × 20 m"], ["Ankling, low amplitude", "2 × 15 m"], ["Short-foot arch activation", "2 × 8 /side"]]],
+    ["Main work", [["Run 1 min / walk 2 min", "6 rounds"], ["Walk cooldown", "5 min"]]],
+    ["Durability + core", [["Cable hip flexion", "2 × 10 /side"], ["Tibialis raise", "2 × 15"], ["Bent-knee soleus raise", "2 × 12"], ["Single-leg balance", "2 × 30s /side"], ["Dead bug", "2 × 8 /side"], ["Side plank", "2 × 30s /side"]]]
+  ]},
+  { id: "wed", name: "Wednesday", title: "Upper strength + grip + trunk", dur: "~70 min", groups: [
+    ["Warm-up", [["RowErg", "5 min"], ["Band pull-apart", "2 × 12"]]],
+    ["Main work", [["Incline dumbbell press", "3 × 8–10"], ["Chest-supported row", "3 × 8–10"], ["Lat pulldown or assisted pull-up", "3 × 8–10"], ["Seated dumbbell shoulder press", "2 × 10"], ["Cable lateral raise", "2 × 12–15"]]],
+    ["Grip + trunk", [["Farmer carry", "3 × 30 m"], ["Pallof press", "2 × 10 /side"], ["Dead hang", "2 × 20–30s"]]]
+  ]},
+  { id: "thu", name: "Thursday", title: "Zone 2 + mobility + light durability", dur: "~65 min", groups: [
+    ["Main work", [["Incline treadmill (3–8%) or StairMaster, Zone 2", "40 min"]]],
+    ["Durability", [["Standing hip-flexor march", "2 × 10 /side"], ["Glute medius cable abduction", "2 × 12 /side"], ["Single-leg Romanian deadlift, light", "2 × 6 /side"], ["Tibialis raise", "2 × 15"]]],
+    ["Mobility", [["90/90 hip mobility", "5 min"], ["Calf stretch", "2 × 30s /side"], ["Hip-flexor stretch", "60s /side"]]]
+  ]},
+  { id: "fri", name: "Friday", title: "Full-body strength + controlled run", dur: "~80 min", groups: [
+    ["Warm-up + run", [["Walk", "5 min"], ["A-march", "2 × 20 m"], ["Run 1 min / walk 2 min", "5 rounds"]]],
+    ["Main work", [["Smith machine or goblet squat", "2 × 8"], ["Cable hip extension", "2 × 10 /side"], ["Dumbbell bench press", "3 × 8–10"], ["One-arm cable row", "2 × 10 /side"]]],
+    ["Trunk", [["Suitcase carry", "3 × 30 m /side"], ["Front plank", "2 × 40–60s"]]]
+  ]},
+  { id: "sat", name: "Saturday", title: "Longer easy aerobic", dur: "~55 min", groups: [
+    ["Main work", [["RowErg / SkiErg / incline walk, Zone 2", "40 min"], ["Easy walk", "10 min"]]],
+    ["Cooldown", [["Calf and hip stretches", "8 min"]]]
+  ]},
+  { id: "sun", name: "Sunday", title: "Recovery", dur: "~45 min", groups: [
+    ["Recovery", [["Walk", "30–45 min"], ["Mobility flow: hips, ankles, thoracic", "15 min"]]]
+  ]}
+];
+
+(function () {
+  document.getElementById("updatedLine").textContent = "Last updated " + DATA.updated + " · numbers update as the work happens";
+
+  function dayDiff(a, b) { return Math.floor((b - a) / 86400000); }
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+
+  const cards = document.getElementById("goalCards");
+  DATA.goals.forEach(function (g) {
+    let pct = null, left = "", right = "";
+    if (g.type === "weight") {
+      pct = Math.max(0, Math.min(100, (g.start - g.current) / (g.start - g.target) * 100));
+      left = g.current.toFixed(1) + " " + g.unit + " now";
+      right = "target " + g.target.toFixed(0) + " " + g.unit;
+    } else if (g.type === "block") {
+      const d = Math.max(1, Math.min(g.totalDays, dayDiff(new Date(g.startDate + "T00:00:00"), now) + 1));
+      pct = d / g.totalDays * 100;
+      left = "Day " + d + " of " + g.totalDays;
+      right = "week " + Math.ceil(d / 7) + " of 4";
+    } else if (g.type === "sprint") {
+      const w = Math.max(1, Math.min(g.totalWeeks, Math.floor(dayDiff(new Date(g.startDate + "T00:00:00"), now) / 7) + 1));
+      pct = w / g.totalWeeks * 100;
+      left = "Week " + w + " of " + g.totalWeeks;
+      right = Math.round(pct) + "%";
+    } else if (g.type === "count") {
+      pct = g.done / g.target * 100;
+      left = g.done + " shipped";
+      right = "target " + g.target;
+    }
+    const card = document.createElement("div");
+    card.className = "goal-card";
+    let bar = "";
+    if (pct !== null) {
+      bar = '<div class="bar"><div data-w="' + pct.toFixed(1) + '"></div></div>' +
+            '<div class="bar-label"><span>' + left + '</span><span>' + right + '</span></div>';
+    }
+    card.innerHTML = '<div class="top"><h3>' + g.name + '</h3>' +
+      '<span class="status ' + g.statusClass + '">' + g.status + '</span></div>' +
+      '<p>' + g.desc + '</p>' + bar;
+    cards.appendChild(card);
+  });
+  requestAnimationFrame(function () {
+    document.querySelectorAll(".bar > div").forEach(function (el) {
+      el.style.width = el.getAttribute("data-w") + "%";
+    });
+  });
+
+  const jsDay = (now.getDay() + 6) % 7; // Monday = 0
+  const dayIds = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+  const todayId = dayIds[jsDay];
+  const host = document.getElementById("dayCards");
+  DAYS.forEach(function (d) {
+    const det = document.createElement("details");
+    det.className = "day";
+    if (d.id === todayId) det.open = true;
+    let body = "";
+    d.groups.forEach(function (grp) {
+      body += '<div class="ex grp">' + grp[0] + '</div>';
+      grp[1].forEach(function (ex) {
+        body += '<div class="ex"><span>' + ex[0] + '</span><span class="rx">' + ex[1] + '</span></div>';
+      });
+    });
+    det.innerHTML = '<summary><span class="d-name">' + d.name +
+      (d.id === todayId ? '<span class="today">Today</span>' : '') +
+      '</span><span class="d-meta">' + d.title + ' · ' + d.dur + '</span>' +
+      '<span class="d-chev">▾</span></summary>' +
+      '<div class="d-body">' + body + '</div>';
+    host.appendChild(det);
+  });
+})();
+</script>
+</body>
+</html>
