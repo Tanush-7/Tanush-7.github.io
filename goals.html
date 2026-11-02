@@ -113,6 +113,7 @@
   .rules ul { margin-left: 18px; color: var(--text); font-size: 0.95rem; }
   .rules li { margin-bottom: 8px; }
   .rules li strong { color: var(--bronze); }
+  .rules .fineprint { margin-top: 14px; font-size: 0.85rem; color: var(--muted); }
 
   footer { padding: 48px 0 64px; border-top: 1px solid var(--line); }
   footer .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.95rem; }
@@ -159,19 +160,34 @@
 
   <section id="plan">
     <h2>Training plan</h2>
-    <p class="sec-sub">The 4-week body-recomposition block behind the fitness goal: 26 Oct – 22 Nov 2026. Morning sessions, 60–90 minutes. Tap a day to see the session.</p>
+    <p class="sec-sub">Current weekly structure: 3 runs, 2 lower-body and 2 upper-body sessions, with postural correction and core work built in. Morning sessions, 60–90 minutes. Sunday fully off. Tap a day to see the session.</p>
     <div id="dayCards"></div>
 
     <div class="rules">
-      <h3>Block rules</h3>
+      <h3>Training notes</h3>
       <ul>
-        <li><strong>Effort:</strong> strength at RPE 7–8 (2–3 reps in reserve). Zone 2 at a pace where full sentences are possible.</li>
-        <li><strong>Running rule:</strong> run only at pain 0–2/10, with no change in gait and no worse morning after. At 3+/10, sharp, or worsening — swap running for incline walking.</li>
-        <li><strong>Fueling:</strong> eat before strength and run days. Fasted only for Thursday/Saturday Zone 2 and the Sunday walk.</li>
+        <li><strong>Running:</strong> distances are starting targets, not mandatory increases. Keep all three runs conversational and retain the 3-minute jog / 1-minute walk strategy.</li>
+        <li><strong>Friday → Saturday:</strong> if Friday's leg session leaves you fatigued for the long run, reduce Friday's sets rather than compromising Saturday.</li>
+        <li><strong>Effort:</strong> strength at RPE 7–8 (2–3 reps in reserve). Easy runs at a pace where full sentences are possible.</li>
         <li><strong>Daily targets:</strong> 2,000–2,100 kcal · 150–160 g protein · 8,000–12,000 steps.</li>
-        <li><strong>Weeks 2–4:</strong> run intervals lengthen (2 min → 3/2 → 4/2), an extra set on the big lifts in week 3, Zone 2 builds to 45–50 min, then a deload week with plank retests.</li>
       </ul>
     </div>
+
+    <div class="rules">
+      <h3>Posture priorities</h3>
+      <ul>
+        <li><strong>Anterior pelvic tilt:</strong> glute bridges, dead bugs, split squats, hip-flexor stretches.</li>
+        <li><strong>Rounded shoulders:</strong> face pulls, reverse pec deck, chest-supported rows, external rotations.</li>
+        <li><strong>Forward-head posture:</strong> chin tucks, wall slides, thoracic extensions.</li>
+        <li><strong>Neck / upper-back:</strong> thoracic mobility, postural strengthening, upper-back work.</li>
+        <li><strong>Abdominal prominence:</strong> overall fat loss, dead bugs, Pallof presses, side planks.</li>
+        <li><strong>Flat feet:</strong> short-foot activation, single-leg balance, calf and tibialis raises.</li>
+        <li><strong>Running mechanics:</strong> A-march, wall-lean march, hip-flexor strengthening, calf and soleus work.</li>
+        <li><strong>V-taper:</strong> lat pulldowns, rows, lateral raises, upper-chest pressing.</li>
+      </ul>
+      <p class="fineprint">Posture traits like pelvic tilt, rounded shoulders or a prominent base of the neck can't be diagnosed reliably from photos — several causes, including normal fat distribution, can look similar. Training improves strength and posture but can't guarantee a visible change. If anything is new, enlarging, painful, or comes with numbness, get it assessed.</p>
+    </div>
+
   </section>
 
 </div>
@@ -196,7 +212,7 @@
    Everything on this page renders from here.
    ============================================================ */
 const DATA = {
-  updated: "29 Oct 2026",
+  updated: "2 Nov 2026",
   goals: [
     {
       name: "Body recomposition",
@@ -236,37 +252,42 @@ const DATA = {
 };
 
 const DAYS = [
-  { id: "mon", name: "Monday", title: "Lower strength + short Zone 2", dur: "~75 min", groups: [
-    ["Warm-up", [["Bike or RowErg", "5 min"], ["Bodyweight squat", "2 × 8"], ["Glute bridge", "2 × 10"]]],
-    ["Main work", [["Hack squat", "3 × 6–8"], ["Dumbbell Romanian deadlift", "3 × 8–10"], ["Leg curl", "2 × 10–12"], ["Low step-up", "2 × 8 /side"], ["Standing calf raise", "3 × 10–12"], ["Bent-knee soleus raise", "2 × 12"]]],
-    ["Finisher", [["Incline treadmill walk, Zone 2", "15 min"], ["Calf stretch", "2 × 30s /side"], ["Couch stretch", "60s /side"]]]
+  { id: "mon", name: "Monday", title: "Lower Body A — strength + pelvic stability", dur: "~75–90 min", groups: [
+    ["Warm-up", [["Incline treadmill walk", "5 min"], ["Ankle dorsiflexion rocks", "2 × 10 /side"], ["90/90 hip rotations", "2 × 8 /side"]]],
+    ["Activation", [["Glute bridge with posterior pelvic tilt", "2 × 12"]]],
+    ["Main work", [["Hack squat", "3 × 6–8"], ["Romanian deadlift", "3 × 8–10"], ["Bulgarian split squat", "3 × 8 /leg"], ["Seated leg curl", "3 × 10–12"]]],
+    ["Lower leg", [["Standing calf raise", "3 × 12–15"], ["Bent-knee soleus raise", "3 × 12–15"], ["Tibialis raise", "2 × 15–20"]]],
+    ["Core + stretch", [["Dead bug", "2 × 10 /side"], ["Couch stretch", "2 × 40s /side"]]]
   ]},
-  { id: "tue", name: "Tuesday", title: "Run intervals + drills + durability + core", dur: "~70 min", groups: [
-    ["Warm-up + drills", [["Walk", "8 min"], ["Wall-lean march", "2 × 20s /side"], ["A-march", "2 × 20 m"], ["Ankling, low amplitude", "2 × 15 m"], ["Short-foot arch activation", "2 × 8 /side"]]],
-    ["Main work", [["Run 1 min / walk 2 min", "6 rounds"], ["Walk cooldown", "5 min"]]],
-    ["Durability + core", [["Cable hip flexion", "2 × 10 /side"], ["Tibialis raise", "2 × 15"], ["Bent-knee soleus raise", "2 × 12"], ["Single-leg balance", "2 × 30s /side"], ["Dead bug", "2 × 8 /side"], ["Side plank", "2 × 30s /side"]]]
+  { id: "tue", name: "Tuesday", title: "Easy run + running mechanics", dur: "~70 min", groups: [
+    ["Warm-up + drills", [["Brisk walk", "5 min"], ["Ankle dorsiflexion rocks", "2 × 10 /side"], ["A-march", "2 × 20 m"], ["Wall-lean march", "2 × 10 /side"], ["Glute bridge", "2 × 12"]]],
+    ["Main work", [["Easy run, 3-min jog / 1-min walk", "4–5 km"], ["Walking cooldown", "5 min"]]],
+    ["Durability + stretch", [["Standing calf raise", "2 × 15"], ["Tibialis raise", "2 × 15"], ["Hip flexor stretch", "2 × 40s /side"], ["Calf stretch", "2 × 40s /side"]]]
   ]},
-  { id: "wed", name: "Wednesday", title: "Upper strength + grip + trunk", dur: "~70 min", groups: [
-    ["Warm-up", [["RowErg", "5 min"], ["Band pull-apart", "2 × 12"]]],
-    ["Main work", [["Incline dumbbell press", "3 × 8–10"], ["Chest-supported row", "3 × 8–10"], ["Lat pulldown or assisted pull-up", "3 × 8–10"], ["Seated dumbbell shoulder press", "2 × 10"], ["Cable lateral raise", "2 × 12–15"]]],
-    ["Grip + trunk", [["Farmer carry", "3 × 30 m"], ["Pallof press", "2 × 10 /side"], ["Dead hang", "2 × 20–30s"]]]
+  { id: "wed", name: "Wednesday", title: "Upper body + rounded shoulders + neck", dur: "~75 min", groups: [
+    ["Warm-up", [["RowErg", "5 min"], ["Chin tucks", "2 × 10"], ["Wall slides", "2 × 12"], ["Band pull-aparts", "2 × 15"], ["Thoracic extensions", "2 × 10"]]],
+    ["Main work", [["Incline dumbbell press", "3 × 8–10"], ["Chest-supported row", "4 × 8–10"], ["Lat pulldown", "3 × 10"], ["Seated dumbbell shoulder press", "2 × 10"], ["Cable lateral raise", "3 × 12–15"]]],
+    ["Posture + core + carry", [["Reverse pec deck", "3 × 12–15"], ["Face pull", "2 × 15"], ["Cable external rotation", "2 × 12 /side"], ["Pallof press", "2 × 12 /side"], ["Farmer carry", "3 × 30–40 m"]]]
   ]},
-  { id: "thu", name: "Thursday", title: "Zone 2 + mobility + light durability", dur: "~65 min", groups: [
-    ["Main work", [["Incline treadmill (3–8%) or StairMaster, Zone 2", "40 min"]]],
-    ["Durability", [["Standing hip-flexor march", "2 × 10 /side"], ["Glute medius cable abduction", "2 × 12 /side"], ["Single-leg Romanian deadlift, light", "2 × 6 /side"], ["Tibialis raise", "2 × 15"]]],
-    ["Mobility", [["90/90 hip mobility", "5 min"], ["Calf stretch", "2 × 30s /side"], ["Hip-flexor stretch", "60s /side"]]]
+  { id: "thu", name: "Thursday", title: "Easy run + hip and core stability", dur: "~65 min", groups: [
+    ["Warm-up", [["Brisk walk", "5 min"], ["A-march", "2 × 20 m"], ["Ankle mobility", "2 × 10 /side"]]],
+    ["Main work", [["Easy run, 3-min jog / 1-min walk", "5–6 km"], ["Walking cooldown", "5 min"]]],
+    ["Stability + stretch", [["Cable hip flexion", "2 × 12 /side"], ["Cable hip abduction", "2 × 15 /side"], ["Side plank", "2 × 30s /side"], ["Bird dog", "2 × 10 /side"], ["Short-foot activation", "2 × 10"], ["Couch stretch", "2 × 40s /side"]]]
   ]},
-  { id: "fri", name: "Friday", title: "Full-body strength + controlled run", dur: "~80 min", groups: [
-    ["Warm-up + run", [["Walk", "5 min"], ["A-march", "2 × 20 m"], ["Run 1 min / walk 2 min", "5 rounds"]]],
-    ["Main work", [["Smith machine or goblet squat", "2 × 8"], ["Cable hip extension", "2 × 10 /side"], ["Dumbbell bench press", "3 × 8–10"], ["One-arm cable row", "2 × 10 /side"]]],
-    ["Trunk", [["Suitcase carry", "3 × 30 m /side"], ["Front plank", "2 × 40–60s"]]]
+  { id: "fri", name: "Friday", title: "Lower Body B — running strength + stability", dur: "~75 min", groups: [
+    ["Warm-up", [["Incline walk", "5 min"], ["Glute bridge", "2 × 12"], ["A-march", "2 × 20 m"]]],
+    ["Main work", [["Step-ups", "3 × 10 /leg"], ["Single-leg Romanian deadlift", "3 × 8 /leg"], ["Smith machine reverse lunge", "2 × 8 /leg"], ["Leg curl", "2 × 12"], ["Spanish squat", "2 × 30–45s"]]],
+    ["Lower leg + balance", [["Bent-knee soleus raise", "3 × 15"], ["Tibialis raise", "3 × 15"], ["Single-leg balance", "2 × 30s /side"], ["Short-foot activation", "2 × 10"]]],
+    ["Stretch", [["Hip flexor stretch", "2 × 40s /side"]]]
   ]},
-  { id: "sat", name: "Saturday", title: "Longer easy aerobic", dur: "~55 min", groups: [
-    ["Main work", [["RowErg / SkiErg / incline walk, Zone 2", "40 min"], ["Easy walk", "10 min"]]],
-    ["Cooldown", [["Calf and hip stretches", "8 min"]]]
+  { id: "sat", name: "Saturday", title: "Long easy run + upper postural accessories", dur: "~80 min", groups: [
+    ["Warm-up", [["Brisk walk", "5 min"], ["A-march", "2 × 20 m"]]],
+    ["Main work", [["Easy long run, 3-min jog / 1-min walk", "7–8 km"], ["Walking cooldown", "5 min"]]],
+    ["Posture + core", [["Band pull-aparts", "2 × 15"], ["Wall slides", "2 × 12"], ["Chin tucks", "2 × 10"], ["Face pull", "2 × 15"], ["Dead bug", "2 × 10 /side"], ["Thoracic extension", "2 × 10"]]],
+    ["Stretch", [["Hip flexor stretch", "2 × 40s /side"], ["Chest doorway stretch", "2 × 30s"]]]
   ]},
-  { id: "sun", name: "Sunday", title: "Recovery", dur: "~45 min", groups: [
-    ["Recovery", [["Walk", "30–45 min"], ["Mobility flow: hips, ankles, thoracic", "15 min"]]]
+  { id: "sun", name: "Sunday", title: "Complete rest", dur: "—", groups: [
+    ["Rest", [["No gym, no running, no scheduled strength or conditioning", "Full rest"]]]
   ]}
 ];
 
