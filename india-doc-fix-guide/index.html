@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fix My Documents (India) - correction guide</title>
+<style>
+:root{--bg:#0f1420;--card:#182034;--ink:#e6ebf5;--muted:#98a4bd;--accent:#f97316;--line:#2a3550}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.docs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.doc{padding:14px 10px;text-align:center;border:1px solid var(--line);border-radius:10px;background:#0d1322;cursor:pointer;font-size:.95rem;color:var(--ink);font-family:inherit}
+.doc:hover{border-color:var(--accent)}
+.doc.on{border-color:var(--accent);background:#2a1a08;color:#fdba74;font-weight:600}
+.changes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chg{padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:#0d1322;cursor:pointer;font-size:.85rem;color:var(--ink);font-family:inherit}
+.chg.on{background:var(--accent);border-color:var(--accent);color:#1a0e02;font-weight:600}
+.result h2{font-size:1.15rem;margin-bottom:8px}
+.result h3{font-size:.95rem;margin:14px 0 6px;color:#fdba74}
+.result ol,.result ul{margin-left:20px;font-size:.9rem;line-height:1.65;color:#cdd6ea}
+.portal{display:inline-block;margin-top:12px;padding:10px 16px;background:var(--accent);color:#1a0e02;border-radius:10px;font-weight:700;text-decoration:none}
+.portal:hover{filter:brightness(1.1)}
+.also{color:var(--muted);font-size:.82rem;margin-top:8px}
+.also a{color:#93c5fd}
+.note{font-size:.82rem;color:var(--muted);margin-top:10px;border-left:3px solid var(--accent);padding-left:10px;line-height:1.5}
+.hidden{display:none}
+footer{color:var(--muted);font-size:.8rem;margin-top:18px;line-height:1.5}
+footer a{color:#93c5fd}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🪪 Fix My Documents (India)</h1>
+  <p class="sub">A starting guide for correcting or updating common government documents - which portal, what you'll typically need, and in what order. Always confirm current rules and fees on the official portal before applying.</p>
+
+  <div class="card">
+    <b>1. Which document?</b>
+    <div class="docs" id="docPick"></div>
+    <div id="chgWrap" class="hidden">
+      <b style="display:block;margin-top:14px">2. What needs fixing?</b>
+      <div class="changes" id="chgPick"></div>
+    </div>
+  </div>
+
+  <div class="card result hidden" id="result"></div>
+
+  <div class="card">
+    <b style="font-size:.9rem">Before you start (applies to most corrections)</b>
+    <ul style="margin:8px 0 0 18px;font-size:.88rem;line-height:1.6;color:#cdd6ea">
+      <li>Keep the original document number and a registered mobile number handy - most portals verify by OTP.</li>
+      <li>Names and dates of birth should match across Aadhaar, PAN and your bank records; fix mismatches in one document at a time, starting with the one everything else depends on (usually Aadhaar).</li>
+      <li>Use only official government portals. Agents charging "express" fees outside the portal are a common scam pattern.</li>
+    </ul>
+  </div>
+
+  <footer>
+    Built after Reddit requests to make issuing/correcting government documents easier -
+    <a href="https://www.reddit.com/r/bangalore/comments/10lll07/what_are_some_problems_in_india_that_you_want_a/" rel="noopener">source thread</a>.
+    General guidance, not legal advice. Procedures, fees and timelines change; the linked official portals are the source of truth.
+  </footer>
+</div>
+
+<script>
+"use strict";
+const GUIDE = {
+  aadhaar: {
+    name: "Aadhaar",
+    icon: "🆔",
+    portal: { label: "Go to UIDAI My Aadhaar", url: "https://uidai.gov.in/en/my-aadhaar" },
+    also: { label: "UIDAI online update service details", url: "https://uidai.gov.in/en/aadhaar-online-services" },
+    changes: {
+      address: {
+        label: "Address",
+        steps: [
+          "Sign in on the UIDAI portal with your Aadhaar number and OTP sent to your registered mobile.",
+          "Choose the address update option and upload a valid address proof.",
+          "Pay the portal's shown fee, save the request number (SRN/URN) and track status on the same portal."
+        ],
+        needs: ["Aadhaar number", "Registered mobile for OTP", "Address proof (the portal lists accepted documents - e.g. passport, bank statement, electricity bill, rent agreement)"],
+        note: "If your mobile number is not linked to Aadhaar, online updates will not work - visit an Aadhaar Seva Kendra first to link it."
+      },
+      mobile: {
+        label: "Mobile number",
+        steps: [
+          "Mobile number changes require an in-person visit to an Aadhaar Seva Kendra or update centre - this cannot be done fully online.",
+          "Carry your Aadhaar; the operator verifies you biometrically.",
+          "Pay the centre's displayed fee and keep the acknowledgement slip to track the update."
+        ],
+        needs: ["Aadhaar card or number", "Yourself in person (biometric verification)"],
+        note: "Locate your nearest centre from the UIDAI portal's centre locator."
+      },
+      name: {
+        label: "Name",
+        steps: [
+          "Check on the UIDAI portal whether your case qualifies for the online update service.",
+          "Upload a valid proof of identity carrying the correct name spelling.",
+          "Save the request number and track status online."
+        ],
+        needs: ["Proof of identity with correct name (e.g. PAN, passport)", "Registered mobile for OTP"],
+        note: "Only minor spelling corrections are typically accepted online; larger changes may need an in-person visit."
+      },
+      dob: {
+        label: "Date of birth",
+        steps: [
+          "Start the update on the UIDAI portal or at an Aadhaar Seva Kendra.",
+          "Provide a valid date-of-birth proof.",
+          "Track the request with the number on your acknowledgement."
+        ],
+        needs: ["DOB proof (birth certificate, passport, marksheet - the portal lists accepted documents)"],
+        note: "UIDAI limits how many times date of birth can be updated - double-check before submitting."
+      }
+    }
+  },
+  pan: {
+    name: "PAN card",
+    icon: "💳",
+    portal: { label: "PAN correction on Protean (NSDL e-Gov)", url: "https://tinpan.proteantech.in/services/pan/correction.html" },
+    also: { label: "Income Tax Dept: how to apply for PAN correction", url: "https://www.incometaxindia.gov.in/w/how-to-apply-for-pan-correction-" },
+    changes: {
+      name: {
+        label: "Name",
+        steps: [
+          "Fill the 'Change/Correction in PAN data' form on the Protean portal.",
+          "Upload proof of the correct name and your existing PAN.",
+          "Pay the portal fee, note the acknowledgement number, and track status online."
+        ],
+        needs: ["Existing PAN number", "Proof of identity with correct name", "Aadhaar (commonly required for e-KYC options)"],
+        note: "After a name correction, update the same spelling with your bank and employer so KYC records stay consistent."
+      },
+      dob: {
+        label: "Date of birth",
+        steps: [
+          "Use the same correction form on the Protean portal and select the DOB field.",
+          "Upload DOB proof and submit with the portal fee.",
+          "Track with the acknowledgement number."
+        ],
+        needs: ["Existing PAN number", "DOB proof (birth certificate, Aadhaar, passport, marksheet)"],
+        note: "PAN DOB should match Aadhaar if you plan to link them - mismatches are a common reason linking fails."
+      },
+      address: {
+        label: "Address / contact",
+        steps: [
+          "Select address or contact fields in the correction form on the Protean portal.",
+          "Upload address proof and submit.",
+          "Track with the acknowledgement number."
+        ],
+        needs: ["Existing PAN number", "Address proof"],
+        note: "Address on PAN is not printed prominently, but keep it current for KYC and correspondence."
+      }
+    }
+  },
+  passport: {
+    name: "Passport",
+    icon: "🛂",
+    portal: { label: "Passport Seva - apply for re-issue", url: "https://www.passportindia.gov.in/psp/ApplyReissue" },
+    also: { label: "Passport Seva FAQ on re-issue reasons", url: "https://passportindia.gov.in/psp/FaqServicesAvailable" },
+    changes: {
+      address: {
+        label: "Address change",
+        steps: [
+          "Address changes are done by re-issuing the passport: register/sign in on Passport Seva and choose 'Re-issue' with reason 'change in personal particulars'.",
+          "Fill the new address, pay the portal fee and book an appointment at a Passport Seva Kendra (PSK/POPSK).",
+          "Carry originals and copies of listed documents to the appointment; police verification may apply."
+        ],
+        needs: ["Current passport", "Address proof for the new address", "Appointment confirmation"],
+        note: "Your passport number changes on re-issue - update visas, banks and travel profiles afterwards."
+      },
+      name: {
+        label: "Name change",
+        steps: [
+          "Apply for re-issue on Passport Seva with the name-change reason.",
+          "Upload/carry supporting proof (e.g. marriage certificate or gazette notification, depending on the case - the portal's document advisor lists what applies).",
+          "Attend the PSK appointment with originals."
+        ],
+        needs: ["Current passport", "Name-change proof per the portal's document advisor"],
+        note: "The exact proof depends on why the name is changing; use the portal's Document Advisor before your appointment."
+      },
+      renewal: {
+        label: "Renewal / expiry",
+        steps: [
+          "Apply for re-issue on Passport Seva before or after expiry.",
+          "Pay the fee, book the PSK appointment, carry the old passport.",
+          "Track the application status on the portal."
+        ],
+        needs: ["Current/expired passport", "Address proof if the address changed"],
+        note: "Many countries want 6 months validity at travel - don't wait for actual expiry."
+      }
+    }
+  },
+  voter: {
+    name: "Voter ID (EPIC)",
+    icon: "🗳️",
+    portal: { label: "ECI Voters' Service Portal", url: "https://voters.eci.gov.in/" },
+    also: { label: "Form 8 (corrections/shifting) on the ECI portal", url: "https://voters.eci.gov.in/Forms/Forms/form8" },
+    changes: {
+      correction: {
+        label: "Correct details",
+        steps: [
+          "Sign in on the ECI Voters' Service Portal and fill Form 8 for correction of entries (name, age, photo, address within the same constituency).",
+          "Upload supporting proof for the corrected field.",
+          "Note the reference number and track the application on the portal."
+        ],
+        needs: ["EPIC number if you have one", "Proof supporting the corrected field", "Registered mobile/email for OTP"],
+        note: "First-time registration uses Form 6 instead - the same portal hosts both."
+      },
+      shift: {
+        label: "Moved to a new place",
+        steps: [
+          "Moved within your constituency: Form 8. Moved to a different constituency: register fresh in the new constituency with Form 6 on the same portal.",
+          "Upload address proof for the new residence.",
+          "Track status on the portal."
+        ],
+        needs: ["New address proof", "Existing EPIC number if any"],
+        note: "Do not register in two constituencies - duplicates can lead to deletion or penalty."
+      }
+    }
+  }
+};
+
+(function(){
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  let doc = null, chg = null;
+  const docPick = $("docPick"), chgWrap = $("chgWrap"), chgPick = $("chgPick"), result = $("result");
+
+  Object.entries(GUIDE).forEach(([key, d])=>{
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "doc"; b.dataset.key = key;
+    b.innerHTML = d.icon + "<br>" + esc(d.name);
+    b.onclick = ()=>{ doc = key; chg = null; renderDocPick(); renderChgs(); result.className = "card result hidden"; };
+    docPick.appendChild(b);
+  });
+  function renderDocPick(){ docPick.querySelectorAll(".doc").forEach(b => b.classList.toggle("on", b.dataset.key === doc)); }
+
+  function renderChgs(){
+    chgWrap.classList.remove("hidden"); chgPick.innerHTML = "";
+    Object.entries(GUIDE[doc].changes).forEach(([key, c])=>{
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "chg"; b.textContent = c.label; b.dataset.key = key;
+      b.onclick = ()=>{ chg = key; chgPick.querySelectorAll(".chg").forEach(x=>x.classList.toggle("on", x.dataset.key===chg)); renderResult(); };
+      chgPick.appendChild(b);
+    });
+  }
+
+  function renderResult(){
+    const d = GUIDE[doc], c = d.changes[chg];
+    result.className = "card result";
+    result.innerHTML =
+      "<h2>" + d.icon + " " + esc(d.name) + " - " + esc(c.label) + "</h2>" +
+      "<h3>Typical steps</h3><ol>" + c.steps.map(s => "<li>" + esc(s) + "</li>").join("") + "</ol>" +
+      "<h3>You'll typically need</h3><ul>" + c.needs.map(s => "<li>" + esc(s) + "</li>").join("") + "</ul>" +
+      '<div class="note">' + esc(c.note) + "</div>" +
+      '<a class="portal" href="' + d.portal.url + '" target="_blank" rel="noopener">' + esc(d.portal.label) + " →</a>" +
+      '<div class="also">Also see: <a href="' + d.also.url + '" target="_blank" rel="noopener">' + esc(d.also.label) + "</a></div>";
+  }
+})();
+</script>
+</body>
+</html>
