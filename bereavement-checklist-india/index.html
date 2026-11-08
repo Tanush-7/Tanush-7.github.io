@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>After a Death in the Family (India) - formalities checklist</title>
+<style>
+:root{--bg:#131118;--card:#1d1a26;--ink:#e9e6f2;--muted:#a49eb8;--accent:#8b5cf6;--line:#322c44;--ok:#16a34a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.progress{height:10px;background:#0d0b13;border-radius:6px;overflow:hidden;border:1px solid var(--line);margin:8px 0 4px}
+.progress>div{height:100%;width:0%;background:var(--accent);transition:width .2s}
+.plabel{color:var(--muted);font-size:.82rem}
+.phase{margin-top:16px}
+.phase h2{font-size:1.05rem;color:#c4b5fd;margin-bottom:8px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.item{display:flex;gap:10px;padding:9px 6px;border-bottom:1px dashed var(--line);align-items:flex-start}
+.item:last-child{border-bottom:none}
+.item input{margin-top:3px;transform:scale(1.2)}
+.item .t b{display:block;font-size:.95rem}
+.item .t span{font-size:.85rem;color:var(--muted);line-height:1.5;display:block;margin-top:2px}
+.item .t a{color:#c4b5fd}
+.item.done .t b{text-decoration:line-through;color:var(--muted)}
+.rowtop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.smallbtns{display:flex;gap:8px}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#141020;color:var(--ink);padding:7px 12px;font-size:.85rem}
+button:hover{border-color:var(--accent)}
+.note{font-size:.85rem;color:var(--muted);line-height:1.6;border-left:3px solid var(--accent);padding-left:10px;margin-top:10px}
+footer{color:var(--muted);font-size:.8rem;margin-top:18px;line-height:1.5}
+footer a{color:#c4b5fd}
+@media print{
+  body{background:#fff;color:#000}
+  .card{border:1px solid #ccc}
+  .smallbtns,.progress{display:none}
+  .item input{transform:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🕊️ After a Death in the Family</h1>
+  <p class="sub">An ordered checklist of the formalities families in India commonly face after a death - from the death certificate to bank accounts, insurance and taxes. Tick items off as you go; progress is saved on this device.</p>
+
+  <div class="card">
+    <div class="rowtop">
+      <div style="flex:1;min-width:200px">
+        <div class="progress"><div id="bar"></div></div>
+        <div class="plabel" id="plabel">0 of 0 done</div>
+      </div>
+      <div class="smallbtns">
+        <button id="printBtn" type="button">Print</button>
+        <button id="resetBtn" type="button">Reset ticks</button>
+      </div>
+    </div>
+    <div id="list"></div>
+  </div>
+
+  <div class="card">
+    <b style="font-size:.9rem">Gentle notes</b>
+    <div class="note">You do not have to finish this list in one week, or alone. Banks and insurers deal with these requests every day - asking them "what is your deceased-account process?" is normal and expected. For anything involving property, disputes or large sums, a lawyer who handles succession matters is worth the fee.</div>
+    <div class="note">General guidance, not legal advice. Exact documents vary by bank, insurer and state; each office confirms its own list.</div>
+  </div>
+
+  <footer>
+    Built after a Reddit request describing how many formalities follow a death - death certificate, succession, closing accounts, loans and insurance -
+    <a href="https://www.reddit.com/r/bangalore/comments/10lll07/what_are_some_problems_in_india_that_you_want_a/" rel="noopener">source thread</a>.
+    Your ticks stay in this browser (localStorage); nothing is uploaded.
+  </footer>
+</div>
+
+<script>
+"use strict";
+const PHASES = [
+  { title: "1. In the first days", items: [
+    { t: "Get the medical certificate of cause of death", d: "Issued by the hospital if the death happened there; for a death at home, a registered doctor certifies the cause. Everything else depends on this document." },
+    { t: "Register the death with the local registrar", d: "Registration of deaths is done with the local authority (municipality/panchayat); many states use the national Civil Registration System portal. See dc.crsorgi.gov.in.", link: "https://dc.crsorgi.gov.in/crs/home" },
+    { t: "Get several certified copies of the death certificate", d: "Banks, insurers, employers and courts each ask for their own copy. Families commonly get 10 or more certified copies to avoid repeat visits." },
+    { t: "Inform close family, employer and the housing society/landlord", d: "The employer starts final settlement, gratuity and provident-fund steps on their side; the society/landlord needs to know about utilities and agreements." }
+  ]},
+  { title: "2. Banks and money", items: [
+    { t: "Tell each bank and ask for their deceased-account process", d: "RBI rules make banks settle accounts with a nominee through a simplified process; without a nominee, banks ask for more documents (their own list applies). Keep the account from being misused in the meantime.", link: "https://www.rbi.org.in/commonperson/English/Scripts/NS_IVRS.aspx" },
+    { t: "Handle lockers, fixed deposits and recurring deposits", d: "Each follows the bank's deceased-depositor process - nominee access or legal-heir documentation." },
+    { t: "Close or take over loans and credit cards", d: "Inform lenders; ask whether any loan was covered by credit insurance. Cards in the deceased's name should be closed to stop fees and misuse." },
+    { t: "Provident fund and pension", d: "For salaried members, the family/nominee files claims with EPFO (EPF, pension and insurance-linked amounts); the employer usually helps with forms." },
+    { t: "Post office savings, PPF, NSC and similar", d: "Each has its own claim form at the post office or issuing office; nominee cases are simpler." },
+    { t: "Demat account, shares and mutual funds", d: "Contact the depository participant (demat) and each fund house (mutual funds). Nominee transmission is straightforward; without a nominee they list extra documents." }
+  ]},
+  { title: "3. Insurance", items: [
+    { t: "File life insurance claims", d: "Inform each insurer (life, health riders, accident cover). They give a claim form and document list - typically the death certificate, policy document, claimant's ID and bank details." },
+    { t: "Check employer group insurance", d: "Many employers include group life/accident cover that families forget to claim. HR can confirm." }
+  ]},
+  { title: "4. Legal and taxes", items: [
+    { t: "Find out whether there is a will", d: "A registered will simplifies everything. Without one, assets pass by succession law - families often need a legal-heir or succession certificate for larger assets." },
+    { t: "File the deceased's income tax return as legal heir", d: "A legal heir registers on the income tax e-filing portal and files any pending returns for the deceased.", link: "https://www.incometax.gov.in/" },
+    { t: "Property, vehicle and utility transfers", d: "Khata/mutation for property, RC transfer at the RTO for vehicles, and name changes for electricity, water, gas and phone connections. Each office has its own form plus the death certificate." }
+  ]},
+  { title: "5. Closing the loops", items: [
+    { t: "Subscriptions and digital accounts", d: "Cancel or transfer streaming, cloud, app subscriptions and memberships; secure email accounts, since password resets flow through them." },
+    { t: "Voter ID, passport and other documents", d: "Notify the election office for voter-list removal and surrender the passport if required - the respective portals list the process.", link: "https://voters.eci.gov.in/" },
+    { t: "Keep one folder with everything", d: "Death certificate copies, claim numbers, acknowledgement receipts and a simple list of what is settled and what is pending. Future-you will be glad it exists." }
+  ]}
+];
+
+(function(){
+  const $ = id => document.getElementById(id);
+  const LS = "bereavementChecklist.v1";
+  let done = {};
+  try{ done = JSON.parse(localStorage.getItem(LS)) || {}; }catch(e){ done = {}; }
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const list = $("list");
+  let total = 0;
+
+  PHASES.forEach((ph, pi)=>{
+    const div = document.createElement("div"); div.className = "phase";
+    div.innerHTML = "<h2>" + esc(ph.title) + "</h2>";
+    ph.items.forEach((it, ii)=>{
+      total++;
+      const id = pi + "-" + ii;
+      const row = document.createElement("label");
+      row.className = "item" + (done[id] ? " done" : "");
+      row.innerHTML = '<input type="checkbox"' + (done[id] ? " checked" : "") + '>' +
+        '<span class="t"><b>' + esc(it.t) + "</b><span>" + esc(it.d) +
+        (it.link ? ' <a href="' + it.link + '" target="_blank" rel="noopener">Official link</a>' : "") + "</span></span>";
+      row.querySelector("input").onchange = e => { done[id] = e.target.checked; localStorage.setItem(LS, JSON.stringify(done)); row.classList.toggle("done", e.target.checked); paint(); };
+      div.appendChild(row);
+    });
+    list.appendChild(div);
+  });
+
+  function paint(){
+    const n = Object.values(done).filter(Boolean).length;
+    $("bar").style.width = (total ? Math.round(n/total*100) : 0) + "%";
+    $("plabel").textContent = n + " of " + total + " done";
+  }
+  $("printBtn").onclick = ()=> window.print();
+  $("resetBtn").onclick = ()=>{ if (confirm("Clear all ticks?")){ done = {}; localStorage.setItem(LS, "{}"); location.reload(); } };
+  paint();
+})();
+</script>
+</body>
+</html>
