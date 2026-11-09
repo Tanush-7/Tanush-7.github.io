@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loan Part-Prepayment Calculator</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600}
+.good{color:var(--good);font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Loan Part-Prepayment Calculator</h1>
+<p class="sub">See what a lump-sum prepayment does to your loan: lower EMI, or same EMI and a shorter tenure.</p>
+
+<div class="card">
+  <strong>Before you start</strong>
+  <p class="note" style="margin-top:6px">
+  This is an <strong>illustration</strong> using your numbers, not advice. Whether an extra payment is treated as <em>part-prepayment of principal</em> or as <em>advance EMI</em> depends on your lender and how the payment is marked - confirm the treatment in writing with your bank before paying, and check for prepayment charges in your loan agreement. Math here assumes a fixed rate, monthly reducing balance, and no fees.
+  </p>
+</div>
+
+<div class="card">
+  <div class="grid3">
+    <div><label>Outstanding principal (Rs)</label><input id="P" type="number" min="0" value="3000000"></div>
+    <div><label>Annual interest rate (%)</label><input id="R" type="number" min="0" step="0.05" value="8.5"></div>
+    <div><label>Months remaining</label><input id="N" type="number" min="1" value="180"></div>
+  </div>
+  <div class="grid3">
+    <div><label>Prepayment amount (Rs)</label><input id="pre" type="number" min="0" value="500000"></div>
+    <div><label>Made after how many EMIs from now</label><input id="when" type="number" min="0" value="1"></div>
+    <div style="display:flex;align-items:flex-end"><button class="primary" id="calc" style="width:100%">Calculate</button></div>
+  </div>
+</div>
+
+<div id="out" style="display:none">
+<div class="card">
+  <strong>Current loan</strong>
+  <table style="margin-top:6px">
+    <tr><th>EMI</th><th>Total interest (remaining)</th><th>Months left</th></tr>
+    <tr><td id="cEmi"></td><td id="cInt"></td><td id="cN"></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <strong>After prepayment: two ways a lender can apply it</strong>
+  <div class="grid2" style="margin-top:8px">
+    <div>
+      <strong>Option A - keep EMI, shorten tenure</strong>
+      <table style="margin-top:6px">
+        <tr><td>EMI stays</td><td id="aEmi"></td></tr>
+        <tr><td>New tenure</td><td id="aN" class="good"></td></tr>
+        <tr><td>Interest saved vs current</td><td id="aSave" class="good"></td></tr>
+      </table>
+      <div class="win note" id="aNote"></div>
+    </div>
+    <div>
+      <strong>Option B - keep tenure, lower EMI</strong>
+      <table style="margin-top:6px">
+        <tr><td>New EMI</td><td id="bEmi" class="good"></td></tr>
+        <tr><td>Tenure stays</td><td id="bN"></td></tr>
+        <tr><td>Interest saved vs current</td><td id="bSave" class="good"></td></tr>
+      </table>
+      <div class="win note" id="bNote"></div>
+    </div>
+  </div>
+  <p class="note" style="margin-top:10px" id="cmp"></p>
+</div>
+
+<div class="card">
+  <strong>Year-wise schedule for the highlighted option</strong>
+  <div style="overflow-x:auto;margin-top:6px">
+  <table>
+    <thead><tr><th>Year</th><th>Principal paid</th><th>Interest paid</th><th>Balance at year end</th></tr></thead>
+    <tbody id="sched"></tbody>
+  </table>
+  </div>
+</div>
+</div>
+
+<p class="note">Runs entirely in your browser; nothing is sent anywhere. Figures are estimates under the assumptions above - your lender's actual recalculation governs.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const inr=n=>isFinite(n)?('Rs '+Math.round(n).toLocaleString('en-IN')):'-';
+
+function emi(P,r,n){
+  if(n<=0)return 0;
+  if(r===0)return P/n;
+  const q=Math.pow(1+r,n);
+  return P*r*q/(q-1);
+}
+// simulate months; returns {months, totalInterest, yearly:[{p,i,bal}], paidOff}
+function simulate(P,r,n,emiAmt,preAmt,preAfter){
+  let bal=P,totI=0,m=0,yearly=[],yP=0,yI=0;
+  while(bal>0.5&&m<1200){
+    m++;
+    const i=bal*r;
+    let pay=emiAmt;
+    let princ=pay-i;
+    if(princ>bal) {princ=bal; pay=princ+i;}
+    bal-=princ; totI+=i; yP+=princ; yI+=i;
+    if(m===preAfter&&preAmt>0){const pp=Math.min(preAmt,bal);bal-=pp;yP+=pp;}
+    if(m%12===0||bal<=0.5){yearly.push({y:Math.ceil(m/12),p:yP,i:yI,bal:Math.max(0,bal)});yP=0;yI=0;}
+  }
+  return {months:m,totalInterest:totI,yearly};
+}
+
+$('calc').onclick=()=>{
+  const P=+$('P').value, R=+$('R').value/1200, N=Math.round(+$('N').value);
+  const pre=+$('pre').value, when=Math.max(0,Math.round(+$('when').value));
+  if(!(P>0&&N>=1)){alert('Enter a positive principal and tenure.');return}
+  if(pre>=P){alert('Prepayment is larger than the outstanding principal - that would close the loan outright.');return}
+  const e=emi(P,R,N);
+  const cur=simulate(P,R,N,e,0,-1);
+  $('cEmi').textContent=inr(e);
+  $('cInt').textContent=inr(cur.totalInterest);
+  $('cN').textContent=cur.months;
+
+  // Option A: same EMI, shorter tenure
+  const A=simulate(P,R,N,e,pre,when);
+  $('aEmi').textContent=inr(e);
+  $('aN').textContent=A.months+' months ('+(cur.months-A.months)+' sooner)';
+  $('aSave').textContent=inr(cur.totalInterest-A.totalInterest);
+  $('aNote').textContent='You pay the same EMI; the loan closes '+Math.max(0,cur.months-A.months)+' months earlier.';
+
+  // Option B: lower EMI, same remaining tenure after prepayment
+  // balance after prepayment at month `when`, then re-amortize over N-when months
+  let bal=P;
+  for(let m=1;m<=when&&m<=N;m++){const i=bal*R;let pr=e-i;if(pr>bal)pr=bal;bal-=pr;}
+  const balAfterPre=Math.max(0,bal-pre);
+  const nLeft=N-when;
+  const eB=emi(balAfterPre,R,Math.max(1,nLeft));
+  const B=simulate(balAfterPre,R,Math.max(1,nLeft),eB,0,-1);
+  const intAlready=preSimTotalInt(P,R,e,when);
+  const bTotal=intAlready+B.totalInterest;
+  $('bEmi').textContent=inr(eB);
+  $('bN').textContent=N+' months total';
+  $('bSave').textContent=inr(cur.totalInterest-bTotal);
+  $('bNote').textContent='Your EMI drops; the end date stays about the same.';
+
+  $('cmp').textContent=(A.totalInterest<=bTotal)
+    ?'Option A (same EMI, shorter tenure) saves roughly '+inr(bTotal-A.totalInterest)+' more interest than Option B with these numbers.'
+    :'Option B (lower EMI) saves more with these numbers.';
+
+  // schedule for option A
+  const tb=$('sched');tb.innerHTML='';
+  A.yearly.forEach(y=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td>Year '+y.y+'</td><td>'+inr(y.p)+'</td><td>'+inr(y.i)+'</td><td>'+inr(y.bal)+'</td>';
+    tb.appendChild(tr);
+  });
+  $('out').style.display='block';
+};
+
+function preSimTotalInt(P,r,e,when){
+  let bal=P,tot=0;
+  for(let m=1;m<=when&&bal>0.5;m++){const i=bal*r;tot+=i;let pr=e-i;if(pr>bal)pr=bal;bal-=pr;}
+  return tot;
+}
+})();
+</script>
+</body>
+</html>
