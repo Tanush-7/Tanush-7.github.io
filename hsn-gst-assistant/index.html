@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSN & GST Rate Verification Assistant</title>
+<style>
+:root{--bg:#1a1210;--card:#261a15;--ink:#f7ece4;--muted:#c0a795;--accent:#fb923c;--line:#3f2c20;--good:#4ade80}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,textarea{padding:9px;border-radius:8px;border:1px solid var(--line);background:#140d09;color:var(--ink);font-size:.95rem;width:100%}
+textarea{resize:vertical;min-height:44px}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#20140e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#3a1c00;font-weight:600}
+button.danger{background:#2a1113;border-color:#4c1d1f;color:#fca5a5}
+table{width:100%;border-collapse:collapse;font-size:.86rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+a{color:var(--accent)}
+.chip{display:inline-block;background:#140d09;border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:3px 4px 0 0;font-size:.85rem}
+.chip b{color:var(--accent)}
+.struct{font-size:1.3rem;font-weight:700;letter-spacing:3px;font-variant-numeric:tabular-nums}
+.struct span{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>HSN & GST Rate Verification Assistant</h1>
+<p class="sub">Decode an HSN code, get to the right official source, and keep a worksheet of the rates you verified yourself.</p>
+
+<div class="card">
+  <strong>Why no ready-made rate table?</strong>
+  <p class="note" style="margin-top:6px">
+  GST rates changed substantially with effect from <strong>22 September 2025</strong> (the rationalisation moving most items into 5% and 18% slabs, notified through Notification No. <strong>09/2025-Central Tax (Rate) dated 17.09.2025</strong>, which superseded the 2017 rate notification). Many rates are <strong>conditional</strong> - for example, the rate on apparel can depend on the sale value per piece, and food items can depend on whether they are branded or pre-packaged. A static table would go stale or mislead, so this tool deliberately does <strong>not</strong> assert any rate. It helps you classify the code and verify the rate from the official sources below, for your specific product and date.
+  </p>
+</div>
+
+<div class="card">
+  <label>Enter an HSN code (2 to 8 digits)</label>
+  <input id="hsn" inputmode="numeric" maxlength="8" placeholder="e.g. 61091000">
+  <div style="margin-top:10px">
+    <div class="struct" id="struct">-</div>
+    <div style="margin-top:6px" id="chips"></div>
+  </div>
+  <p class="note" style="margin-top:8px" id="chap"></p>
+</div>
+
+<div class="card">
+  <strong>Verify the rate at the official sources</strong>
+  <ol class="note" style="margin:8px 0 0 18px;line-height:1.7">
+    <li><strong>GST portal - Search HSN:</strong> the official taxpayer portal has a "Search HSN / SAC" service (no login needed) that shows the description and integrated tax rate for a code. Entry point: <a href="https://services.gst.gov.in/services/quicklinks/userservices" target="_blank" rel="noopener">services.gst.gov.in &rarr; User Services &rarr; Search HSN Code</a>. A walkthrough of the feature is on the official tutorial site: <a href="https://tutorial.gst.gov.in/userguide/taxpayersdashboard/Search_HSN_SAC_Tax_Rates.htm" target="_blank" rel="noopener">tutorial.gst.gov.in - Search HSN/SAC Tax Rates</a>.</li>
+    <li><strong>Rate notifications:</strong> the legal text of every rate, exemption, and condition is in CBIC notifications, searchable on the <a href="https://taxinformation.cbic.gov.in/" target="_blank" rel="noopener">CBIC Tax Information Portal</a> (under GST &rarr; Notifications). The current master rate notification is No. 09/2025-Central Tax (Rate) dated 17.09.2025, effective 22.09.2025, as amended - always check for later amendments for your product.</li>
+    <li><strong>Council decisions:</strong> rate-change background appears in <a href="https://gstcouncil.gov.in/" target="_blank" rel="noopener">GST Council</a> press releases; the notification text is what actually applies.</li>
+  </ol>
+  <p class="note" style="margin-top:8px">Watch for conditions in the notification's schedule entries (value thresholds, branding, packaging, use). If two entries seem to cover your product, the more specific description and any chapter notes decide - when in doubt, a chartered accountant or an advance ruling is the reliable route.</p>
+</div>
+
+<div class="card">
+  <strong>Your verification worksheet</strong>
+  <p class="note" style="margin-top:4px">Record what you verified, from which notification, on which date. Saved only in this browser.</p>
+  <div class="grid3" style="margin-top:8px">
+    <div><label>HSN code</label><input id="wHsn" placeholder="e.g. 6109"></div>
+    <div><label>Product description</label><input id="wDesc" placeholder="e.g. cotton T-shirts, knitted"></div>
+    <div><label>Rate you verified (%)</label><input id="wRate" placeholder="from the notification"></div>
+  </div>
+  <div class="grid3">
+    <div><label>Notification no. &amp; date</label><input id="wNotif" placeholder="e.g. 09/2025-CT(R) dt 17.09.2025"></div>
+    <div><label>Condition that applies (if any)</label><input id="wCond" placeholder="e.g. sale value above/below threshold"></div>
+    <div><label>Verified on</label><input id="wDate" type="date"></div>
+  </div>
+  <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+    <button class="primary" id="add">Add row</button>
+    <button id="csv">Export CSV</button>
+  </div>
+  <div style="overflow-x:auto;margin-top:10px">
+  <table>
+    <thead><tr><th>HSN</th><th>Description</th><th>Rate (you verified)</th><th>Notification</th><th>Condition</th><th>Verified on</th><th></th></tr></thead>
+    <tbody id="rows"><tr><td colspan="7" class="note">Nothing recorded yet.</td></tr></tbody>
+  </table>
+  </div>
+</div>
+
+<p class="note">This tool gives structural and source guidance only. It does not provide tax advice, and it intentionally shows no rates of its own - verify each rate against the current notification for your product and date.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const LS='hsn-gst-worksheet-v1';
+const CHAPTERS={"01":"Live animals","02":"Meat and edible meat offal","03":"Fish and aquatic invertebrates","04":"Dairy, eggs, honey, edible animal products","05":"Other animal products","06":"Live trees, plants, cut flowers","07":"Edible vegetables","08":"Edible fruits and nuts","09":"Coffee, tea, spices","10":"Cereals","11":"Milling products, malt, starches","12":"Oil seeds, fodder, medicinal plants","13":"Lac, gums, resins, vegetable saps","14":"Vegetable plaiting materials","15":"Animal/vegetable fats and oils","16":"Meat or fish preparations","17":"Sugars and sugar confectionery","18":"Cocoa and cocoa preparations","19":"Preparations of cereals, flour, pastry","20":"Preparations of vegetables, fruit, nuts","21":"Miscellaneous edible preparations","22":"Beverages, spirits, vinegar","23":"Food industry residues, animal feed","24":"Tobacco and substitutes","25":"Salt, sulphur, earths, stone, plaster, lime, cement","26":"Ores, slag, ash","27":"Mineral fuels, oils, bituminous substances","28":"Inorganic chemicals","29":"Organic chemicals","30":"Pharmaceutical products","31":"Fertilisers","32":"Tanning/dyeing extracts, paints, inks","33":"Essential oils, perfumery, cosmetics","34":"Soap, washing preparations, waxes, candles","35":"Albuminoidal substances, glues, enzymes","36":"Explosives, fireworks, matches","37":"Photographic or cinematographic goods","38":"Miscellaneous chemical products","39":"Plastics and articles thereof","40":"Rubber and articles thereof","41":"Raw hides, skins, leather","42":"Leather articles, bags, saddlery","43":"Furskins and artificial fur","44":"Wood and articles of wood, charcoal","45":"Cork and articles","46":"Straw and plaiting-material manufactures","47":"Pulp of wood, waste paper","48":"Paper, paperboard and articles","49":"Printed books, newspapers, pictures","50":"Silk","51":"Wool, fine or coarse animal hair","52":"Cotton","53":"Other vegetable textile fibres","54":"Man-made filaments","55":"Man-made staple fibres","56":"Wadding, felt, nonwovens, twine","57":"Carpets and textile floor coverings","58":"Special woven fabrics, lace, tapestries","59":"Impregnated or coated textile fabrics","60":"Knitted or crocheted fabrics","61":"Knitted or crocheted apparel and clothing","62":"Woven apparel and clothing","63":"Other made textile articles, rags","64":"Footwear, gaiters and parts","65":"Headgear and parts","66":"Umbrellas, walking sticks","67":"Prepared feathers, artificial flowers, human hair","68":"Stone, plaster, cement, asbestos, mica articles","69":"Ceramic products","70":"Glass and glassware","71":"Precious stones, metals, jewellery, coins","72":"Iron and steel","73":"Articles of iron or steel","74":"Copper and articles","75":"Nickel and articles","76":"Aluminium and articles","78":"Lead and articles","79":"Zinc and articles","80":"Tin and articles","81":"Other base metals and articles","82":"Tools, implements, cutlery of base metal","83":"Miscellaneous articles of base metal","84":"Machinery, mechanical appliances, parts","85":"Electrical machinery and equipment, parts","86":"Railway or tramway stock and fittings","87":"Vehicles other than railway/tramway, parts","88":"Aircraft, spacecraft and parts","89":"Ships, boats, floating structures","90":"Optical, medical, measuring instruments","91":"Clocks, watches and parts","92":"Musical instruments","93":"Arms and ammunition","94":"Furniture, bedding, lamps, prefab buildings","95":"Toys, games, sports requisites","96":"Miscellaneous manufactured articles","97":"Works of art, collectors' pieces, antiques","98":"Project imports, laboratory chemicals, special","99":"Services (SAC classification begins here)"};
+
+$('hsn').addEventListener('input',()=>{
+  const v=$('hsn').value.replace(/\D/g,'').slice(0,8);
+  $('hsn').value=v;
+  if(!v){$('struct').textContent='-';$('chips').innerHTML='';$('chap').textContent='';return}
+  const parts=[['Chapter',v.slice(0,2)],['Heading',v.slice(2,4)],['Sub-heading',v.slice(4,6)],['Tariff item',v.slice(6,8)]];
+  let s='<span>'+v.slice(0,2)+'</span>';
+  if(v.length>2)s+=' '+v.slice(2,4);
+  if(v.length>4)s+=' <span>'+v.slice(4,6)+'</span>';
+  if(v.length>6)s+=' '+v.slice(6,8);
+  $('struct').innerHTML=s;
+  $('chips').innerHTML=parts.filter(p=>p[1]).map(p=>'<span class="chip"><b>'+p[0]+'</b> '+p[1]+'</span>').join('');
+  const ch=CHAPTERS[v.slice(0,2)];
+  $('chap').textContent=ch?('Chapter '+v.slice(0,2)+' covers: '+ch+'. (Chapter titles are standard customs-tariff headings; the GST rate still has to be verified from the notification for your exact product.)'):'Unknown chapter number.';
+});
+
+let rows=[];
+try{rows=JSON.parse(localStorage.getItem(LS)||'[]')}catch(e){rows=[]}
+function save(){localStorage.setItem(LS,JSON.stringify(rows))}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function render(){
+  const tb=$('rows');tb.innerHTML='';
+  if(!rows.length){tb.innerHTML='<tr><td colspan="7" class="note">Nothing recorded yet.</td></tr>';return}
+  rows.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td>'+esc(r.hsn)+'</td><td>'+esc(r.desc)+'</td><td>'+esc(r.rate)+'</td><td>'+esc(r.notif)+'</td><td>'+esc(r.cond)+'</td><td>'+esc(r.date)+'</td><td><button class="danger" data-i="'+i+'" style="padding:4px 8px">x</button></td>';
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('.danger').forEach(b=>b.onclick=()=>{rows.splice(+b.dataset.i,1);save();render()});
+}
+$('add').onclick=()=>{
+  const r={hsn:$('wHsn').value.trim(),desc:$('wDesc').value.trim(),rate:$('wRate').value.trim(),notif:$('wNotif').value.trim(),cond:$('wCond').value.trim(),date:$('wDate').value};
+  if(!r.hsn||!r.desc){alert('At least enter the HSN code and a description.');return}
+  rows.push(r);
+  ['wHsn','wDesc','wRate','wNotif','wCond','wDate'].forEach(id=>$(id).value='');
+  save();render();
+};
+$('csv').onclick=()=>{
+  const head=['hsn','description','rate_verified_by_you','notification','condition','verified_on'];
+  const lines=rows.map(r=>[r.hsn,r.desc,r.rate,r.notif,r.cond,r.date].map(x=>'"'+(x||'').replace(/"/g,'""')+'"').join(','));
+  const blob=new Blob([[head.join(',')].concat(lines).join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='hsn-gst-verification.csv';a.click();URL.revokeObjectURL(a.href);
+};
+render();
+})();
+</script>
+</body>
+</html>
