@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noise Event Logger</title>
+<style>
+:root{--bg:#101a24;--card:#16232f;--ink:#e6eef5;--muted:#8fa5b5;--accent:#38bdf8;--line:#24384a;--warn:#f59e0b;--bad:#ef4444}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select,textarea{padding:9px;border-radius:8px;border:1px solid var(--line);background:#0b141d;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#0d1b27;color:var(--ink);padding:10px 14px;font-size:.92rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#06202f;font-weight:600}
+button.danger{background:#2a1113;border-color:#4c1d1f;color:#fca5a5}
+button:disabled{opacity:.5;cursor:default}
+table{width:100%;border-collapse:collapse;font-size:.86rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+.meter{height:14px;border-radius:7px;background:#0b141d;border:1px solid var(--line);overflow:hidden}
+.meter>div{height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444);transition:width .12s}
+.big{font-size:2rem;font-weight:700;font-variant-numeric:tabular-nums}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.75rem;border:1px solid var(--line);color:var(--muted)}
+.badge.on{color:#86efac;border-color:#166534}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1;min-width:140px}
+.row button{flex:0 0 auto}
+@media print{
+  body{background:#fff;color:#000;padding:0}
+  .no-print{display:none!important}
+  .card{border:none;padding:6px 0}
+  th,td{border-bottom:1px solid #999;color:#000}
+  th{color:#333}
+  h1{font-size:1.2rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Noise Event Logger</h1>
+<p class="sub">Timestamped log of loud-noise events, kept on your device, exportable as CSV or a printable report.</p>
+
+<div class="card no-print">
+  <strong>What this is (and is not)</strong>
+  <p class="note" style="margin-top:6px">
+  This page uses your microphone to note <em>when</em> loud sounds happen and roughly how loud they were relative to your room's baseline. Phone microphones are <strong>not calibrated</strong>, so the levels here are indicative, not measurements of any legal standard. No audio is recorded, stored, or sent anywhere - only relative loudness numbers are computed in your browser.<br><br>
+  This tool only keeps a personal timestamped record. If you want to report a noise problem, the right channel depends on your city and situation - your local police station or your state police department's official app or online grievance portal are the usual starting points. <strong>112 is an emergency number</strong>, not a routine noise-complaint line.
+  </p>
+</div>
+
+<div class="card no-print">
+  <div class="row">
+    <div>
+      <label>Location label for this log (optional)</label>
+      <input id="loc" placeholder="e.g. 3rd floor, facing 12th Main, HSR">
+    </div>
+    <div>
+      <label>Noise threshold above baseline (relative units)</label>
+      <input id="thresh" type="range" min="5" max="60" value="18" style="padding:0">
+      <span class="note">Trigger at: <strong id="threshVal">18</strong> above baseline</span>
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button id="startBtn" class="primary">Start monitoring</button>
+    <button id="stopBtn" disabled>Stop</button>
+    <span id="state" class="badge">idle</span>
+  </div>
+  <div style="margin-top:12px">
+    <div class="row">
+      <div>
+        <span class="note">Live level (relative)</span>
+        <div class="big" id="level">-</div>
+      </div>
+      <div>
+        <span class="note">Baseline (learned)</span>
+        <div class="big" id="base">-</div>
+      </div>
+    </div>
+    <div class="meter" style="margin-top:8px"><div id="bar"></div></div>
+    <p class="note" style="margin-top:6px" id="hint">Press Start, allow microphone access, and keep this tab open. The baseline is learned from your first quiet 5 seconds; keep the room quiet during that time.</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="row no-print">
+    <strong style="flex:1">Logged events (<span id="count">0</span>)</strong>
+    <button id="csvBtn">Export CSV</button>
+    <button id="printBtn">Print report</button>
+    <button id="clearBtn" class="danger">Clear</button>
+  </div>
+  <div style="overflow-x:auto;margin-top:8px">
+  <table id="tbl">
+    <thead><tr><th>#</th><th>Date</th><th>Start</th><th>Duration</th><th>Peak (rel.)</th><th>Note</th><th class="no-print"></th></tr></thead>
+    <tbody id="rows"><tr><td colspan="7" class="note">No events yet.</td></tr></tbody>
+  </table>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div class="no-print" style="flex:2">
+      <label>Add a manual event (heard it but wasn't monitoring)</label>
+      <input id="manualDesc" placeholder="e.g. Loud bomb-type cracker, about 11:40 PM">
+    </div>
+    <button id="manualBtn" class="no-print" style="margin-top:18px">Add manual entry</button>
+  </div>
+</div>
+
+<p class="note no-print">Everything stays in this browser (localStorage). Closing the tab does not erase your log; Clear does.</p>
+<p class="note" style="display:none" id="printHead">Printed from Noise Event Logger. Levels are relative and uncalibrated (phone/laptop microphone). Location: <span id="printLoc"></span></p>
+</div>
+
+<script>
+(function(){
+"use strict";
+const LS='noise-event-log-v1';
+const $=id=>document.getElementById(id);
+let events=[];
+try{events=JSON.parse(localStorage.getItem(LS)||'[]')}catch(e){events=[]}
+let audioCtx=null,analyser=null,stream=null,raf=null;
+let baseline=null,baseSamples=[],learning=false;
+let inEvent=false,evStart=0,evPeak=0,belowSince=0;
+const START_HOLD=300, END_HOLD=2000;
+
+function save(){localStorage.setItem(LS,JSON.stringify(events))}
+function fmtDur(ms){const s=Math.round(ms/1000);if(s<60)return s+'s';const m=Math.floor(s/60);return m+'m '+(s%60)+'s'}
+function fmtTime(t){return new Date(t).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+function fmtDate(t){return new Date(t).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}
+
+function render(){
+  const tb=$('rows');tb.innerHTML='';
+  $('count').textContent=events.length;
+  if(!events.length){tb.innerHTML='<tr><td colspan="7" class="note">No events yet.</td></tr>';return}
+  events.forEach((e,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td>'+(i+1)+'</td><td>'+fmtDate(e.start)+'</td><td>'+fmtTime(e.start)+'</td><td>'+fmtDur(e.dur)+'</td><td>'+(e.peak!=null?e.peak:'manual')+'</td>'+
+      '<td><input data-i="'+i+'" class="noteEdit no-print" value="'+(e.note||'').replace(/"/g,'&quot;')+'" placeholder="add note"><span style="display:none" class="printNote">'+(e.note||'')+'</span></td>'+
+      '<td class="no-print"><button class="danger del" data-i="'+i+'" style="padding:4px 8px">x</button></td>';
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('.del').forEach(b=>b.onclick=()=>{events.splice(+b.dataset.i,1);save();render()});
+  tb.querySelectorAll('.noteEdit').forEach(inp=>inp.onchange=()=>{events[+inp.dataset.i].note=inp.value;save();render()});
+}
+
+function levelNow(){
+  const buf=new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buf);
+  let sum=0;for(let i=0;i<buf.length;i++)sum+=buf[i]*buf[i];
+  return Math.sqrt(sum/buf.length)*1000; // relative RMS x1000
+}
+
+function tick(){
+  if(!analyser)return;
+  const lv=levelNow();
+  $('level').textContent=lv.toFixed(1);
+  $('bar').style.width=Math.min(100,lv/1.5)+'%';
+  const now=performance.now();
+  if(learning){
+    baseSamples.push(lv);
+    if(baseSamples.length>=50){ // ~5s at 100ms cadence
+      baseSamples.sort((a,b)=>a-b);
+      baseline=baseSamples[Math.floor(baseSamples.length*0.5)];
+      learning=false;
+      $('base').textContent=baseline.toFixed(1);
+      $('hint').textContent='Baseline learned. Events above the threshold are logged automatically.';
+      $('state').textContent='monitoring';
+    }
+  }else if(baseline!=null){
+    const over=lv>baseline+ +$('thresh').value;
+    if(!inEvent){
+      if(over){if(!evStart)evStart=now; if(now-evStart>=START_HOLD){inEvent=true;evPeak=lv;evStartWall=Date.now();belowSince=0}}
+      else evStart=0;
+    }else{
+      if(lv>evPeak)evPeak=lv;
+      if(over){belowSince=0}
+      else{
+        if(!belowSince)belowSince=now;
+        if(now-belowSince>=END_HOLD){
+          events.push({start:evStartWall,dur:now-START_HOLD-(now-belowSince)+ (belowSince-evStart) ,dur:Date.now()-evStartWall,peak:+evPeak.toFixed(1),note:''});
+          save();render();
+          inEvent=false;evStart=0;belowSince=0;
+        }
+      }
+    }
+  }
+  raf=setTimeout(tick,100);
+}
+let evStartWall=0;
+
+$('startBtn').onclick=async()=>{
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  }catch(e){
+    $('hint').textContent='Microphone access was denied or is unavailable. You can still add manual entries below.';
+    return;
+  }
+  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  const src=audioCtx.createMediaStreamSource(stream);
+  analyser=audioCtx.createAnalyser();analyser.fftSize=2048;
+  src.connect(analyser);
+  baseline=null;baseSamples=[];learning=true;inEvent=false;evStart=0;belowSince=0;
+  $('startBtn').disabled=true;$('stopBtn').disabled=false;
+  $('state').textContent='learning baseline';$('state').classList.add('on');
+  $('hint').textContent='Learning baseline for ~5 seconds - keep the room quiet.';
+  tick();
+};
+$('stopBtn').onclick=()=>{
+  clearTimeout(raf);raf=null;
+  if(stream)stream.getTracks().forEach(t=>t.stop());
+  if(audioCtx)audioCtx.close();
+  analyser=null;
+  $('startBtn').disabled=false;$('stopBtn').disabled=true;
+  $('state').textContent='idle';$('state').classList.remove('on');
+  $('level').textContent='-';$('bar').style.width='0%';
+  $('hint').textContent='Stopped. Press Start to resume monitoring.';
+};
+$('thresh').oninput=()=>$('threshVal').textContent=$('thresh').value;
+
+$('manualBtn').onclick=()=>{
+  const d=$('manualDesc').value.trim();
+  events.push({start:Date.now(),dur:0,peak:null,note:d||'Manual entry'});
+  $('manualDesc').value='';
+  save();render();
+};
+$('csvBtn').onclick=()=>{
+  const head=['#','date','start_time','duration_seconds','peak_relative','note','location'];
+  const loc=$('loc').value.replace(/"/g,'""');
+  const lines=events.map((e,i)=>[i+1,fmtDate(e.start),fmtTime(e.start),Math.round(e.dur/1000),e.peak!=null?e.peak:'manual','"'+(e.note||'').replace(/"/g,'""')+'"','"'+loc+'"'].join(','));
+  const blob=new Blob([[head.join(',')].concat(lines).join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='noise-log-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();URL.revokeObjectURL(a.href);
+};
+$('printBtn').onclick=()=>{
+  $('printLoc').textContent=$('loc').value||'(not set)';
+  $('printHead').style.display='block';
+  document.querySelectorAll('.noteEdit').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.printNote').forEach(el=>el.style.display='inline');
+  window.print();
+  document.querySelectorAll('.noteEdit').forEach(el=>el.style.display='');
+  document.querySelectorAll('.printNote').forEach(el=>el.style.display='none');
+};
+$('clearBtn').onclick=()=>{
+  if(confirm('Delete all logged events?')){events=[];save();render()}
+};
+render();
+})();
+</script>
+</body>
+</html>
