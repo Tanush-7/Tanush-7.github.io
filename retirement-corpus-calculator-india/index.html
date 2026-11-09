@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retirement Corpus Calculator (India)</title>
+<style>
+:root{--bg:#0f1d1a;--card:#152b25;--ink:#e8f5ef;--muted:#93b3a4;--accent:#2dd4bf;--line:#22453b;--good:#4ade80}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input{padding:9px;border-radius:8px;border:1px solid var(--line);background:#0a1714;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#0e201b;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#06312b;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600}
+.good{color:var(--good);font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.hero{font-size:2rem;font-weight:700;font-variant-numeric:tabular-nums}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Retirement Corpus Calculator (India)</h1>
+<p class="sub">How much might you need the month you retire, and what monthly saving gets you there.</p>
+
+<div class="card">
+  <strong>Assumptions, stated up front</strong>
+  <p class="note" style="margin-top:6px">
+  Everything here is a <strong>projection from the numbers you type, not a prediction or advice</strong>. Inflation and returns are your guesses; markets do not return a fixed rate. The corpus target uses a growing-annuity model: retirement expenses keep rising with inflation and the corpus earns your post-retirement return. Defaults are placeholders only. Consider reviewing the result with a SEBI-registered investment adviser.
+  </p>
+</div>
+
+<div class="card">
+  <div class="grid3">
+    <div><label>Current age</label><input id="age" type="number" min="10" max="80" value="30"></div>
+    <div><label>Retirement age</label><input id="retAge" type="number" min="20" max="80" value="55"></div>
+    <div><label>Plan expenses till age</label><input id="endAge" type="number" min="40" max="110" value="85"></div>
+  </div>
+  <div class="grid3">
+    <div><label>Monthly household expense today (Rs)</label><input id="exp" type="number" min="0" value="60000"></div>
+    <div><label>Existing retirement savings (Rs)</label><input id="saved" type="number" min="0" value="500000"></div>
+    <div><label>Annual step-up on your SIP (%)</label><input id="step" type="number" min="0" max="30" value="5"></div>
+  </div>
+  <div class="grid3">
+    <div><label>Expected inflation (% p.a.)</label><input id="infl" type="number" min="0" max="20" step="0.5" value="6"></div>
+    <div><label>Return before retirement (% p.a.)</label><input id="preR" type="number" min="0" max="25" step="0.5" value="11"></div>
+    <div><label>Return after retirement (% p.a.)</label><input id="postR" type="number" min="0" max="15" step="0.5" value="7"></div>
+  </div>
+  <div style="margin-top:12px"><button class="primary" id="calc" style="width:100%">Calculate</button></div>
+</div>
+
+<div id="out" style="display:none">
+<div class="card">
+  <div class="grid2">
+    <div>
+      <span class="note">Monthly expense in your first retired year</span>
+      <div class="hero" id="oExp"></div>
+    </div>
+    <div>
+      <span class="note">Corpus needed at retirement</span>
+      <div class="hero" id="oCorpus"></div>
+    </div>
+  </div>
+  <table style="margin-top:10px">
+    <tr><td>Your existing savings grow to</td><td id="oSaved"></td></tr>
+    <tr><td>Gap to fund through investing</td><td id="oGap" class="good"></td></tr>
+    <tr><td><strong>Monthly SIP needed (with your step-up)</strong></td><td id="oSip" class="good"><strong></strong></td></tr>
+  </table>
+  <p class="note" style="margin-top:8px" id="oNote"></p>
+</div>
+
+<div class="card">
+  <strong>Milestones (projected)</strong>
+  <div style="overflow-x:auto;margin-top:6px">
+  <table>
+    <thead><tr><th>Age</th><th>Corpus if you follow the SIP</th><th>Annual expense (then)</th></tr></thead>
+    <tbody id="ms"></tbody>
+  </table>
+  </div>
+</div>
+</div>
+
+<p class="note">Runs entirely in your browser; nothing is sent anywhere. These are illustrations under your assumptions - actual inflation and returns will differ.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const inr=n=>isFinite(n)?('Rs '+Math.round(n).toLocaleString('en-IN')):'-';
+const cr=n=>{const c=n/1e7;return c>=1?('Rs '+c.toFixed(2)+' Cr'):(n>=1e5?('Rs '+(n/1e5).toFixed(1)+' L'):inr(n))};
+
+$('calc').onclick=()=>{
+  const age=+$('age').value, retAge=+$('retAge').value, endAge=+$('endAge').value;
+  const exp=+$('exp').value, saved=+$('saved').value, step=+$('step').value/100;
+  const infl=+$('infl').value/100, preR=+$('preR').value/100, postR=+$('postR').value/100;
+  if(!(retAge>age)){alert('Retirement age must be after your current age.');return}
+  if(!(endAge>retAge)){alert('Plan-till age must be after retirement age.');return}
+  const yrsWork=retAge-age, yrsRet=endAge-retAge;
+
+  // expense in first retired month
+  const expRet=exp*Math.pow(1+infl,yrsWork);
+  const annualExpRet=expRet*12;
+
+  // corpus: PV at retirement of inflation-growing withdrawals, post-ret return
+  let corpus;
+  const real=(1+postR)/(1+infl)-1;
+  if(Math.abs(real)<1e-9){corpus=annualExpRet*yrsRet}
+  else{corpus=annualExpRet*(1-Math.pow(1+real,-yrsRet))/real}
+
+  // existing savings growth
+  const savedAtRet=saved*Math.pow(1+preR,yrsWork);
+  const gap=Math.max(0,corpus-savedAtRet);
+
+  // monthly SIP with annual step-up: solve P s.t. FV = gap (yearly model, monthly contributions averaged)
+  // FV of step-up SIP, yearly: each year contribution C_t = P*12*(1+step)^(t-1), grows at preR for (yrsWork - t) years
+  function fvFactor(){
+    let f=0;
+    for(let t=1;t<=yrsWork;t++){
+      f+=12*Math.pow(1+step,t-1)*Math.pow(1+preR,yrsWork-t);
+    }
+    return f;
+  }
+  const sip=yrsWork>0?gap/fvFactor():0;
+
+  $('oExp').textContent=cr(expRet)+' /month';
+  $('oCorpus').textContent=cr(corpus);
+  $('oSaved').textContent=cr(savedAtRet);
+  $('oGap').textContent=cr(gap);
+  $('oSip').textContent=cr(sip)+' /month';
+  $('oNote').textContent='At '+Math.round(infl*100)+'% inflation, Rs '+Math.round(exp).toLocaleString('en-IN')+'/month today becomes '+cr(expRet)+'/month in '+yrsWork+' years. The corpus assumes money keeps earning '+Math.round(postR*100)+'% p.a. while expenses keep rising with inflation for '+yrsRet+' retirement years.';
+
+  // milestones every 5 working years + retirement
+  const tb=$('ms');tb.innerHTML='';
+  for(let a=age+5;a<=retAge;a+=5){
+    const y=a-age;
+    let corp=saved*Math.pow(1+preR,y);
+    for(let t=1;t<=y;t++)corp+=sip*12*Math.pow(1+step,t-1)*Math.pow(1+preR,y-t);
+    const anExp=exp*12*Math.pow(1+infl,y);
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td>'+a+'</td><td>'+cr(corp)+'</td><td>'+cr(anExp)+'</td>';
+    tb.appendChild(tr);
+  }
+  const trR=document.createElement('tr');
+  trR.innerHTML='<td><strong>'+retAge+' (retire)</strong></td><td><strong>'+cr(gap+savedAtRet)+'</strong></td><td><strong>'+cr(annualExpRet)+'</strong></td>';
+  tb.appendChild(trR);
+  $('out').style.display='block';
+};
+})();
+</script>
+</body>
+</html>
