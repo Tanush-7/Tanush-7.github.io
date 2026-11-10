@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Net Worth Snapshot Calculator (India)</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--bad:#f87171}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+button.small{padding:4px 10px;font-size:.8rem}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.item{display:grid;grid-template-columns:1fr 150px 40px;gap:8px;margin-bottom:6px;align-items:center}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:12px;margin-top:10px;text-align:center}
+.big{font-size:1.6rem;font-weight:700}
+.good{color:var(--good)}.bad{color:var(--bad)}
+h3{font-size:1rem;margin-bottom:6px}
+.bar{height:10px;border-radius:5px;background:#100e22;overflow:hidden;margin-top:6px}
+.bar>div{height:100%}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:8px}
+th,td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Net Worth Snapshot Calculator</h1>
+<p class="sub">Everything you own minus everything you owe. Add items with rough current values and see your net worth in one number.</p>
+
+<div class="card">
+  <strong>Before you start</strong>
+  <p class="note" style="margin-top:6px">
+  Use what each asset would fetch <strong>if you sold it today</strong>, not what you paid or hope it will be worth. This is a snapshot for your own clarity, not a valuation for tax, loan or legal purposes - those need documents and, where relevant, a professional. Nothing you type leaves this browser (local storage only).
+  </p>
+</div>
+
+<div class="card">
+  <h3>Assets (what you own)</h3>
+  <div id="assets"></div>
+  <button class="small" id="addAsset">+ Add asset</button>
+</div>
+
+<div class="card">
+  <h3>Liabilities (what you owe)</h3>
+  <div id="liabs"></div>
+  <button class="small" id="addLiab">+ Add liability</button>
+</div>
+
+<div class="card">
+  <div id="result"></div>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+    <button class="small" id="exportBtn">Download CSV</button>
+    <button class="small" id="clearBtn">Clear everything</button>
+  </div>
+</div>
+
+<p class="note">Built after a r/personalfinanceindia thread asking how to actually calculate net worth. Free, no sign-up, no data leaves your device.</p>
+</div>
+
+<script>
+const KEY='netWorthV1';
+const ASSET_SUGGEST=['Savings account','Fixed deposits','EPF balance','PPF balance','Mutual funds','Stocks','Gold','Property (current value)','PPF/NPS other'];
+const LIAB_SUGGEST=['Home loan outstanding','Car loan outstanding','Personal loan','Credit card dues','Loan from family/friends'];
+let state={assets:[],liabs:[]};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.assets))state=s;}catch(e){}
+if(!state.assets.length&&!state.liabs.length){
+  state.assets=[['Savings account',50000],['Mutual funds',150000],['EPF balance',200000]].map(r=>({name:r[0],val:r[1]}));
+  state.liabs=[{name:'Credit card dues',val:15000}];
+}
+const $=id=>document.getElementById(id);
+const fmt=n=>'Rs '+Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function rowHtml(kind,it,i){
+  return '<div class="item"><input data-'+kind+'-name="'+i+'" value="'+escapeAttr(it.name)+'" placeholder="Item name">'+
+  '<input data-'+kind+'-val="'+i+'" type="number" min="0" value="'+it.val+'">'+
+  '<button class="small" data-'+kind+'-del="'+i+'">x</button></div>';
+}
+function escapeAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function render(){
+  $('assets').innerHTML=state.assets.map((a,i)=>rowHtml('a',a,i)).join('');
+  $('liabs').innerHTML=state.liabs.map((l,i)=>rowHtml('l',l,i)).join('');
+  bind();
+  const A=state.assets.reduce((s,a)=>s+(+a.val||0),0);
+  const L=state.liabs.reduce((s,l)=>s+(+l.val||0),0);
+  const NW=A-L;
+  const pct=A+L?Math.round(100*A/(A+L)):0;
+  $('result').innerHTML=
+    '<div class="win"><div class="note">Your net worth</div>'+
+    '<div class="big '+(NW>=0?'good':'bad')+'">'+fmt(NW)+'</div>'+
+    '<table><tr><th></th><th>Amount</th></tr>'+
+    '<tr><td>Total assets</td><td class="good">'+fmt(A)+'</td></tr>'+
+    '<tr><td>Total liabilities</td><td class="bad">'+fmt(L)+'</td></tr></table>'+
+    '<div class="bar"><div style="width:'+pct+'%;background:var(--good)"></div></div>'+
+    '<div class="note" style="margin-top:4px">'+(A+L?pct+'% assets / '+(100-pct)+'% liabilities':'Add items above')+'</div></div>';
+}
+function bind(){
+  document.querySelectorAll('[data-a-name]').forEach(el=>el.oninput=()=>{state.assets[+el.dataset.aName].name=el.value;save();});
+  document.querySelectorAll('[data-a-val]').forEach(el=>el.oninput=()=>{state.assets[+el.dataset.aVal].val=+el.value||0;save();render();});
+  document.querySelectorAll('[data-a-del]').forEach(el=>el.onclick=()=>{state.assets.splice(+el.dataset.aDel,1);save();render();});
+  document.querySelectorAll('[data-l-name]').forEach(el=>el.oninput=()=>{state.liabs[+el.dataset.lName].name=el.value;save();});
+  document.querySelectorAll('[data-l-val]').forEach(el=>el.oninput=()=>{state.liabs[+el.dataset.lVal].val=+el.value||0;save();render();});
+  document.querySelectorAll('[data-l-del]').forEach(el=>el.onclick=()=>{state.liabs.splice(+el.dataset.lDel,1);save();render();});
+}
+$('addAsset').onclick=()=>{state.assets.push({name:ASSET_SUGGEST[state.assets.length%ASSET_SUGGEST.length],val:0});save();render();};
+$('addLiab').onclick=()=>{state.liabs.push({name:LIAB_SUGGEST[state.liabs.length%LIAB_SUGGEST.length],val:0});save();render();};
+$('exportBtn').onclick=()=>{
+  let csv='type,item,amount\n';
+  state.assets.forEach(a=>csv+='asset,"'+a.name.replace(/"/g,'""')+'",'+a.val+'\n');
+  state.liabs.forEach(l=>csv+='liability,"'+l.name.replace(/"/g,'""')+'",'+l.val+'\n');
+  const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='net-worth-snapshot.csv';a.click();
+};
+$('clearBtn').onclick=()=>{if(confirm('Delete all items?')){state={assets:[],liabs:[]};save();render();}};
+render();
+</script>
+</body>
+</html>

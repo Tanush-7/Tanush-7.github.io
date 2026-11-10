@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fuel Mileage & Cost-per-KM Tracker</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+button.small{padding:4px 10px;font-size:.8rem}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.row>div{flex:1;min-width:130px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:8px}
+.stat{background:#221f42;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.stat b{display:block;font-size:1.25rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Fuel Mileage & Cost-per-KM Tracker</h1>
+<p class="sub">Log each refill with the odometer reading. The full-tank-to-full-tank method then gives you real km/l, cost per km, and monthly fuel spend.</p>
+
+<div class="card">
+  <strong>How to get accurate numbers</strong>
+  <p class="note" style="margin-top:6px">
+  Fill the tank to full (auto-cutoff), note the odometer, and drive normally. At the <em>next</em> full refill, note the odometer again and the litres filled - the litres of that second fill are what the distance between the two readings consumed. The first entry only sets the baseline, so mileage appears from your second fill onwards. Everything is saved only in this browser.
+  </p>
+</div>
+
+<div class="card">
+  <strong>Add a refill</strong>
+  <div class="row">
+    <div><label>Date</label><input id="fDate" type="date"></div>
+    <div><label>Odometer (km)</label><input id="fOdo" type="number" min="0" step="0.1" placeholder="25410"></div>
+    <div><label>Litres filled</label><input id="fLit" type="number" min="0" step="0.01" placeholder="6.42"></div>
+    <div><label>Price per litre (Rs)</label><input id="fPrice" type="number" min="0" step="0.01" placeholder="104.77"></div>
+    <div style="flex:0"><button class="primary" id="addBtn">Add</button></div>
+  </div>
+</div>
+
+<div class="card">
+  <strong>Your numbers</strong>
+  <div class="stats" id="stats"></div>
+  <div id="perFill"></div>
+</div>
+
+<div class="card">
+  <strong>Refill log</strong>
+  <div id="log"><p class="note">No refills yet.</p></div>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="small" id="exportBtn">Download CSV</button>
+    <button class="small" id="clearBtn">Clear everything</button>
+  </div>
+</div>
+
+<p class="note">Built after r/CarsIndia threads on logging fuel to get real mileage. Free, no sign-up, no data leaves your device. Mileage varies with traffic, load, tyre pressure and riding style - treat trends over several tanks as more meaningful than any single fill.</p>
+</div>
+
+<script>
+const KEY='fuelTrackerV1';
+let fills=[];
+try{fills=JSON.parse(localStorage.getItem(KEY))||[];}catch(e){}
+const $=id=>document.getElementById(id);
+const fmt=(n,d=2)=>Number(n).toLocaleString('en-IN',{maximumFractionDigits:d});
+function save(){localStorage.setItem(KEY,JSON.stringify(fills));}
+function sorted(){return fills.slice().sort((a,b)=>a.odo-b.odo||(a.date<b.date?-1:1));}
+function render(){
+  const s=sorted();
+  // per-fill mileage: litres of this fill drove distance since previous fill
+  let rows='',totKm=0,totLit=0,totCost=0,measCount=0;
+  for(let i=1;i<s.length;i++){
+    const dist=s[i].odo-s[i-1].odo;
+    if(dist>0&&s[i].lit>0){
+      const kml=dist/s[i].lit;const cost=s[i].lit*s[i].price;const cpk=cost/dist;
+      totKm+=dist;totLit+=s[i].lit;totCost+=cost;measCount++;
+      rows+='<tr><td>'+s[i].date+'</td><td>'+fmt(s[i].odo,1)+'</td><td>'+fmt(dist,0)+'</td><td>'+fmt(s[i].lit)+'</td>'+
+        '<td>'+fmt(kml,1)+' km/l</td><td>Rs '+fmt(cpk)+'/km</td></tr>';
+    }
+  }
+  $('stats').innerHTML=
+    stat('Avg mileage',measCount?fmt(totKm/totLit,1)+' km/l':'-')+
+    stat('Avg cost per km',totKm?'Rs '+fmt(totCost/totKm):'-')+
+    stat('Total tracked',fmt(totKm,0)+' km')+
+    stat('Fuel spend (tracked)','Rs '+fmt(totCost,0));
+  $('perFill').innerHTML=rows?
+    '<table style="margin-top:10px"><tr><th>Fill date</th><th>Odometer</th><th>Km since prev</th><th>Litres</th><th>Mileage</th><th>Cost/km</th></tr>'+rows+'</table>':
+    '<p class="note" style="margin-top:8px">Mileage appears from your second full-tank entry.</p>';
+  $('log').innerHTML=s.length?
+    '<table><tr><th>Date</th><th>Odometer</th><th>Litres</th><th>Rs/litre</th><th>Amount</th><th></th></tr>'+
+    s.slice().reverse().map(f=>'<tr><td>'+f.date+'</td><td>'+fmt(f.odo,1)+'</td><td>'+fmt(f.lit)+'</td><td>'+fmt(f.price)+'</td><td>Rs '+fmt(f.lit*f.price,0)+'</td><td><button class="small" data-del="'+f.id+'">x</button></td></tr>').join('')+'</table>':
+    '<p class="note">No refills yet.</p>';
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{fills=fills.filter(f=>f.id!==b.dataset.del);save();render();});
+}
+function stat(label,val){return '<div class="stat"><b>'+val+'</b><span class="note">'+label+'</span></div>';}
+$('addBtn').onclick=()=>{
+  const d=$('fDate').value,o=parseFloat($('fOdo').value),l=parseFloat($('fLit').value),p=parseFloat($('fPrice').value);
+  if(!d||isNaN(o)||isNaN(l)||isNaN(p)||l<=0||p<=0){alert('Fill in date, odometer, litres and price.');return;}
+  const s=sorted();
+  if(s.length&&o<s[s.length-1].odo&&!confirm('Odometer is lower than your last entry ('+s[s.length-1].odo+' km). Add anyway?'))return;
+  fills.push({id:Date.now()+''+Math.floor(Math.random()*1e4),date:d,odo:o,lit:l,price:p});
+  $('fLit').value='';$('fPrice').value='';save();render();
+};
+$('exportBtn').onclick=()=>{
+  let csv='date,odometer_km,litres,price_per_litre,amount\n';
+  sorted().forEach(f=>csv+=[f.date,f.odo,f.lit,f.price,(f.lit*f.price).toFixed(2)].join(',')+'\n');
+  const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='fuel-log.csv';a.click();
+};
+$('clearBtn').onclick=()=>{if(confirm('Delete all refills?')){fills=[];save();render();}};
+$('fDate').value=new Date().toISOString().slice(0,10);
+render();
+</script>
+</body>
+</html>
