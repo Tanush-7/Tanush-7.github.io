@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit Card Statement Cycle Tracker</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+button.small{padding:4px 10px;font-size:.8rem}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.4rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.row>div{flex:1;min-width:140px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Credit Card Statement Cycle Tracker</h1>
+<p class="sub">Your card statement runs (for example) from the 20th of one month to the 19th of the next, not by calendar month. Track spends against the real statement cycle so the bill never surprises you.</p>
+
+<div class="card">
+  <strong>Before you start</strong>
+  <p class="note" style="margin-top:6px">
+  Everything stays in your browser (local storage) - nothing is uploaded anywhere. Statement close dates and payment due dates are set by your card issuer; check your actual statement or the issuer's app for the exact dates, and rely on that statement for the amount you must pay. This tool only organises what you enter.
+  </p>
+</div>
+
+<div class="card">
+  <strong>1. Your statement cycle</strong>
+  <div class="grid3">
+    <div><label>Statement closes on day of month</label><input id="closeDay" type="number" min="1" max="31" value="19"></div>
+    <div><label>Payment due (days after close)</label><input id="dueDays" type="number" min="1" max="45" value="18"></div>
+    <div><label>Card nickname (optional)</label><input id="nick" type="text" placeholder="e.g. HDFC Millennia"></div>
+  </div>
+  <p class="note" style="margin-top:8px">Example: if your statement says "Statement period: 20 Sep - 19 Oct", the close day is <strong>19</strong>. Spends from the 20th fall into the next statement.</p>
+  <div id="cycleInfo" class="win"></div>
+</div>
+
+<div class="card">
+  <strong>2. Add a spend</strong>
+  <div class="row">
+    <div><label>Date</label><input id="txDate" type="date"></div>
+    <div><label>Amount (Rs)</label><input id="txAmt" type="number" min="0" step="0.01" placeholder="1250"></div>
+    <div><label>What was it?</label><input id="txDesc" type="text" placeholder="Groceries, Swiggy, fuel..."></div>
+    <div style="flex:0"><button class="primary" id="addBtn">Add</button></div>
+  </div>
+  <p class="note" style="margin-top:6px">Add refunds as a negative amount (e.g. -500).</p>
+</div>
+
+<div class="card">
+  <strong>3. Where you stand</strong>
+  <div id="summary"></div>
+</div>
+
+<div class="card">
+  <strong>4. All entries</strong>
+  <div id="txTableWrap"><p class="note">No entries yet.</p></div>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="small" id="exportBtn">Download CSV</button>
+    <button class="small" id="clearBtn">Clear everything</button>
+  </div>
+</div>
+
+<p class="note">Built after a r/personalfinanceindia thread where credit-card billing cycles (20th to 20th) made monthly expenses impossible to reconcile. Free, no sign-up, no data leaves your device.</p>
+</div>
+
+<script>
+const KEY='ccStmtTrackerV1';
+let state={closeDay:19,dueDays:18,nick:'',tx:[]};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.tx))state=s;}catch(e){}
+const $=id=>document.getElementById(id);
+const fmt=n=>'Rs '+Number(n).toLocaleString('en-IN',{maximumFractionDigits:2});
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function cycleBounds(ref,closeDay){
+  // returns {start,end} of the statement cycle containing date ref.
+  // cycle = (closeDay of prev month + 1 day) .. (closeDay of this month)
+  let y=ref.getFullYear(),m=ref.getMonth();
+  let closeThis=new Date(y,m,Math.min(closeDay,daysIn(y,m)));
+  let end,start;
+  if(ref<=closeThis){end=closeThis;let pm=new Date(y,m-1,1);start=new Date(pm.getFullYear(),pm.getMonth(),Math.min(closeDay,daysIn(pm.getFullYear(),pm.getMonth()))+1);}
+  else{end=new Date(y,m+1,Math.min(closeDay,daysIn(y,m+1)));start=new Date(y,m,Math.min(closeDay,daysIn(y,m))+1);}
+  return {start,end};
+}
+function daysIn(y,m){return new Date(y,m+1,0).getDate();}
+function disp(d){return d.getDate()+' '+d.toLocaleString('en',{month:'short'})+' '+d.getFullYear();}
+function render(){
+  state.closeDay=Math.min(31,Math.max(1,+$('closeDay').value||19));
+  state.dueDays=Math.max(1,+$('dueDays').value||18);
+  state.nick=$('nick').value;
+  save();
+  const today=new Date();
+  const {start,end}=cycleBounds(today,state.closeDay);
+  const nextStart=new Date(end);nextStart.setDate(nextStart.getDate()+1);
+  const next=cycleBounds(nextStart,state.closeDay);
+  const due=new Date(end);due.setDate(due.getDate()+state.dueDays);
+  const daysLeft=Math.ceil((end-today)/86400000);
+  const dueIn=Math.ceil((due-today)/86400000);
+  $('cycleInfo').innerHTML=
+    '<div class="grid3">'+
+    '<div><div class="note">Current statement period</div><strong>'+disp(start)+' - '+disp(end)+'</strong>'+
+    '<div class="note">closes in '+daysLeft+' day'+(daysLeft===1?'':'s')+'</div></div>'+
+    '<div><div class="note">Estimated payment due</div><strong>'+disp(due)+'</strong>'+
+    '<div class="note">'+(dueIn>=0?'in '+dueIn+' days':'passed '+( -dueIn)+' days ago')+' - confirm on your statement</div></div>'+
+    '<div><div class="note">Next statement period</div><strong>'+disp(next.start)+' - '+disp(next.end)+'</strong></div>'+
+    '</div>';
+  // bucket transactions
+  const buckets=new Map();
+  state.tx.forEach(t=>{
+    const d=new Date(t.date+'T00:00:00');
+    const b=cycleBounds(d,state.closeDay);
+    const k=iso(b.end);
+    if(!buckets.has(k))buckets.set(k,{start:b.start,end:b.end,items:[],total:0});
+    const bk=buckets.get(k);bk.items.push(t);bk.total+= +t.amt;
+  });
+  const keys=[...buckets.keys()].sort().reverse();
+  let html='';
+  keys.forEach((k,i)=>{
+    const b=buckets.get(k);
+    html+='<div class="win"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">'+
+      '<span><strong>'+disp(b.start)+' - '+disp(b.end)+'</strong>'+(i===0&&k===iso(end)?' <span class="warn">(current)</span>':'')+'</span>'+
+      '<span class="big">'+fmt(b.total)+'</span></div></div>';
+  });
+  $('summary').innerHTML=html||'<p class="note">Add spends above and they will be grouped into statement cycles here.</p>';
+  // table
+  if(state.tx.length){
+    let rows=state.tx.slice().sort((a,b)=>b.date.localeCompare(a.date)).map((t,i)=>{
+      const d=new Date(t.date+'T00:00:00');const b=cycleBounds(d,state.closeDay);
+      return '<tr><td>'+t.date+'</td><td>'+escapeHtml(t.desc||'-')+'</td><td>stmt ending '+disp(b.end)+'</td><td>'+fmt(t.amt)+'</td>'+
+      '<td><button class="small" data-del="'+t.id+'">x</button></td></tr>';
+    }).join('');
+    $('txTableWrap').innerHTML='<table><tr><th>Date</th><th>Description</th><th>Statement cycle</th><th>Amount</th><th></th></tr>'+rows+'</table>';
+  } else $('txTableWrap').innerHTML='<p class="note">No entries yet.</p>';
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{state.tx=state.tx.filter(t=>t.id!==b.dataset.del);save();render();});
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+$('addBtn').onclick=()=>{
+  const d=$('txDate').value,a=parseFloat($('txAmt').value);
+  if(!d||isNaN(a)||a===0){alert('Enter a date and a non-zero amount.');return;}
+  state.tx.push({id:Date.now()+''+Math.floor(Math.random()*1e4),date:d,amt:a,desc:$('txDesc').value.trim()});
+  $('txAmt').value='';$('txDesc').value='';save();render();
+};
+$('exportBtn').onclick=()=>{
+  let csv='date,description,amount,statement_end\n';
+  state.tx.forEach(t=>{const d=new Date(t.date+'T00:00:00');const b=cycleBounds(d,state.closeDay);
+    csv+=[t.date,'"'+(t.desc||'').replace(/"/g,'""')+'"',t.amt,iso(b.end)].join(',')+'\n';});
+  const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='statement-cycles.csv';a.click();
+};
+$('clearBtn').onclick=()=>{if(confirm('Delete all entries and settings?')){state.tx=[];save();render();}};
+$('closeDay').value=state.closeDay;$('dueDays').value=state.dueDays;$('nick').value=state.nick||'';
+$('txDate').value=iso(new Date());
+['closeDay','dueDays','nick'].forEach(id=>$(id).addEventListener('input',render));
+render();
+</script>
+</body>
+</html>
