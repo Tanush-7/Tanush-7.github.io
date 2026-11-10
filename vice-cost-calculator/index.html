@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Vice Cost Calculator — Caffeine, Alcohol & Cigarettes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f6f2; --surface:#ffffff; --surface2:#efeee8; --ink:#17191c; --muted:#5d646f; --faint:#8a919c;
+    --line:#ddd9cf; --line2:#c9c4b6;
+    --coffee:#9a5510; --coffee-bg:#fdf0dd;
+    --matcha:#4c7a34; --matcha-bg:#eaf2e2;
+    --tea:#7a5b12;
+    --alcohol:#8e3524; --alcohol-bg:#fbeae6;
+    --smoke:#3f4750; --smoke-bg:#e9ebee;
+    --good:#2e7d46; --good-bg:#e6f3ea;
+    --bad:#b3372e; --bad-bg:#fae9e7;
+    --warn:#9a6a0a; --warn-bg:#fdf3d7;
+    --chart-line:#9a5510; --chart-fill:rgba(154,85,16,.16); --chart-grid:#e2ded2; --chart-target:#b3372e;
+    --shadow:0 1px 2px rgba(20,20,20,.05), 0 10px 28px -18px rgba(20,20,20,.25);
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#111214; --surface:#1a1c1f; --surface2:#232529; --ink:#f1f0ea; --muted:#a9afb9; --faint:#7d838e;
+      --line:#2e3036; --line2:#3d4048;
+      --coffee:#e0a458; --coffee-bg:#2e2415;
+      --matcha:#9cc47e; --matcha-bg:#1e2b18;
+      --alcohol:#e08a76; --alcohol-bg:#2f1d18;
+      --smoke:#b9c0c9; --smoke-bg:#24262b;
+      --good:#7cc793; --good-bg:#1c2b21;
+      --bad:#ef9a92; --bad-bg:#331f1d;
+      --warn:#e3bc67; --warn-bg:#2e2712;
+      --chart-line:#e0a458; --chart-fill:rgba(224,164,88,.18); --chart-grid:#2b2d33; --chart-target:#ef9a92;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px -18px rgba(0,0,0,.7);
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+  button,[role="button"],select,input:not([type="checkbox"]){min-height:44px}
+  button{font-family:inherit;cursor:pointer}
+  input,select{font-family:inherit}
+  a{color:var(--coffee)}
+  .wrap{max-width:1080px;margin:0 auto;padding:20px 16px 56px}
+  @media(min-width:760px){.wrap{padding:32px 24px 72px}}
+
+  /* Header */
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--coffee);font-weight:600;margin:0 0 8px}
+  h1{font-size:clamp(30px,6vw,46px);line-height:1.04;font-weight:900;letter-spacing:-.02em;margin:0 0 10px}
+  .lede{font-size:17px;color:var(--muted);max-width:640px;margin:0}
+  .lede strong{color:var(--ink)}
+
+  /* Summary strip */
+  .summary{display:grid;grid-template-columns:1fr;gap:10px;margin:22px 0 8px}
+  @media(min-width:700px){.summary{grid-template-columns:repeat(3,1fr)}}
+  .sum-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);text-align:left;width:100%;color:var(--ink)}
+  .sum-card:hover{border-color:var(--line2)}
+  .sum-label{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .dot.c{background:var(--coffee)} .dot.a{background:var(--alcohol)} .dot.s{background:var(--smoke)}
+  .sum-value{font-family:"IBM Plex Mono",monospace;font-size:26px;font-weight:700;letter-spacing:-.01em;margin:6px 0 2px}
+  .sum-value small{font-size:14px;font-weight:500;color:var(--muted)}
+  .sum-sub{font-size:13.5px;color:var(--muted);margin:0}
+
+  /* Tabs */
+  .tabs{display:flex;gap:6px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:5px;margin:18px 0 20px;position:sticky;top:10px;z-index:20}
+  .tab{flex:1;border:0;background:transparent;color:var(--muted);font-weight:700;font-size:15px;border-radius:8px;padding:10px 6px;min-height:46px}
+  .tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+  .tab:focus-visible{outline:2px solid var(--coffee);outline-offset:2px}
+
+  .panel{display:none}
+  .panel.active{display:block}
+  .grid{display:grid;grid-template-columns:1fr;gap:16px}
+  @media(min-width:900px){.grid{grid-template-columns:400px 1fr;align-items:start}}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+  .card + .card{margin-top:16px}
+  .card h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0 0 4px}
+  .card h3{font-size:15px;font-weight:800;margin:20px 0 8px}
+  .card h3:first-child{margin-top:0}
+  .hint{font-size:13.5px;color:var(--muted);margin:0 0 12px}
+  label.flabel{display:block;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:16px 0 7px}
+  label.flabel:first-of-type{margin-top:4px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  input[type="time"],input[type="number"],select{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font-size:16px;color:var(--ink)}
+  input[type="range"]{width:100%;accent-color:var(--coffee);min-height:36px;padding:0}
+  .range-row{display:flex;align-items:center;gap:12px}
+  .range-row output{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:15px;min-width:74px;text-align:right}
+  .seg{display:flex;gap:6px;flex-wrap:wrap}
+  .seg button{border:1px solid var(--line2);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 14px;font-weight:600;font-size:14px;min-height:40px}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+  /* Drink presets */
+  .presets{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .preset{border:1px solid var(--line2);background:var(--bg);border-radius:12px;padding:10px 12px;text-align:left;color:var(--ink);min-height:56px}
+  .preset:hover{border-color:var(--coffee)}
+  .preset .pname{font-weight:700;font-size:14.5px;display:block;line-height:1.25}
+  .preset .pmg{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--muted)}
+  .preset .tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+  .tag.matcha{background:var(--matcha-bg);color:var(--matcha)} .tag.tea{background:var(--coffee-bg);color:var(--tea)} .tag.coffee{background:var(--coffee-bg);color:var(--coffee)}
+
+  /* Drink list */
+  .drink-row{display:grid;grid-template-columns:1fr 108px 86px 44px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+  .drink-row:last-child{border-bottom:0}
+  .drink-row .dname{font-weight:700;font-size:14.5px;line-height:1.3}
+  .drink-row .dsub{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted)}
+  .drink-row input{min-height:42px;padding:6px 8px;font-size:14.5px}
+  .icon-btn{border:1px solid var(--line2);background:var(--bg);color:var(--muted);border-radius:10px;font-size:17px;line-height:1;min-height:42px;min-width:44px}
+  .icon-btn:hover{color:var(--bad);border-color:var(--bad)}
+  .empty-note{font-size:14px;color:var(--muted);border:1px dashed var(--line2);border-radius:12px;padding:14px;text-align:center;margin:8px 0 0}
+
+  /* Results */
+  .big-result{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between}
+  .big-num{font-family:"IBM Plex Mono",monospace;font-size:clamp(40px,8vw,58px);font-weight:700;line-height:1;letter-spacing:-.02em}
+  .big-num small{font-size:20px;color:var(--muted);font-weight:500}
+  .big-cap{font-size:14px;color:var(--muted);margin-top:6px;max-width:340px}
+  .badge{display:inline-block;font-weight:800;font-size:13px;border-radius:999px;padding:7px 13px;white-space:nowrap}
+  .badge.good{background:var(--good-bg);color:var(--good)}
+  .badge.bad{background:var(--bad-bg);color:var(--bad)}
+  .badge.warn{background:var(--warn-bg);color:var(--warn)}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+  @media(min-width:560px){.stats{grid-template-columns:repeat(4,1fr)}}
+  .stat{background:var(--surface2);border-radius:12px;padding:12px 13px}
+  .stat .sv{font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:19px;line-height:1.2}
+  .stat .sl{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px;line-height:1.35}
+  .cutoff{margin-top:16px;border-radius:12px;padding:14px 16px;background:var(--coffee-bg);border:1px solid var(--line)}
+  .cutoff .ct{font-family:"IBM Plex Mono",monospace;font-size:24px;font-weight:700}
+  .cutoff p{margin:4px 0 0;font-size:14px;color:var(--muted)}
+  .cutoff p strong{color:var(--ink)}
+  .chart-wrap{margin-top:18px}
+  .chart-wrap svg{width:100%;height:auto;display:block}
+  .chart-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:8px}
+  .chart-legend span{display:inline-flex;align-items:center;gap:6px}
+  .swatch{width:18px;height:3px;border-radius:2px;background:var(--chart-line);display:inline-block}
+  .swatch.dash{background:repeating-linear-gradient(90deg,var(--chart-target) 0 5px,transparent 5px 9px)}
+  .swatch.bed{background:var(--faint);width:3px;height:12px}
+
+  /* Bars */
+  .bar-track{position:relative;background:var(--surface2);border-radius:8px;height:26px;margin:10px 0 6px;overflow:visible}
+  .bar-fill{height:100%;border-radius:8px;transition:width .3s ease}
+  .bar-marker{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+  .bar-marker span{position:absolute;top:-19px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;white-space:nowrap;color:var(--muted)}
+  .bar-scale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);font-family:"IBM Plex Mono",monospace}
+  .equiv{margin-top:14px;font-size:14.5px;background:var(--surface2);border-radius:12px;padding:13px 15px}
+  .equiv strong{font-family:"IBM Plex Mono",monospace}
+
+  .method{font-size:13.5px;color:var(--muted)}
+  .method li{margin-bottom:6px}
+  footer{margin-top:34px;border-top:1px solid var(--line);padding-top:18px;font-size:13px;color:var(--muted)}
+  footer h2{font-size:14px;color:var(--ink);margin:0 0 8px}
+  footer li{margin-bottom:5px}
+  .disclaimer{background:var(--warn-bg);border-radius:12px;padding:13px 15px;font-size:13.5px;margin-top:16px;color:var(--ink)}
+  @media (prefers-reduced-motion: reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <p class="kicker">Tanush R · Tools</p>
+  <h1>Vice Cost Calculator</h1>
+  <p class="lede">What caffeine, alcohol and cigarettes actually cost you. <strong>Caffeine still in your system at bedtime</strong>, and <strong>minutes of life expectancy per drink and per cigarette</strong> — from published research, not vibes.</p>
+
+  <!-- Live summary -->
+  <div class="summary" role="group" aria-label="Summary of all three calculators">
+    <button class="sum-card" data-goto="caffeine" type="button">
+      <span class="sum-label"><span class="dot c"></span> Caffeine at bedtime</span>
+      <span class="sum-value" id="sumCaff">–</span>
+      <p class="sum-sub" id="sumCaffSub">Add your drinks</p>
+    </button>
+    <button class="sum-card" data-goto="alcohol" type="button">
+      <span class="sum-label"><span class="dot a"></span> Alcohol · life cost</span>
+      <span class="sum-value" id="sumAlc">–</span>
+      <p class="sum-sub" id="sumAlcSub">Set your weekly drinks</p>
+    </button>
+    <button class="sum-card" data-goto="smoke" type="button">
+      <span class="sum-label"><span class="dot s"></span> Cigarettes · life cost</span>
+      <span class="sum-value" id="sumSmoke">–</span>
+      <p class="sum-sub" id="sumSmokeSub">Set cigarettes per day</p>
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist" aria-label="Calculator sections">
+    <button class="tab" role="tab" id="tab-caffeine" aria-selected="true" aria-controls="panel-caffeine" data-tab="caffeine" type="button">☕ Caffeine</button>
+    <button class="tab" role="tab" id="tab-alcohol" aria-selected="false" aria-controls="panel-alcohol" data-tab="alcohol" type="button">🍺 Alcohol</button>
+    <button class="tab" role="tab" id="tab-smoke" aria-selected="false" aria-controls="panel-smoke" data-tab="smoke" type="button">🚬 Cigarettes</button>
+  </div>
+
+  <!-- ============ CAFFEINE ============ -->
+  <section class="panel active" id="panel-caffeine" role="tabpanel" aria-labelledby="tab-caffeine">
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2>Your sleep setup</h2>
+          <p class="hint">Caffeine clears by half-life: half is gone every half-life period. The average adult half-life is about 5 hours, but the real range is roughly 1.5 to 9.5 hours.</p>
+
+          <label class="flabel" for="bedtime">Bedtime</label>
+          <input type="time" id="bedtime" value="23:00">
+
+          <label class="flabel" for="targetRange">Target caffeine at bedtime</label>
+          <div class="range-row">
+            <input type="range" id="targetRange" min="10" max="100" step="5" value="50">
+            <output id="targetOut" for="targetRange">50 mg</output>
+          </div>
+          <p class="hint" style="margin-top:6px">50 mg is the working line used in the chart you shared. Lower it if you are caffeine-sensitive.</p>
+
+          <label class="flabel">Your metabolism (half-life)</label>
+          <div class="seg" id="hlSeg" role="group" aria-label="Half-life preset">
+            <button type="button" data-hl="3.5">Fast · 3.5 h</button>
+            <button type="button" data-hl="5" aria-pressed="true">Average · 5 h</button>
+            <button type="button" data-hl="7">Slow · 7 h</button>
+          </div>
+          <div class="range-row" style="margin-top:10px">
+            <input type="range" id="hlRange" min="2" max="9.5" step="0.5" value="5" aria-label="Half-life in hours">
+            <output id="hlOut" for="hlRange">5.0 h</output>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Add a drink</h2>
+          <p class="hint">Tap a drink to add it at the time below. Coffee, matcha and tea are all here — matcha counts: you drink the whole leaf.</p>
+          <label class="flabel" for="nextTime">Time of this drink</label>
+          <input type="time" id="nextTime" value="09:00">
+          <label class="flabel">Pick a drink</label>
+          <div class="presets" id="presets"></div>
+          <label class="flabel" for="customMg">Or custom caffeine (mg)</label>
+          <div class="row2">
+            <input type="number" id="customMg" min="1" max="600" placeholder="e.g. 120">
+            <button type="button" id="addCustom" style="border:1px solid var(--line2);background:var(--ink);color:var(--bg);border-radius:10px;font-weight:700">Add custom</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Today's drinks</h2>
+          <div id="drinkList"></div>
+          <p class="empty-note" id="drinkEmpty" hidden>No drinks yet. Add one above and the bedtime number appears.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>Still in you at bedtime</h2>
+          <div class="big-result">
+            <div>
+              <div class="big-num"><span id="bedMg">0</span><small> mg</small></div>
+              <p class="big-cap" id="bedCap">caffeine remaining when your head hits the pillow.</p>
+            </div>
+            <span class="badge good" id="bedBadge">Under target</span>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><div class="sv" id="stTotal">0 mg</div><div class="sl">Total caffeine today</div></div>
+            <div class="stat"><div class="sv" id="stCups">0</div><div class="sl">Drinks logged</div></div>
+            <div class="stat"><div class="sv" id="stPeak">0 mg</div><div class="sl">Peak level in your system</div></div>
+            <div class="stat"><div class="sv" id="stDaily">0%</div><div class="sl">Of the FDA 400 mg/day reference</div></div>
+          </div>
+
+          <div class="cutoff" id="cutoffBox">
+            <div class="ct" id="cutoffTime">Last cup by —</div>
+            <p id="cutoffText">Add a drink to get your personal cutoff.</p>
+          </div>
+
+          <div class="chart-wrap">
+            <svg id="caffChart" viewBox="0 0 720 268" role="img" aria-label="Chart of caffeine level in your body across the day"></svg>
+            <div class="chart-legend">
+              <span><span class="swatch"></span> Caffeine in your system</span>
+              <span><span class="swatch dash"></span> Bedtime target</span>
+              <span><span class="swatch bed"></span> Bedtime</span>
+              <span>● Drink taken</span>
+            </div>
+          </div>
+
+          <h3>How to read this</h3>
+          <p class="method" style="margin:0">Each drink decays on its own clock: <span class="mono">remaining = dose × ½<sup>(hours since drink ÷ half-life)</sup></span>. The chart adds all drinks together. The model assumes instant absorption — in reality caffeine peaks 30–60 minutes after a drink, so treat early peaks as approximate. Matcha and tea release caffeine more gently (L-theanine smooths the feel), but the milligrams still decay on the same half-life.</p>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0">Caffeine per drink used here</h3>
+          <ul class="method" style="margin:0;padding-left:18px">
+            <li><strong>Filter / brewed coffee (240 ml):</strong> 95 mg · <strong>Espresso (single shot):</strong> 63 mg · <strong>Cold brew (355 ml):</strong> ~150 mg · <strong>Instant coffee:</strong> ~62 mg</li>
+            <li><strong>Matcha (2 g whisked):</strong> ~68 mg · <strong>Black tea (240 ml):</strong> 47 mg · <strong>Masala chai (240 ml):</strong> ~50 mg · <strong>Green tea (240 ml):</strong> 28 mg</li>
+            <li><strong>Energy drink (250 ml):</strong> 80 mg · <strong>Cola (355 ml):</strong> 34 mg · <strong>Decaf coffee:</strong> ~7 mg</li>
+          </ul>
+          <p class="method" style="margin:10px 0 0">Typical averages compiled from FDA and USDA FoodData Central figures. Your actual cup varies with bean, leaf, dose and brew — edit any drink's mg in the list to match your cup.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ALCOHOL ============ -->
+  <section class="panel" id="panel-alcohol" role="tabpanel" aria-labelledby="tab-alcohol">
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2>Your drinking pattern</h2>
+          <p class="hint">Life-expectancy loss from alcohol is about the <em>habit</em>, not one night. The strongest numbers come from Wood et al. (<em>The Lancet</em>, 2018): 599,912 drinkers in 19 countries.</p>
+
+          <label class="flabel" for="alcType">Drink type</label>
+          <select id="alcType">
+            <option value="13" selected>Beer — 330 ml bottle/can, 5% (13 g alcohol)</option>
+            <option value="20">Beer — 500 ml, 5% (20 g alcohol)</option>
+            <option value="17">Wine — 175 ml glass, 12.5% (17 g alcohol)</option>
+            <option value="12">Wine — 125 ml glass, 12.5% (12 g alcohol)</option>
+            <option value="9">Spirit — 30 ml peg, 40% (9 g alcohol)</option>
+            <option value="19">Spirit — 60 ml peg, 40% (19 g alcohol)</option>
+            <option value="14">Standard drink — 14 g alcohol (US)</option>
+          </select>
+
+          <label class="flabel" for="alcPerWeek">Drinks per week</label>
+          <div class="range-row">
+            <input type="range" id="alcPerWeek" min="0" max="35" step="1" value="8">
+            <output id="alcPerWeekOut" for="alcPerWeek">8 / wk</output>
+          </div>
+
+          <label class="flabel" for="alcYears">Years at roughly this level</label>
+          <input type="number" id="alcYears" min="0" max="60" value="10">
+
+          <label class="flabel" for="alcPrice">Price per drink (₹, your price)</label>
+          <input type="number" id="alcPrice" min="0" max="100000" value="300">
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0">The 100 g line</h3>
+          <p class="method" style="margin:0">In Wood et al., all-cause mortality was lowest at <strong>100 g of alcohol per week or less</strong> — about 7–8 beers (330 ml). Above it, life expectancy at age 40 fell in steps:</p>
+          <ul class="method" style="padding-left:18px;margin:10px 0 0">
+            <li><strong>100–200 g/week:</strong> about 6 months shorter</li>
+            <li><strong>200–350 g/week:</strong> about 1–2 years shorter</li>
+            <li><strong>Over 350 g/week:</strong> about 4–5 years shorter</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>What this pattern costs</h2>
+          <div class="big-result">
+            <div>
+              <div class="big-num"><span id="alcGrams">0</span><small> g / week</small></div>
+              <p class="big-cap">pure alcohol per week at your current pattern.</p>
+            </div>
+            <span class="badge good" id="alcBadge">Lowest-risk band</span>
+          </div>
+
+          <div class="bar-track" aria-hidden="true">
+            <div class="bar-fill" id="alcBar" style="width:0%;background:var(--alcohol)"></div>
+            <div class="bar-marker" id="alcMarker" style="left:25%"><span>100 g line</span></div>
+          </div>
+          <div class="bar-scale"><span>0 g</span><span>400 g / week</span></div>
+
+          <div class="stats">
+            <div class="stat"><div class="sv" id="alcBand">—</div><div class="sl">Life expectancy at 40, if this is a lifelong pattern (Wood et al. bands) — this is the headline figure</div></div>
+            <div class="stat"><div class="sv" id="alcPerWeekCost">—</div><div class="sl">Marginal saving per week if you cut back to the 100 g line (drinks above the line only, 15–30 min each)</div></div>
+            <div class="stat"><div class="sv" id="alcPerYearCost">—</div><div class="sl">Marginal saving per year from cutting back to the line</div></div>
+            <div class="stat"><div class="sv" id="alcMoney">—</div><div class="sl">Money spent per year at your price</div></div>
+          </div>
+
+          <div class="equiv" id="alcEquiv">Set your drinks to see the cigarette equivalent.</div>
+
+          <h3>Two numbers, two different questions — read them apart</h3>
+          <p class="method" style="margin:0">The <strong>band figure</strong> (e.g. “≈ 6 months shorter”) is Wood et al.'s estimate for <em>everyone in that weekly band</em> — the band's study average was ~123 g/week, so it describes the band, not your exact grams. The <strong>marginal figure</strong> answers a different question: what you save by cutting back to the line. The University of Cambridge summary of Wood et al. puts it pro-rata: above the low-risk level, each drink costs roughly <strong>15–30 minutes of life expectancy</strong> — about the same as a cigarette. This calculator applies that range only to drinks <em>above</em> 100 g/week, so just over the line the marginal figure is small while the band figure is not. Both are population models, not a personal clock.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CIGARETTES ============ -->
+  <section class="panel" id="panel-smoke" role="tabpanel" aria-labelledby="tab-smoke">
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2>Your smoking pattern</h2>
+          <p class="hint">The per-cigarette figure was updated in December 2024 by University College London (Jackson et al., <em>Addiction</em>), using the British Doctors Study and the Million Women Study.</p>
+
+          <label class="flabel" for="cigPerDay">Cigarettes per day</label>
+          <div class="range-row">
+            <input type="range" id="cigPerDay" min="0" max="40" step="1" value="10">
+            <output id="cigPerDayOut" for="cigPerDay">10 / day</output>
+          </div>
+
+          <label class="flabel">Minutes lost per cigarette</label>
+          <div class="seg" id="cigSeg" role="group" aria-label="Per-cigarette minutes">
+            <button type="button" data-min="20" aria-pressed="true">Average · 20 min</button>
+            <button type="button" data-min="17">Men · 17 min</button>
+            <button type="button" data-min="22">Women · 22 min</button>
+          </div>
+          <p class="hint" style="margin-top:8px">The older 2000 BMJ estimate was 11 minutes. With longer follow-up data, UCL's updated estimate is ~20 minutes.</p>
+
+          <label class="flabel" for="cigYears">Years smoked at this level</label>
+          <input type="number" id="cigYears" min="0" max="70" value="5">
+
+          <label class="flabel" for="cigPrice">Price per cigarette (₹, your price)</label>
+          <input type="number" id="cigPrice" min="0" max="1000" value="18">
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0">The pack maths</h3>
+          <ul class="method" style="margin:0;padding-left:18px">
+            <li><strong>1 cigarette:</strong> ~20 minutes of life expectancy</li>
+            <li><strong>1 pack of 20:</strong> ~6 hours 40 minutes — nearly 7 hours</li>
+            <li><strong>10 a day, quit on 1 Jan:</strong> you prevent the loss of a full day of life by 8 Jan (UCL's own example)</li>
+            <li><strong>Lifelong smokers overall:</strong> lose about 10 years (men) to 11 years (women) vs non-smokers</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>What this pattern costs</h2>
+          <div class="big-result">
+            <div>
+              <div class="big-num"><span id="cigDayCost">0</span><small> min / day</small></div>
+              <p class="big-cap">of life expectancy lost every day at this rate.</p>
+            </div>
+            <span class="badge bad" id="cigBadge">—</span>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><div class="sv" id="cigYearCost">—</div><div class="sl">Life lost per year at this rate</div></div>
+            <div class="stat"><div class="sv" id="cigTotalCost">—</div><div class="sl">Life lost over the years smoked so far</div></div>
+            <div class="stat"><div class="sv" id="cigMoney">—</div><div class="sl">Money spent per year at your price</div></div>
+            <div class="stat"><div class="sv" id="cigQuitGain">—</div><div class="sl">Life you keep per year if you quit today</div></div>
+          </div>
+
+          <div class="equiv" id="cigEquiv"></div>
+
+          <h3>Read this the right way</h3>
+          <p class="method" style="margin:0">These are <strong>population averages for long-term smokers</strong>, spread across a lifetime of smoking — not a timer that starts when you light one cigarette. The harm is cumulative, and the same research is clear on the flip side: the sooner you stop, and the more cigarettes you don't smoke, the more life you keep. Quitting at any age recovers a large share of the loss.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="disclaimer"><strong>Not medical advice.</strong> Every number here is a population average from the studies cited below, applied to the pattern you enter. Your personal half-life, risk and life expectancy depend on genetics, health, medicines and more. If you want to cut down or quit, a doctor can help with a plan that actually sticks.</div>
+
+  <footer>
+    <h2>Sources & method</h2>
+    <ul style="margin:0;padding-left:18px">
+      <li>Caffeine content & 400 mg/day reference: FDA and USDA FoodData Central figures, compiled at <a href="https://caffiq.app/articles/caffeine-content-coffee-tea-energy-drinks/" target="_blank" rel="noopener">CaffIQ caffeine chart</a>. Half-life ~5 h average (range 1.5–9.5 h): <a href="https://www.steadymatcha.com/learn/matcha-safety/caffeine-half-life" target="_blank" rel="noopener">caffeine half-life review</a>.</li>
+      <li>Alcohol: Wood et al., <em>The Lancet</em> (2018), 599,912 current drinkers — summary via <a href="https://neurosciencenews.com/lifespan-alcohol-8779/" target="_blank" rel="noopener">University of Cambridge / Neuroscience News</a>. Microlife framing (1 microlife = 30 min of life expectancy): <a href="http://understandinguncertainty.org/microlives" target="_blank" rel="noopener">Understanding Uncertainty, Cambridge</a>.</li>
+      <li>Cigarettes: Jackson, Jarvis & West, “The price of a cigarette: 20 minutes of life?”, <em>Addiction</em> (Dec 2024), University College London — <a href="https://discovery.ucl.ac.uk/10203237/1/Jackson_Jackson%20et%20al.%20The%20price%20of%20a%20cigarette.pdf" target="_blank" rel="noopener">full paper (PDF)</a>.</li>
+    </ul>
+    <p style="margin-top:12px">Built for tanush.tech · Your inputs stay in this page — nothing is saved or sent anywhere.</p>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var fmtInt = function(n){ return Math.round(n).toLocaleString("en-IN"); };
+  var fmtMoney = function(n){
+    if(n >= 100000) return "₹" + (n/100000).toFixed(n >= 1000000 ? 0 : 1).replace(/\.0$/,"") + "L";
+    return "₹" + fmtInt(n);
+  };
+  var pad = function(n){ return (n<10?"0":"")+n; };
+  var fmtTimeAbs = function(absMin){
+    var m = ((Math.round(absMin) % 1440) + 1440) % 1440;
+    var h24 = Math.floor(m/60), mm = m%60;
+    var ap = h24 >= 12 ? "PM" : "AM"; var h12 = h24%12; if(h12===0) h12=12;
+    return pad(h12===0?12:h12)+":"+pad(mm)+" "+ap;
+  };
+  var fmtTimeAbsShort = function(absMin){
+    var m = ((Math.round(absMin) % 1440) + 1440) % 1440;
+    return pad(Math.floor(m/60))+":"+pad(m%60);
+  };
+  var parseTime = function(v){ if(!v) return 0; var p=v.split(":"); return (+p[0])*60 + (+p[1]); };
+
+  /* ---------- Tabs ---------- */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+  function showTab(name){
+    tabs.forEach(function(t){ t.setAttribute("aria-selected", t.getAttribute("data-tab")===name ? "true":"false"); });
+    ["caffeine","alcohol","smoke"].forEach(function(n){
+      $("panel-"+n).classList.toggle("active", n===name);
+    });
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+  tabs.forEach(function(t){ t.addEventListener("click", function(){ showTab(t.getAttribute("data-tab")); }); });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-goto]"), function(el){
+    el.addEventListener("click", function(){ showTab(el.getAttribute("data-goto")); });
+  });
+
+  /* ---------- CAFFEINE ---------- */
+  var DRINKS = [
+    {name:"Filter coffee", sub:"240 ml brewed", mg:95, tag:"coffee", tagLabel:"Coffee"},
+    {name:"Espresso", sub:"single shot, 30 ml", mg:63, tag:"coffee", tagLabel:"Coffee"},
+    {name:"Cold brew", sub:"355 ml", mg:150, tag:"coffee", tagLabel:"Coffee"},
+    {name:"Instant coffee", sub:"240 ml", mg:62, tag:"coffee", tagLabel:"Coffee"},
+    {name:"Matcha", sub:"2 g whisked, whole leaf", mg:68, tag:"matcha", tagLabel:"Matcha"},
+    {name:"Black tea", sub:"240 ml", mg:47, tag:"tea", tagLabel:"Tea"},
+    {name:"Masala chai", sub:"240 ml", mg:50, tag:"tea", tagLabel:"Tea"},
+    {name:"Green tea", sub:"240 ml", mg:28, tag:"tea", tagLabel:"Tea"},
+    {name:"Energy drink", sub:"250 ml can", mg:80, tag:"coffee", tagLabel:"Energy"},
+    {name:"Cola", sub:"355 ml can", mg:34, tag:"tea", tagLabel:"Soft"},
+    {name:"Decaf coffee", sub:"240 ml", mg:7, tag:"coffee", tagLabel:"Decaf"}
+  ];
+  var presetsEl = $("presets");
+  DRINKS.forEach(function(d){
+    var b = document.createElement("button");
+    b.type="button"; b.className="preset";
+    b.innerHTML = '<span class="pname">'+d.name+'<span class="tag '+d.tag+'">'+d.tagLabel+'</span></span><span class="pmg">'+d.mg+' mg · '+d.sub+'</span>';
+    b.addEventListener("click", function(){ addDrink(d.name, d.mg); });
+    presetsEl.appendChild(b);
+  });
+
+  var entries = [
+    {name:"Filter coffee", mg:95, time:"09:00"},
+    {name:"Filter coffee", mg:95, time:"11:00"},
+    {name:"Filter coffee", mg:95, time:"15:30"}
+  ];
+
+  var hl = 5;
+  function setHL(v, fromSlider){
+    hl = Math.min(9.5, Math.max(2, +v));
+    $("hlRange").value = hl;
+    $("hlOut").textContent = hl.toFixed(1)+" h";
+    Array.prototype.forEach.call($("hlSeg").querySelectorAll("button"), function(b){
+      b.setAttribute("aria-pressed", Math.abs(parseFloat(b.getAttribute("data-hl"))-hl) < 0.01 ? "true":"false");
+    });
+    calcCaffeine();
+  }
+  $("hlSeg").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return; setHL(b.getAttribute("data-hl"));
+  });
+  $("hlRange").addEventListener("input", function(){ setHL(this.value, true); });
+  $("targetRange").addEventListener("input", function(){
+    $("targetOut").textContent = this.value+" mg"; calcCaffeine();
+  });
+  $("bedtime").addEventListener("change", calcCaffeine);
+  $("addCustom").addEventListener("click", function(){
+    var mg = parseFloat($("customMg").value);
+    if(!mg || mg<=0) return;
+    addDrink("Custom drink", mg);
+    $("customMg").value="";
+  });
+
+  function addDrink(name, mg){
+    entries.push({name:name, mg:mg, time: $("nextTime").value || "09:00"});
+    entries.sort(function(a,b){ return parseTime(a.time)-parseTime(b.time); });
+    renderDrinks(); calcCaffeine();
+  }
+
+  function renderDrinks(){
+    var list = $("drinkList"); list.innerHTML="";
+    $("drinkEmpty").hidden = entries.length>0;
+    entries.forEach(function(en, idx){
+      var row = document.createElement("div"); row.className="drink-row";
+      var left = document.createElement("div");
+      left.innerHTML = '<div class="dname"></div><div class="dsub"></div>';
+      left.querySelector(".dname").textContent = en.name;
+      left.querySelector(".dsub").textContent = en.mg+" mg";
+      var t = document.createElement("input"); t.type="time"; t.value=en.time; t.setAttribute("aria-label","Time for "+en.name);
+      t.addEventListener("change", function(){ en.time=t.value; entries.sort(function(a,b){return parseTime(a.time)-parseTime(b.time);}); renderDrinks(); calcCaffeine(); });
+      var m = document.createElement("input"); m.type="number"; m.min="0"; m.max="600"; m.value=en.mg; m.setAttribute("aria-label","Caffeine mg for "+en.name);
+      m.addEventListener("change", function(){ en.mg=Math.max(0, parseFloat(m.value)||0); renderDrinks(); calcCaffeine(); });
+      var del = document.createElement("button"); del.type="button"; del.className="icon-btn"; del.textContent="×"; del.setAttribute("aria-label","Remove "+en.name);
+      del.addEventListener("click", function(){ entries.splice(idx,1); renderDrinks(); calcCaffeine(); });
+      row.appendChild(left); row.appendChild(t); row.appendChild(m); row.appendChild(del);
+      list.appendChild(row);
+    });
+  }
+
+  function bedAbs(){
+    var b = parseTime($("bedtime").value || "23:00");
+    return b < 720 ? b+1440 : b;
+  }
+  function drinkAbs(timeStr){
+    var d = parseTime(timeStr);
+    return d < 360 ? d+1440 : d;
+  }
+  function levelAt(absMin, list){
+    var total=0;
+    list.forEach(function(en){
+      var da = drinkAbs(en.time);
+      if(absMin >= da){ total += en.mg * Math.pow(0.5, (absMin-da)/60/hl); }
+    });
+    return total;
+  }
+
+  function calcCaffeine(){
+    var bed = bedAbs();
+    var target = parseFloat($("targetRange").value);
+    var atBed = levelAt(bed, entries);
+    var totalMg = entries.reduce(function(s,e){ return s+e.mg; },0);
+    var peak=0;
+    for(var t=360; t<=1800; t+=10){ peak=Math.max(peak, levelAt(t, entries)); }
+
+    $("bedMg").textContent = fmtInt(atBed);
+    var badge = $("bedBadge");
+    if(entries.length===0){ badge.className="badge good"; badge.textContent="No caffeine"; $("bedCap").textContent="No drinks logged — nothing left in your system at bedtime."; }
+    else if(atBed <= target){ badge.className="badge good"; badge.textContent="✓ Under target"; $("bedCap").textContent="caffeine remaining at bedtime — under your "+target+" mg target. Sleep should come easier."; }
+    else if(atBed <= target*1.6){ badge.className="badge warn"; badge.textContent="Over target"; $("bedCap").textContent="caffeine remaining at bedtime — over your "+target+" mg target. Expect lighter, later sleep."; }
+    else { badge.className="badge bad"; badge.textContent="Well over target"; $("bedCap").textContent="caffeine remaining at bedtime — that's like drinking coffee in the evening. Sleep will take the hit."; }
+
+    $("stTotal").textContent = fmtInt(totalMg)+" mg";
+    $("stCups").textContent = entries.length;
+    $("stPeak").textContent = fmtInt(peak)+" mg";
+    $("stDaily").textContent = Math.round(totalMg/400*100)+"%";
+
+    /* Cutoff: treat the LAST drink as the movable one */
+    var cTime=$("cutoffTime"), cText=$("cutoffText");
+    if(entries.length===0){
+      cTime.textContent="Last cup by —";
+      cText.textContent="Add a drink to get your personal cutoff.";
+    } else {
+      var sorted = entries.slice().sort(function(a,b){ return drinkAbs(a.time)-drinkAbs(b.time); });
+      var last = sorted[sorted.length-1];
+      var others = entries.filter(function(e){ return e!==last; });
+      var othersAtBed = levelAt(bed, others);
+      var budget = target - othersAtBed;
+      if(budget <= 0){
+        cTime.textContent = "No room for that last cup";
+        cText.innerHTML = "Your earlier drinks alone leave <strong>"+fmtInt(othersAtBed)+" mg</strong> at bedtime — already over your "+target+" mg target before the "+last.time+" "+escapeHtml(last.name.toLowerCase())+" is even counted.";
+      } else if(last.mg <= budget){
+        cTime.textContent = "That last cup is fine";
+        cText.innerHTML = "Even at <strong>"+last.time+"</strong>, your "+escapeHtml(last.name.toLowerCase())+" leaves you under target. Your cutoff is bedtime itself.";
+      } else {
+        var cutoff = bed - hl*60*Math.log2(last.mg/budget);
+        cTime.textContent = "Last cup by "+fmtTimeAbs(cutoff);
+        cText.innerHTML = "Your <strong>"+escapeHtml(last.name.toLowerCase())+" ("+fmtInt(last.mg)+" mg)</strong> at "+last.time+" is the one to move. Taken by <strong>"+fmtTimeAbs(cutoff)+"</strong> instead, you'd land at exactly "+target+" mg at your "+$("bedtime").value+" bedtime.";
+      }
+    }
+
+    /* Summary card */
+    $("sumCaff").innerHTML = fmtInt(atBed)+' <small>mg at bed</small>';
+    $("sumCaffSub").textContent = entries.length===0 ? "No drinks logged" :
+      (atBed<=target ? "Under your "+target+" mg target ✓" : fmtInt(atBed-target)+" mg over your "+target+" mg target");
+
+    drawChart(bed, target, peak);
+  }
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+  function drawChart(bed, target, peak){
+    var svg = $("caffChart");
+    var W=720,H=268, padL=14, padR=14, padT=26, padB=34;
+    var x0=360, x1=1800;
+    var yMax = Math.max(110, peak*1.18, target*1.7);
+    function X(t){ return padL + (t-x0)/(x1-x0)*(W-padL-padR); }
+    function Y(v){ return (H-padB) - (v/yMax)*(H-padT-padB); }
+    var NS="http://www.w3.org/2000/svg";
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    function el(tag, attrs){
+      var e=document.createElementNS(NS,tag);
+      for(var k in attrs) e.setAttribute(k, attrs[k]);
+      svg.appendChild(e); return e;
+    }
+    function txt(x,y,str,attrs){
+      var e=el("text", Object.assign({x:x,y:y,"font-size":"11.5","font-family":"'IBM Plex Mono',monospace",fill:"var(--faint)"}, attrs||{}));
+      e.textContent=str; return e;
+    }
+    /* gridlines */
+    [0,50,100,150,200,250,300].forEach(function(v){
+      if(v>yMax) return;
+      el("line",{x1:padL,x2:W-padR,y1:Y(v),y2:Y(v),stroke:"var(--chart-grid)","stroke-width":"1"});
+      txt(W-padR+2, Y(v)-4, "", {});
+      txt(padL, Y(v)-5, v===0?"":String(v), {"text-anchor":"start"});
+    });
+    /* area path */
+    var pts=[], step=10;
+    for(var t=x0;t<=x1;t+=step){ pts.push([X(t), Y(levelAt(t, entries))]); }
+    var line = pts.map(function(p,i){ return (i===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" ");
+    var area = line + " L"+X(x1).toFixed(1)+","+Y(0)+" L"+X(x0).toFixed(1)+","+Y(0)+" Z";
+    el("path",{d:area, fill:"var(--chart-fill)", stroke:"none"});
+    el("path",{d:line, fill:"none", stroke:"var(--chart-line)","stroke-width":"2.4","stroke-linejoin":"round"});
+    /* target line */
+    el("line",{x1:padL,x2:W-padR,y1:Y(target),y2:Y(target),stroke:"var(--chart-target)","stroke-width":"1.6","stroke-dasharray":"6 5"});
+    txt(W-padR, Y(target)-7, target+" mg target", {"text-anchor":"end", fill:"var(--chart-target)","font-weight":"600"});
+    /* bedtime line */
+    el("line",{x1:X(bed),x2:X(bed),y1:padT-8,y2:H-padB,stroke:"var(--faint)","stroke-width":"1.6"});
+    var atBed = levelAt(bed, entries);
+    txt(X(bed), padT-14, "BED "+$("bedtime").value+" · "+fmtInt(atBed)+" MG", {"text-anchor": X(bed) > W-190 ? "end":"start","font-weight":"700",fill:"var(--ink)"});
+    el("circle",{cx:X(bed),cy:Y(atBed),r:"4.5",fill:"var(--chart-target)",stroke:"var(--surface)","stroke-width":"2"});
+    /* drink markers */
+    entries.forEach(function(en){
+      var da=drinkAbs(en.time);
+      el("circle",{cx:X(da),cy:H-padB,r:"4",fill:"var(--ink)"});
+      txt(X(da), H-padB+20, fmtTimeAbsShort(da), {"text-anchor":"middle","font-weight":"600",fill:"var(--ink)"});
+    });
+    /* axis labels */
+    [[360,"06"],[720,"12"],[1080,"18"],[1440,"00"],[1800,"06"]].forEach(function(pair){
+      if(entries.some(function(en){ return Math.abs(drinkAbs(en.time)-pair[0])<55; })) return;
+      txt(X(pair[0]), H-6, pair[1], {"text-anchor":"middle"});
+    });
+    el("line",{x1:padL,x2:W-padR,y1:H-padB,y2:H-padB,stroke:"var(--line2)","stroke-width":"1"});
+  }
+
+  /* ---------- ALCOHOL ---------- */
+  var alcPerMinLow=15, alcPerMinHigh=30;
+  function calcAlcohol(){
+    var gramsPer = parseFloat($("alcType").value);
+    var perWeek = parseFloat($("alcPerWeek").value);
+    var years = Math.max(0, parseFloat($("alcYears").value)||0);
+    var price = Math.max(0, parseFloat($("alcPrice").value)||0);
+    $("alcPerWeekOut").textContent = perWeek+" / wk";
+    var gWeek = gramsPer*perWeek;
+    $("alcGrams").textContent = fmtInt(gWeek);
+    $("alcBar").style.width = Math.min(100, gWeek/400*100)+"%";
+    $("alcMarker").style.left = "25%";
+
+    var badge=$("alcBadge"), band=$("alcBand");
+    var bandText, badgeCls, badgeTxt;
+    if(perWeek===0){ bandText="—"; badgeCls="badge good"; badgeTxt="Not drinking"; }
+    else if(gWeek<=100){ bandText="Lowest-risk band (reference)"; badgeCls="badge good"; badgeTxt="✓ Lowest-risk band"; }
+    else if(gWeek<=200){ bandText="≈ 6 months shorter"; badgeCls="badge warn"; badgeTxt="100–200 g band"; }
+    else if(gWeek<=350){ bandText="≈ 1–2 years shorter"; badgeCls="badge bad"; badgeTxt="200–350 g band"; }
+    else { bandText="≈ 4–5 years shorter"; badgeCls="badge bad"; badgeTxt="Over 350 g band"; }
+    badge.className=badgeCls; badge.textContent=badgeTxt;
+    band.textContent=bandText;
+
+    var excessGrams = Math.max(0, gWeek-100);
+    var excessDrinks = gramsPer>0 ? excessGrams/gramsPer : 0;
+    var minLow = excessDrinks*alcPerMinLow, minHigh = excessDrinks*alcPerMinHigh;
+    function fmtMins(m){
+      if(m<=0) return "0 min";
+      if(m<90) return Math.round(m)+" min";
+      if(m<60*36) return (m/60).toFixed(1).replace(/\.0$/,"")+" hrs";
+      return (m/60/24).toFixed(1).replace(/\.0$/,"")+" days";
+    }
+    $("alcPerWeekCost").textContent = excessDrinks<=0 ? "0 min" : fmtMins(minLow)+"–"+fmtMins(minHigh);
+    $("alcPerYearCost").textContent = excessDrinks<=0 ? "0" : fmtMins(minLow*52)+"–"+fmtMins(minHigh*52);
+    $("alcMoney").textContent = fmtMoney(perWeek*52*price)+(years>0?"":"");
+    var midMin = (minLow+minHigh)/2;
+    var cigEq = midMin/20;
+    $("alcEquiv").innerHTML = excessDrinks<=0
+      ? "You are at or under the 100 g/week line — in the Wood et al. model this is the <strong>lowest-risk band</strong>, so the per-drink life cost above the line is <strong>0</strong>. That does not make alcohol risk-free (it is a Group 1 carcinogen); it means this dataset's mortality curve bottoms out here."
+      : "Marginal view — what cutting back to the line saves: <strong>"+excessDrinks.toFixed(1)+" drinks/week</strong> above the line ≈ <strong>"+fmtMins(minLow)+"–"+fmtMins(minHigh)+"</strong> of life expectancy a week — roughly the same as smoking <strong>"+cigEq.toFixed(1)+" cigarettes</strong> a week. Over "+years+" year"+(years===1?"":"s")+" those above-line drinks add up to <strong>"+fmtMins(minLow*52*years)+"–"+fmtMins(minHigh*52*years)+"</strong>, and total spend at this pattern is <strong>"+fmtMoney(perWeek*52*price*years)+"</strong>. The band figure above remains the headline for the whole pattern.";
+
+    if(perWeek===0){ $("sumAlc").innerHTML = '0 <small>g / wk</small>'; }
+    else if(gWeek<=100){ $("sumAlc").innerHTML = 'Lowest-risk <small>band</small>'; }
+    else if(gWeek<=200){ $("sumAlc").innerHTML = '≈6 <small>months shorter</small>'; }
+    else if(gWeek<=350){ $("sumAlc").innerHTML = '≈1–2 <small>years shorter</small>'; }
+    else { $("sumAlc").innerHTML = '≈4–5 <small>years shorter</small>'; }
+    $("sumAlcSub").textContent = fmtInt(gWeek)+" g/week · life expectancy at 40 if lifelong (Wood et al. band)";
+  }
+  ["alcType","alcYears","alcPrice"].forEach(function(id){ $(id).addEventListener("input", calcAlcohol); $(id).addEventListener("change", calcAlcohol); });
+  $("alcPerWeek").addEventListener("input", calcAlcohol);
+
+  /* ---------- CIGARETTES ---------- */
+  var cigMin=20;
+  $("cigSeg").addEventListener("click", function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    cigMin=parseFloat(b.getAttribute("data-min"));
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function(x){ x.setAttribute("aria-pressed", x===b?"true":"false"); });
+    calcSmoke();
+  });
+  function fmtLife(mins){
+    if(mins<=0) return "0";
+    if(mins<60*24) return (mins/60).toFixed(1).replace(/\.0$/,"")+" hrs";
+    if(mins<60*24*30) return (mins/60/24).toFixed(1).replace(/\.0$/,"")+" days";
+    if(mins<60*24*365) return (mins/60/24/30.4).toFixed(1).replace(/\.0$/,"")+" months";
+    return (mins/60/24/365).toFixed(2).replace(/\.00$/,"")+" yrs";
+  }
+  function calcSmoke(){
+    var perDay=parseFloat($("cigPerDay").value);
+    var years=Math.max(0, parseFloat($("cigYears").value)||0);
+    var price=Math.max(0, parseFloat($("cigPrice").value)||0);
+    $("cigPerDayOut").textContent=perDay+" / day";
+    var dayMin=perDay*cigMin;
+    $("cigDayCost").textContent=fmtInt(dayMin);
+    var badge=$("cigBadge");
+    if(perDay===0){ badge.className="badge good"; badge.textContent="✓ Not smoking"; }
+    else if(perDay<10){ badge.className="badge warn"; badge.textContent=fmtInt(dayMin)+" min lost daily"; }
+    else { badge.className="badge bad"; badge.textContent=fmtInt(dayMin)+" min lost daily"; }
+    $("cigYearCost").textContent=fmtLife(dayMin*365);
+    $("cigTotalCost").textContent=fmtLife(dayMin*365*years);
+    $("cigMoney").textContent=fmtMoney(perDay*365*price);
+    $("cigQuitGain").textContent=fmtLife(dayMin*365);
+    $("cigEquiv").innerHTML = perDay===0
+      ? "No cigarettes entered — <strong>no life cost</strong> from this vice. This is the one with no low-risk band in the research."
+      : "At <strong>"+perDay+" a day</strong>, a pack of 20 goes in "+(20/perDay).toFixed(1).replace(/\.0$/,"")+" days and costs about <strong>"+fmtLife(20*cigMin)+"</strong> each. Over "+years+" year"+(years===1?"":"s")+": <strong>"+fmtLife(dayMin*365*years)+"</strong> of life expectancy and <strong>"+fmtMoney(perDay*365*price*years)+"</strong> spent. Quit today and every week from now keeps <strong>"+fmtLife(dayMin*7)+"</strong>.";
+    $("sumSmoke").innerHTML = fmtInt(dayMin)+' <small>min / day</small>';
+    $("sumSmokeSub").textContent = perDay===0 ? "Not smoking" : fmtLife(dayMin*365)+" of life per year at "+perDay+"/day";
+  }
+  $("cigPerDay").addEventListener("input", calcSmoke);
+  ["cigYears","cigPrice"].forEach(function(id){ $(id).addEventListener("input", calcSmoke); $(id).addEventListener("change", calcSmoke); });
+
+  /* Init */
+  renderDrinks();
+  calcCaffeine();
+  calcAlcohol();
+  calcSmoke();
+})();
+</script>
+</body>
+</html>
