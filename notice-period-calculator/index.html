@@ -31,7 +31,7 @@ th{color:var(--muted);font-weight:600}
 <body>
 <div class="wrap">
 <h1>Notice Period & Last Working Day Calculator</h1>
-<p class="sub">Resigning and not sure when your last working day falls, or how many days you still owe? Do the date math here.</p>
+<p class="sub">Resigning and not sure when your last working day falls, or how much notice is left? Do the date math here.</p>
 
 <div class="card">
   <strong>Before you start</strong>
@@ -54,15 +54,14 @@ th{color:var(--muted);font-weight:600}
     </div>
     <div id="customWrap" style="display:none"><label>Custom days</label><input id="customDays" type="number" min="1" value="45"></div>
   </div>
-  <div class="grid3">
+  <div class="grid2">
     <div><label>Counting mode</label>
       <select id="mode">
-        <option value="calendar" selected>Calendar days (most common)</option>
-        <option value="working">Working days (Mon-Fri only)</option>
+        <option value="calendar" selected>Calendar days</option>
+        <option value="working">Working days (Mon-Fri)</option>
       </select>
     </div>
-    <div><label>Days already served (optional)</label><input id="served" type="number" min="0" value="0"></div>
-    <div><label>Leave days to adjust (optional)</label><input id="leaveAdj" type="number" min="0" value="0"></div>
+    <div><label>Leave days HR agreed to adjust (optional)</label><input id="leaveAdj" type="number" min="0" value="0"></div>
   </div>
   <div style="margin-top:12px"><button class="primary" id="calc">Calculate</button></div>
   <div id="out"></div>
@@ -72,10 +71,12 @@ th{color:var(--muted);font-weight:600}
   <strong>How the counting works</strong>
   <table>
     <tr><th>Term</th><th>Meaning</th></tr>
-    <tr><td>Calendar days</td><td>Every day counts, including weekends and holidays. A 30-day notice given on 1 Nov ends on 1 Dec.</td></tr>
-    <tr><td>Working days</td><td>Only Monday-Friday count (this tool does not know your company holidays). Less common - use only if your letter says so.</td></tr>
+    <tr><td>Counting convention used here</td><td>The submission day is day 0 and the last day is the notice length added to it: a 30-day notice submitted on 1 Nov ends on 1 Dec. If your employer counts the submission day itself as day 1, dates shift by one day - HR's written confirmation wins.</td></tr>
+    <tr><td>Calendar days</td><td>Every day counts, including weekends and holidays.</td></tr>
+    <tr><td>Working days</td><td>Only Monday-Friday count (this tool does not know your company holidays). Use this only if your appointment letter counts the notice in working days.</td></tr>
+    <tr><td>Days served</td><td>Days since your resignation date already sit inside the notice window, so they never move the last day earlier - they only tell you how much notice is left.</td></tr>
+    <tr><td>Leave adjustment</td><td>Some employers allow adjusting earned leave against notice; many do not. Only enter a number here if HR has agreed to it in writing - that is the only thing this tool lets move your last day earlier.</td></tr>
     <tr><td>Buyout / recovery</td><td>Some employers let you pay for unserved days or recover pay for them. Whether and how much is entirely company policy - ask HR in writing.</td></tr>
-    <tr><td>Leave adjustment</td><td>Some employers allow adjusting earned leave against notice; many do not. Only enter a number here if HR has agreed to it.</td></tr>
   </table>
 </div>
 
@@ -87,33 +88,41 @@ const $=id=>document.getElementById(id);
 const disp=d=>d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
 $('noticeLen').onchange=()=>{$('customWrap').style.display=$('noticeLen').value==='custom'?'':'none';};
 $('resignDate').value=new Date().toISOString().slice(0,10);
+function isWork(d){return d.getDay()!==0&&d.getDay()!==6;}
+function addDays(from,n,calendar){
+  const d=new Date(from);let added=0;
+  while(added<n){d.setDate(d.getDate()+1);
+    if(calendar||isWork(d))added++;}
+  return d;
+}
+function daysBetween(a,b,calendar){ // a exclusive .. b inclusive
+  if(b<=a)return 0;const d=new Date(a);let n=0;
+  while(d<b){d.setDate(d.getDate()+1);if(calendar||isWork(d))n++;}
+  return n;
+}
 $('calc').onclick=()=>{
   const start=new Date($('resignDate').value+'T00:00:00');
   if(isNaN(start)){alert('Pick the resignation date.');return;}
   let days=$('noticeLen').value==='custom'?+$('customDays').value:+$('noticeLen').value;
   if(!days||days<1){alert('Notice period must be at least 1 day.');return;}
-  const served=Math.max(0,+$('served').value||0);
   const leaveAdj=Math.max(0,+$('leaveAdj').value||0);
   const mode=$('mode').value;
-  function addDays(from,n,calendar){
-    const d=new Date(from);let added=0;
-    while(added<n){d.setDate(d.getDate()+1);
-      if(calendar|| (d.getDay()!==0&&d.getDay()!==6))added++;}
-    return d;
-  }
-  const fullEnd=addDays(start,days,mode==='calendar');
-  const remainDays=Math.max(0,days-served-leaveAdj);
-  const adjEnd=addDays(start,days-Math.min(days,served+leaveAdj),mode==='calendar');
+  const cal=mode==='calendar';
   const today=new Date();today.setHours(0,0,0,0);
+  const fullEnd=addDays(start,days,cal);
+  const elapsed=daysBetween(start,today>start?today:start,cal);
+  const remain=Math.max(0,days-elapsed);
+  const leaveUsed=Math.min(days,leaveAdj);
   const leftCal=Math.ceil((fullEnd-today)/86400000);
   $('out').innerHTML=
-    '<div class="win"><div class="note">Standard last working day ('+days+' '+mode+' days)</div>'+
+    '<div class="win"><div class="note">Standard last working day ('+days+' '+mode+' days from '+disp(start)+')</div>'+
     '<div class="big">'+disp(fullEnd)+'</div>'+
-    '<div class="note">'+(leftCal>=0?leftCal+' calendar day'+(leftCal===1?'':'s')+' from today':'that date has passed')+'</div></div>'+
-    (served||leaveAdj?
-      '<div class="win"><div class="note">After '+served+' served'+(leaveAdj?' + '+leaveAdj+' leave-adjusted':'')+' - remaining notice: '+remainDays+' '+mode+' days</div>'+
-      '<div class="big">'+disp(adjEnd)+'</div>'+
-      '<div class="note warn">Only valid if your employer agrees in writing to the leave adjustment / served-day counting.</div></div>':'')+
+    '<div class="note">'+(leftCal>=0?leftCal+' calendar day'+(leftCal===1?'':'s')+' from today':'that date has passed')+'</div>'+
+    '<div class="note" style="margin-top:4px">Counted so far: '+elapsed+' of '+days+' '+mode+' days'+(elapsed>0?' - about '+remain+' left':'')+'</div></div>'+
+    (leaveUsed?
+      '<div class="win"><div class="note">With '+leaveUsed+' leave day'+(leaveUsed===1?'':'s')+' adjusted against notice</div>'+
+      '<div class="big">'+disp(addDays(start,days-leaveUsed,cal))+'</div>'+
+      '<div class="note warn">Only valid if your employer has agreed to the leave adjustment in writing. Without that, the standard date above stands.</div></div>':'')+
     '<p class="note" style="margin-top:10px">Send your resignation by email and keep the acknowledgement. Ask HR to confirm the computed last working day in writing - their confirmation overrides any calculator, including this one.</p>';
 };
 </script>
