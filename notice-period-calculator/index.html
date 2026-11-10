@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notice Period & Last Working Day Calculator</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Notice Period & Last Working Day Calculator</h1>
+<p class="sub">Resigning and not sure when your last working day falls, or how many days you still owe? Do the date math here.</p>
+
+<div class="card">
+  <strong>Before you start</strong>
+  <p class="note" style="margin-top:6px">
+  This is <strong>date arithmetic only</strong>. Your actual notice terms - length, whether it counts calendar or working days, buyout options, leave adjustment, early relief - come from your appointment letter and your employer's policies, and HR's written confirmation is what counts. If salary is being withheld or there is a dispute, that is a separate issue; check your contract and, if needed, get advice specific to your situation.
+  </p>
+</div>
+
+<div class="card">
+  <div class="grid3">
+    <div><label>Resignation submitted on</label><input id="resignDate" type="date"></div>
+    <div><label>Notice period</label>
+      <select id="noticeLen">
+        <option value="15">15 days</option>
+        <option value="30" selected>30 days</option>
+        <option value="60">60 days</option>
+        <option value="90">90 days</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+    <div id="customWrap" style="display:none"><label>Custom days</label><input id="customDays" type="number" min="1" value="45"></div>
+  </div>
+  <div class="grid3">
+    <div><label>Counting mode</label>
+      <select id="mode">
+        <option value="calendar" selected>Calendar days (most common)</option>
+        <option value="working">Working days (Mon-Fri only)</option>
+      </select>
+    </div>
+    <div><label>Days already served (optional)</label><input id="served" type="number" min="0" value="0"></div>
+    <div><label>Leave days to adjust (optional)</label><input id="leaveAdj" type="number" min="0" value="0"></div>
+  </div>
+  <div style="margin-top:12px"><button class="primary" id="calc">Calculate</button></div>
+  <div id="out"></div>
+</div>
+
+<div class="card">
+  <strong>How the counting works</strong>
+  <table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td>Calendar days</td><td>Every day counts, including weekends and holidays. A 30-day notice given on 1 Nov ends on 1 Dec.</td></tr>
+    <tr><td>Working days</td><td>Only Monday-Friday count (this tool does not know your company holidays). Less common - use only if your letter says so.</td></tr>
+    <tr><td>Buyout / recovery</td><td>Some employers let you pay for unserved days or recover pay for them. Whether and how much is entirely company policy - ask HR in writing.</td></tr>
+    <tr><td>Leave adjustment</td><td>Some employers allow adjusting earned leave against notice; many do not. Only enter a number here if HR has agreed to it.</td></tr>
+  </table>
+</div>
+
+<p class="note">Built after recurring r/IndianWorkplace threads asking how notice periods and last working days are counted. Free, runs fully in your browser, nothing is stored or sent anywhere.</p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const disp=d=>d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+$('noticeLen').onchange=()=>{$('customWrap').style.display=$('noticeLen').value==='custom'?'':'none';};
+$('resignDate').value=new Date().toISOString().slice(0,10);
+$('calc').onclick=()=>{
+  const start=new Date($('resignDate').value+'T00:00:00');
+  if(isNaN(start)){alert('Pick the resignation date.');return;}
+  let days=$('noticeLen').value==='custom'?+$('customDays').value:+$('noticeLen').value;
+  if(!days||days<1){alert('Notice period must be at least 1 day.');return;}
+  const served=Math.max(0,+$('served').value||0);
+  const leaveAdj=Math.max(0,+$('leaveAdj').value||0);
+  const mode=$('mode').value;
+  function addDays(from,n,calendar){
+    const d=new Date(from);let added=0;
+    while(added<n){d.setDate(d.getDate()+1);
+      if(calendar|| (d.getDay()!==0&&d.getDay()!==6))added++;}
+    return d;
+  }
+  const fullEnd=addDays(start,days,mode==='calendar');
+  const remainDays=Math.max(0,days-served-leaveAdj);
+  const adjEnd=addDays(start,days-Math.min(days,served+leaveAdj),mode==='calendar');
+  const today=new Date();today.setHours(0,0,0,0);
+  const leftCal=Math.ceil((fullEnd-today)/86400000);
+  $('out').innerHTML=
+    '<div class="win"><div class="note">Standard last working day ('+days+' '+mode+' days)</div>'+
+    '<div class="big">'+disp(fullEnd)+'</div>'+
+    '<div class="note">'+(leftCal>=0?leftCal+' calendar day'+(leftCal===1?'':'s')+' from today':'that date has passed')+'</div></div>'+
+    (served||leaveAdj?
+      '<div class="win"><div class="note">After '+served+' served'+(leaveAdj?' + '+leaveAdj+' leave-adjusted':'')+' - remaining notice: '+remainDays+' '+mode+' days</div>'+
+      '<div class="big">'+disp(adjEnd)+'</div>'+
+      '<div class="note warn">Only valid if your employer agrees in writing to the leave adjustment / served-day counting.</div></div>':'')+
+    '<p class="note" style="margin-top:10px">Send your resignation by email and keep the acknowledgement. Ask HR to confirm the computed last working day in writing - their confirmation overrides any calculator, including this one.</p>';
+};
+</script>
+</body>
+</html>
