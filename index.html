@@ -234,6 +234,9 @@
     .rotator { transition: none; }
     html { scroll-behavior: auto; }
   }
+
+  /* keep full-bleed sections from creating horizontal overflow (100vw includes the scrollbar) */
+  html, body { overflow-x: clip; }
 </style>
 </head>
 <body>
