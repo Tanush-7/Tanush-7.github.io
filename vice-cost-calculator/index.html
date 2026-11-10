@@ -22,6 +22,7 @@
     --bad:#b3372e; --bad-bg:#fae9e7;
     --warn:#9a6a0a; --warn-bg:#fdf3d7;
     --chart-line:#9a5510; --chart-fill:rgba(154,85,16,.16); --chart-grid:#e2ded2; --chart-target:#b3372e;
+    --accent:#2456c8; --accent-bg:#e3ebfc;
     --shadow:0 1px 2px rgba(20,20,20,.05), 0 10px 28px -18px rgba(20,20,20,.25);
     color-scheme: light dark;
   }
@@ -37,6 +38,7 @@
       --bad:#ef9a92; --bad-bg:#331f1d;
       --warn:#e3bc67; --warn-bg:#2e2712;
       --chart-line:#e0a458; --chart-fill:rgba(224,164,88,.18); --chart-grid:#2b2d33; --chart-target:#ef9a92;
+      --accent:#7aa7ff; --accent-bg:#1d2a47;
       --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px -18px rgba(0,0,0,.7);
     }
   }
@@ -141,6 +143,28 @@
   .swatch{width:18px;height:3px;border-radius:2px;background:var(--chart-line);display:inline-block}
   .swatch.dash{background:repeating-linear-gradient(90deg,var(--chart-target) 0 5px,transparent 5px 9px)}
   .swatch.bed{background:var(--faint);width:3px;height:12px}
+  .swatch.dots{background-image:radial-gradient(var(--chart-line) 1.3px, transparent 1.4px);background-size:5px 5px;background-color:transparent;width:18px;height:11px;border-radius:0}
+  .swatch.dline{background:transparent;border-top:3px dotted var(--faint);height:0;width:18px;border-radius:0}
+  .dotkey{width:9px;height:9px;border-radius:50%;background:var(--ink);display:inline-block;flex:none}
+  .chart-card{padding:20px 18px 14px}
+  .chart-head{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:flex-end;justify-content:space-between;margin-bottom:6px}
+  .chart-title{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0}
+  .chart-meta{font-size:12.5px;letter-spacing:.1em;color:var(--muted);margin:3px 0 0;font-weight:600}
+  .chart-hint{font-size:13px;color:var(--muted);margin:0;max-width:350px}
+  #caffChart{touch-action:none;cursor:crosshair;display:block;width:100%;height:auto}
+  #caffChart g[data-drag="drink"]:focus .dotring{stroke:var(--accent)}
+  #caffChart [data-drag="bed"]:focus{outline:none}
+  .sel-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--surface2);border-radius:12px;padding:10px 12px;margin-top:10px;min-height:58px}
+  .sel-info{font-size:14px}
+  .sel-info .mono{font-weight:700}
+  .sel-actions{display:flex;gap:6px;flex-wrap:wrap}
+  .sel-actions button{border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:9px;padding:7px 12px;font-weight:700;font-size:13.5px;min-height:40px}
+  .sel-actions button:hover{border-color:var(--accent);color:var(--accent)}
+  .sel-actions button.danger:hover{border-color:var(--bad);color:var(--bad)}
+  .chart-foot{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+  #chartCutoff{font-weight:700;font-size:14px;letter-spacing:.06em}
+  .drink-row{border-radius:10px;padding-left:8px;padding-right:8px;margin-left:-8px;margin-right:-8px;cursor:pointer}
+  .drink-row.sel{background:var(--surface2)}
 
   /* Bars */
   .bar-track{position:relative;background:var(--surface2);border-radius:8px;height:26px;margin:10px 0 6px;overflow:visible}
@@ -195,7 +219,35 @@
 
   <!-- ============ CAFFEINE ============ -->
   <section class="panel active" id="panel-caffeine" role="tabpanel" aria-labelledby="tab-caffeine">
-    <div class="grid">
+    <div class="card chart-card">
+      <div class="chart-head">
+        <div>
+          <p class="chart-title">Caffeine in your system</p>
+          <p class="chart-meta mono" id="chartMeta">—</p>
+        </div>
+        <p class="chart-hint">Drag a drink's dot along the bottom axis to move it. Drag the BED line to change bedtime. Press or drag across the chart to read any moment.</p>
+      </div>
+      <svg id="caffChart" viewBox="0 0 720 368" role="img" aria-label="Interactive caffeine timeline. Drag the drink dots along the time axis to change when each drink was taken; the bedtime caffeine number updates live."></svg>
+      <div class="sel-bar" id="selBar">
+        <span class="sel-info" id="selInfo">Tap a dot under the chart to select a drink.</span>
+        <div class="sel-actions" id="selActions" hidden>
+          <button type="button" id="selMinus">−15 min</button>
+          <button type="button" id="selPlus">+15 min</button>
+          <button type="button" id="selRemove" class="danger">Remove drink</button>
+        </div>
+      </div>
+      <div class="chart-foot">
+        <span class="mono" id="chartCutoff">LAST CUP BY —</span>
+        <div class="chart-legend" style="margin-top:0">
+          <span><span class="swatch dots"></span> Total in your system</span>
+          <span><span class="swatch dline"></span> One drink decaying</span>
+          <span><span class="swatch dash"></span> Bedtime target</span>
+          <span><span class="swatch bed"></span> Bedtime</span>
+          <span><span class="dotkey"></span> Drink — drag to move</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:16px">
       <div>
         <div class="card">
           <h2>Your sleep setup</h2>
@@ -225,7 +277,7 @@
 
         <div class="card">
           <h2>Add a drink</h2>
-          <p class="hint">Tap a drink to add it at the time below. Coffee, matcha and tea are all here — matcha counts: you drink the whole leaf.</p>
+          <p class="hint">Tap a drink to add it at the time below — it lands on the timeline above as a dot you can drag. Coffee, matcha and tea are all here — matcha counts: you drink the whole leaf.</p>
           <label class="flabel" for="nextTime">Time of this drink</label>
           <input type="time" id="nextTime" value="09:00">
           <label class="flabel">Pick a drink</label>
@@ -239,6 +291,7 @@
 
         <div class="card">
           <h2>Today's drinks</h2>
+          <p class="hint">The same drinks as the dots on the timeline — drag either. Tap a row to highlight that drink's curve.</p>
           <div id="drinkList"></div>
           <p class="empty-note" id="drinkEmpty" hidden>No drinks yet. Add one above and the bedtime number appears.</p>
         </div>
@@ -267,18 +320,8 @@
             <p id="cutoffText">Add a drink to get your personal cutoff.</p>
           </div>
 
-          <div class="chart-wrap">
-            <svg id="caffChart" viewBox="0 0 720 268" role="img" aria-label="Chart of caffeine level in your body across the day"></svg>
-            <div class="chart-legend">
-              <span><span class="swatch"></span> Caffeine in your system</span>
-              <span><span class="swatch dash"></span> Bedtime target</span>
-              <span><span class="swatch bed"></span> Bedtime</span>
-              <span>● Drink taken</span>
-            </div>
-          </div>
-
           <h3>How to read this</h3>
-          <p class="method" style="margin:0">Each drink decays on its own clock: <span class="mono">remaining = dose × ½<sup>(hours since drink ÷ half-life)</sup></span>. The chart adds all drinks together. The model assumes instant absorption — in reality caffeine peaks 30–60 minutes after a drink, so treat early peaks as approximate. Matcha and tea release caffeine more gently (L-theanine smooths the feel), but the milligrams still decay on the same half-life.</p>
+          <p class="method" style="margin:0">Every drink decays on its own clock — that is each dotted curve: <span class="mono">remaining = dose × ½<sup>(hours since drink ÷ half-life)</sup></span>. The dotted field is all drinks added together, and the blue slice is the selected drink's share of it. Drag a drink earlier and watch the bedtime number fall before you change anything in real life. The model assumes instant absorption — in reality caffeine peaks 30–60 minutes after a drink, so treat early peaks as approximate. Matcha and tea release caffeine more gently (L-theanine smooths the feel), but the milligrams still decay on the same half-life.</p>
         </div>
 
         <div class="card">
@@ -505,15 +548,16 @@
     var b = document.createElement("button");
     b.type="button"; b.className="preset";
     b.innerHTML = '<span class="pname">'+d.name+'<span class="tag '+d.tag+'">'+d.tagLabel+'</span></span><span class="pmg">'+d.mg+' mg · '+d.sub+'</span>';
-    b.addEventListener("click", function(){ addDrink(d.name, d.mg); });
+    b.addEventListener("click", function(){ addDrink(d.name, d.mg, d.tag); });
     presetsEl.appendChild(b);
   });
 
   var entries = [
-    {name:"Filter coffee", mg:95, time:"09:00"},
-    {name:"Filter coffee", mg:95, time:"11:00"},
-    {name:"Filter coffee", mg:95, time:"15:30"}
+    {name:"Filter coffee", mg:95, time:"09:00", tag:"coffee"},
+    {name:"Filter coffee", mg:95, time:"11:00", tag:"coffee"},
+    {name:"Filter coffee", mg:95, time:"15:30", tag:"coffee"}
   ];
+  var selectedIdx = 2;
 
   var hl = 5;
   function setHL(v, fromSlider){
@@ -536,31 +580,40 @@
   $("addCustom").addEventListener("click", function(){
     var mg = parseFloat($("customMg").value);
     if(!mg || mg<=0) return;
-    addDrink("Custom drink", mg);
+    addDrink("Custom drink", mg, "coffee");
     $("customMg").value="";
   });
 
-  function addDrink(name, mg){
-    entries.push({name:name, mg:mg, time: $("nextTime").value || "09:00"});
-    entries.sort(function(a,b){ return parseTime(a.time)-parseTime(b.time); });
+  function addDrink(name, mg, tag){
+    entries.push({name:name, mg:mg, time: $("nextTime").value || "09:00", tag: tag || "coffee"});
+    selectedIdx = entries.length-1;
+    renderDrinks(); calcCaffeine();
+  }
+  function removeDrink(idx){
+    entries.splice(idx,1);
+    if(selectedIdx>=entries.length) selectedIdx=entries.length-1;
     renderDrinks(); calcCaffeine();
   }
 
   function renderDrinks(){
     var list = $("drinkList"); list.innerHTML="";
     $("drinkEmpty").hidden = entries.length>0;
-    entries.forEach(function(en, idx){
-      var row = document.createElement("div"); row.className="drink-row";
+    var order = entries.map(function(en, idx){ return {en:en, idx:idx}; });
+    order.sort(function(a,b){ return drinkAbs(a.en.time)-drinkAbs(b.en.time); });
+    order.forEach(function(item){
+      var en=item.en, idx=item.idx;
+      var row = document.createElement("div"); row.className="drink-row"+(idx===selectedIdx?" sel":"");
       var left = document.createElement("div");
       left.innerHTML = '<div class="dname"></div><div class="dsub"></div>';
       left.querySelector(".dname").textContent = en.name;
       left.querySelector(".dsub").textContent = en.mg+" mg";
       var t = document.createElement("input"); t.type="time"; t.value=en.time; t.setAttribute("aria-label","Time for "+en.name);
-      t.addEventListener("change", function(){ en.time=t.value; entries.sort(function(a,b){return parseTime(a.time)-parseTime(b.time);}); renderDrinks(); calcCaffeine(); });
+      t.addEventListener("change", function(){ en.time=t.value; if(selectedIdx!==idx){ selectedIdx=idx; } renderDrinks(); calcCaffeine(); });
       var m = document.createElement("input"); m.type="number"; m.min="0"; m.max="600"; m.value=en.mg; m.setAttribute("aria-label","Caffeine mg for "+en.name);
       m.addEventListener("change", function(){ en.mg=Math.max(0, parseFloat(m.value)||0); renderDrinks(); calcCaffeine(); });
       var del = document.createElement("button"); del.type="button"; del.className="icon-btn"; del.textContent="×"; del.setAttribute("aria-label","Remove "+en.name);
-      del.addEventListener("click", function(){ entries.splice(idx,1); renderDrinks(); calcCaffeine(); });
+      del.addEventListener("click", function(){ removeDrink(idx); });
+      row.addEventListener("click", function(e){ if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON") return; selectedIdx=idx; renderDrinks(); calcCaffeine(); });
       row.appendChild(left); row.appendChild(t); row.appendChild(m); row.appendChild(del);
       list.appendChild(row);
     });
@@ -588,8 +641,8 @@
     var target = parseFloat($("targetRange").value);
     var atBed = levelAt(bed, entries);
     var totalMg = entries.reduce(function(s,e){ return s+e.mg; },0);
-    var peak=0;
-    for(var t=360; t<=1800; t+=10){ peak=Math.max(peak, levelAt(t, entries)); }
+    var peak=0, peakT=360;
+    for(var t=360; t<=1800; t+=5){ var lv=levelAt(t, entries); if(lv>peak){ peak=lv; peakT=t; } }
 
     $("bedMg").textContent = fmtInt(atBed);
     var badge = $("bedBadge");
@@ -606,7 +659,7 @@
     /* Cutoff: treat the LAST drink as the movable one */
     var cTime=$("cutoffTime"), cText=$("cutoffText");
     if(entries.length===0){
-      cTime.textContent="Last cup by —";
+      cTime.textContent="Last cup by —"; $("chartCutoff").textContent="LAST CUP BY —";
       cText.textContent="Add a drink to get your personal cutoff.";
     } else {
       var sorted = entries.slice().sort(function(a,b){ return drinkAbs(a.time)-drinkAbs(b.time); });
@@ -615,14 +668,14 @@
       var othersAtBed = levelAt(bed, others);
       var budget = target - othersAtBed;
       if(budget <= 0){
-        cTime.textContent = "No room for that last cup";
+        cTime.textContent = "No room for that last cup"; $("chartCutoff").textContent="EARLIER DRINKS ALONE ARE OVER TARGET";
         cText.innerHTML = "Your earlier drinks alone leave <strong>"+fmtInt(othersAtBed)+" mg</strong> at bedtime — already over your "+target+" mg target before the "+last.time+" "+escapeHtml(last.name.toLowerCase())+" is even counted.";
       } else if(last.mg <= budget){
-        cTime.textContent = "That last cup is fine";
+        cTime.textContent = "That last cup is fine"; $("chartCutoff").textContent="LAST CUP: FINE AS IS";
         cText.innerHTML = "Even at <strong>"+last.time+"</strong>, your "+escapeHtml(last.name.toLowerCase())+" leaves you under target. Your cutoff is bedtime itself.";
       } else {
         var cutoff = bed - hl*60*Math.log2(last.mg/budget);
-        cTime.textContent = "Last cup by "+fmtTimeAbs(cutoff);
+        cTime.textContent = "Last cup by "+fmtTimeAbs(cutoff); $("chartCutoff").textContent = "LAST CUP BY "+fmtTimeAbs(cutoff).toUpperCase();
         cText.innerHTML = "Your <strong>"+escapeHtml(last.name.toLowerCase())+" ("+fmtInt(last.mg)+" mg)</strong> at "+last.time+" is the one to move. Taken by <strong>"+fmtTimeAbs(cutoff)+"</strong> instead, you'd land at exactly "+target+" mg at your "+$("bedtime").value+" bedtime.";
       }
     }
@@ -632,63 +685,253 @@
     $("sumCaffSub").textContent = entries.length===0 ? "No drinks logged" :
       (atBed<=target ? "Under your "+target+" mg target ✓" : fmtInt(atBed-target)+" mg over your "+target+" mg target");
 
-    drawChart(bed, target, peak);
+    $("chartMeta").textContent = entries.length + (entries.length===1 ? " DRINK" : " DRINKS") + " · " + fmtInt(totalMg) + " MG · HALF-LIFE " + (hl % 1 ? hl.toFixed(1) : hl) + "H";
+    renderSelBar(bed);
+    drawChart(bed, target, peak, peakT);
   }
   function escapeHtml(s){ return s.replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 
-  function drawChart(bed, target, peak){
-    var svg = $("caffChart");
-    var W=720,H=268, padL=14, padR=14, padT=26, padB=34;
-    var x0=360, x1=1800;
-    var yMax = Math.max(110, peak*1.18, target*1.7);
-    function X(t){ return padL + (t-x0)/(x1-x0)*(W-padL-padR); }
-    function Y(v){ return (H-padB) - (v/yMax)*(H-padT-padB); }
+  /* ---------- Interactive timeline (draggable, like the video) ---------- */
+  var TL = {W:720, H:368, padL:16, padR:36, padT:48, axisY:296, x0:360, x1:1800};
+  var lastYMax = 200, hoverEls = null, pendingFocus = null, dragInfo = null;
+
+  function absToClock(abs){
+    var m = ((Math.round(abs) % 1440) + 1440) % 1440;
+    return pad(Math.floor(m/60))+":"+pad(m%60);
+  }
+  function tlXPos(t){ return TL.padL + (t-TL.x0)/(TL.x1-TL.x0)*(TL.W-TL.padL-TL.padR); }
+  function clientToAbs(clientX){
+    var r = $("caffChart").getBoundingClientRect();
+    var x = (clientX - r.left) * (TL.W / r.width);
+    var abs = TL.x0 + (x - TL.padL)/(TL.W-TL.padL-TL.padR)*(TL.x1-TL.x0);
+    return Math.min(TL.x1-5, Math.max(TL.x0, abs));
+  }
+  function snap5(v){ return Math.round(v/5)*5; }
+  function selEntry(){ return (selectedIdx>=0 && selectedIdx<entries.length) ? entries[selectedIdx] : null; }
+  function selRemAt(t){
+    var en = selEntry(); if(!en) return 0;
+    var da = drinkAbs(en.time);
+    return t>=da ? en.mg * Math.pow(0.5, (t-da)/60/hl) : 0;
+  }
+
+  function renderSelBar(bed){
+    var en = selEntry();
+    var info = $("selInfo"), actions = $("selActions");
+    if(!en){ info.textContent = "Tap a dot under the chart to select a drink."; actions.hidden = true; return; }
+    var da = drinkAbs(en.time);
+    var rem = da <= bed ? en.mg * Math.pow(0.5, (bed-da)/60/hl) : 0;
+    info.innerHTML = "<strong></strong> · <span class='mono'></span> · " + fmtInt(en.mg) + " mg · leaves <span class='mono'>" + fmtInt(rem) + " mg</span> at bedtime";
+    info.querySelector("strong").textContent = en.name;
+    info.querySelector(".mono").textContent = fmtTimeAbs(da);
+    actions.hidden = false;
+  }
+
+  function drawChart(bed, target, peak, peakT){
+    var svg = $("caffChart"); if(!svg) return;
+    var W=TL.W, padL=TL.padL, padR=TL.padR, padT=TL.padT, axisY=TL.axisY, x0=TL.x0, x1=TL.x1;
+    var yMax = Math.max(120, peak*1.16, target*1.8); lastYMax = yMax;
+    function X(t){ return tlXPos(t); }
+    function Y(v){ return axisY - (v/yMax)*(axisY-padT); }
     var NS="http://www.w3.org/2000/svg";
     while(svg.firstChild) svg.removeChild(svg.firstChild);
-    function el(tag, attrs){
-      var e=document.createElementNS(NS,tag);
-      for(var k in attrs) e.setAttribute(k, attrs[k]);
-      svg.appendChild(e); return e;
+    function el(tag, attrs){ var e=document.createElementNS(NS,tag); for(var k in attrs) e.setAttribute(k, attrs[k]); svg.appendChild(e); return e; }
+    function sub(parent, tag, attrs){ var e=document.createElementNS(NS,tag); for(var k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
+    function txt(x,y,str,attrs){ var e=el("text", Object.assign({x:x,y:y,"font-size":"11.5","font-family":"'IBM Plex Mono',monospace",fill:"var(--faint)"}, attrs||{})); e.textContent=str; return e; }
+
+    /* sample times: every 5 min plus each drink's exact start, so jumps stay sharp */
+    var ts=[]; for(var t=x0;t<=x1;t+=5) ts.push(t);
+    entries.forEach(function(en){ var da=drinkAbs(en.time); if(ts.indexOf(da)<0) ts.push(da); });
+    ts.sort(function(a,b){ return a-b; });
+    var totalLine = ts.map(function(tt,i){ return (i===0?"M":"L")+X(tt).toFixed(1)+","+Y(levelAt(tt, entries)).toFixed(1); }).join(" ");
+    var totalArea = totalLine + " L"+X(x1).toFixed(1)+","+axisY+" L"+X(x0).toFixed(1)+","+axisY+" Z";
+    var sel = selEntry(), bandArea = null;
+    if(sel){
+      var upper = ts.map(function(tt,i){ return (i===0?"M":"L")+X(tt).toFixed(1)+","+Y(levelAt(tt, entries)).toFixed(1); }).join(" ");
+      var lower = ts.slice().reverse().map(function(tt){ return "L"+X(tt).toFixed(1)+","+Y(levelAt(tt, entries)-selRemAt(tt)).toFixed(1); }).join(" ");
+      bandArea = upper + " " + lower + " Z";
     }
-    function txt(x,y,str,attrs){
-      var e=el("text", Object.assign({x:x,y:y,"font-size":"11.5","font-family":"'IBM Plex Mono',monospace",fill:"var(--faint)"}, attrs||{}));
-      e.textContent=str; return e;
-    }
-    /* gridlines */
-    [0,50,100,150,200,250,300].forEach(function(v){
-      if(v>yMax) return;
-      el("line",{x1:padL,x2:W-padR,y1:Y(v),y2:Y(v),stroke:"var(--chart-grid)","stroke-width":"1"});
-      txt(W-padR+2, Y(v)-4, "", {});
-      txt(padL, Y(v)-5, v===0?"":String(v), {"text-anchor":"start"});
+
+    /* defs: dot patterns (the halftone field) + clip paths */
+    var defs = el("defs",{});
+    var pat = sub(defs,"pattern",{id:"dotsP",width:"7",height:"7",patternUnits:"userSpaceOnUse"});
+    sub(pat,"circle",{cx:"2.2",cy:"2.2",r:"1.7",fill:"var(--chart-line)",opacity:"0.45"});
+    var patB = sub(defs,"pattern",{id:"dotsB",width:"7",height:"7",patternUnits:"userSpaceOnUse",patternTransform:"translate(3.5,3.5)"});
+    sub(patB,"circle",{cx:"2.2",cy:"2.2",r:"2",fill:"var(--accent)",opacity:"0.9"});
+    var clipT = sub(defs,"clipPath",{id:"clipTotal"}); sub(clipT,"path",{d:totalArea});
+    if(bandArea){ var clipS = sub(defs,"clipPath",{id:"clipSel"}); sub(clipS,"path",{d:bandArea}); }
+
+    /* faint scale gridlines */
+    [100,200,300].forEach(function(v){ if(v<yMax) el("line",{x1:padL,x2:W-padR,y1:Y(v),y2:Y(v),stroke:"var(--chart-grid)","stroke-width":"1"}); });
+
+    /* the dotted field: total in your system, selected drink's slice in accent */
+    el("rect",{x:padL,y:padT-8,width:W-padL-padR,height:axisY-padT+8,fill:"url(#dotsP)","clip-path":"url(#clipTotal)"});
+    if(bandArea) el("rect",{x:padL,y:padT-8,width:W-padL-padR,height:axisY-padT+8,fill:"url(#dotsB)","clip-path":"url(#clipSel)"});
+    el("path",{d:totalLine,fill:"none",stroke:"var(--chart-line)","stroke-width":"1.4",opacity:"0.4","stroke-linejoin":"round"});
+
+    /* one dotted decay curve per drink */
+    entries.forEach(function(en, idx){
+      var da=drinkAbs(en.time); var pts=[];
+      for(var tt=da; tt<=x1; tt+=10){ pts.push([X(tt), Y(en.mg*Math.pow(0.5,(tt-da)/60/hl))]); }
+      if(pts.length<2) return;
+      var d=pts.map(function(p,i){ return (i===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" ");
+      el("path",{d:d,fill:"none",stroke: idx===selectedIdx ? "var(--accent)" : "var(--faint)", "stroke-width": idx===selectedIdx ? "3" : "2.4", "stroke-dasharray":"0.1 6.5", "stroke-linecap":"round", opacity: idx===selectedIdx ? "1" : "0.7"});
     });
-    /* area path */
-    var pts=[], step=10;
-    for(var t=x0;t<=x1;t+=step){ pts.push([X(t), Y(levelAt(t, entries))]); }
-    var line = pts.map(function(p,i){ return (i===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" ");
-    var area = line + " L"+X(x1).toFixed(1)+","+Y(0)+" L"+X(x0).toFixed(1)+","+Y(0)+" Z";
-    el("path",{d:area, fill:"var(--chart-fill)", stroke:"none"});
-    el("path",{d:line, fill:"none", stroke:"var(--chart-line)","stroke-width":"2.4","stroke-linejoin":"round"});
-    /* target line */
+
+    /* the target line (50 mg by default) */
     el("line",{x1:padL,x2:W-padR,y1:Y(target),y2:Y(target),stroke:"var(--chart-target)","stroke-width":"1.6","stroke-dasharray":"6 5"});
-    txt(W-padR, Y(target)-7, target+" mg target", {"text-anchor":"end", fill:"var(--chart-target)","font-weight":"600"});
-    /* bedtime line */
-    el("line",{x1:X(bed),x2:X(bed),y1:padT-8,y2:H-padB,stroke:"var(--faint)","stroke-width":"1.6"});
-    var atBed = levelAt(bed, entries);
-    txt(X(bed), padT-14, "BED "+$("bedtime").value+" · "+fmtInt(atBed)+" MG", {"text-anchor": X(bed) > W-190 ? "end":"start","font-weight":"700",fill:"var(--ink)"});
-    el("circle",{cx:X(bed),cy:Y(atBed),r:"4.5",fill:"var(--chart-target)",stroke:"var(--surface)","stroke-width":"2"});
-    /* drink markers */
-    entries.forEach(function(en){
+    txt(W-padR+8, Y(target)+4, String(Math.round(target)), {fill:"var(--chart-target)","font-weight":"700","font-size":"12.5"});
+
+    /* selected drink: dotted drop line from its peak to its dot */
+    if(sel){
+      var sda=drinkAbs(sel.time), slv=levelAt(sda, entries);
+      el("line",{x1:X(sda),x2:X(sda),y1:Y(slv),y2:axisY,stroke:"var(--accent)","stroke-width":"1.6","stroke-dasharray":"2 4"});
+      el("circle",{cx:X(sda),cy:Y(slv),r:"4.5",fill:"var(--accent)",stroke:"var(--surface)","stroke-width":"2"});
+    }
+
+    /* peak marker */
+    if(entries.length && peak>0){
+      var px=X(peakT);
+      el("line",{x1:px,x2:px,y1:Y(peak),y2:38,stroke:"var(--faint)","stroke-width":"1"});
+      var pAnchor = px<90 ? "start" : (px>W-120 ? "end" : "middle");
+      var pX = px<90 ? px-6 : (px>W-120 ? px+6 : px);
+      txt(pX, 14, "PEAK "+fmtInt(peak)+" MG", {"text-anchor":pAnchor,"font-weight":"700",fill:"var(--ink)"});
+      txt(pX, 29, absToClock(peakT), {"text-anchor":pAnchor});
+    }
+
+    /* bedtime marker (draggable) */
+    var bx=X(bed), atBed=levelAt(bed, entries);
+    el("line",{x1:bx,x2:bx,y1:36,y2:axisY,stroke:"var(--faint)","stroke-width":"1.6"});
+    var bEnd = bx > W-215;
+    txt(bEnd ? bx-9 : bx+9, 14, "BED "+absToClock(bed), {"text-anchor": bEnd?"end":"start","font-weight":"700",fill:"var(--ink)","font-size":"12.5"});
+    txt(bEnd ? bx-9 : bx+9, 29, fmtInt(atBed)+" MG STILL IN YOU", {"text-anchor": bEnd?"end":"start",fill:"var(--muted)"});
+    el("circle",{cx:bx,cy:Y(atBed),r:"4.5",fill:"var(--chart-target)",stroke:"var(--surface)","stroke-width":"2"});
+    var bedHit = el("rect",{x:bx-18,y:34,width:"36",height:axisY-34,fill:"transparent",tabindex:"0",role:"slider","aria-label":"Bedtime, "+absToClock(bed)+". Use arrow keys to move it."});
+    bedHit.setAttribute("data-drag","bed");
+    bedHit.style.cursor="ew-resize";
+
+    /* axis */
+    el("line",{x1:padL,x2:W-padR,y1:axisY,y2:axisY,stroke:"var(--line2)","stroke-width":"1"});
+
+    /* labels under the axis: selected drink first, then the rest, then hour ticks */
+    var placed=[];
+    function tryLabel(x, str, attrs, force){
+      if(!force){ for(var i=0;i<placed.length;i++){ if(Math.abs(placed[i]-x)<48) return; } }
+      placed.push(x);
+      txt(x, axisY+42, str, Object.assign({"text-anchor":"middle"}, attrs||{}));
+    }
+    var byTime = entries.map(function(en,idx){ return {en:en, idx:idx, da:drinkAbs(en.time)}; }).sort(function(a,b){ return a.da-b.da; });
+    byTime.forEach(function(it){ if(it.idx===selectedIdx) tryLabel(X(it.da), absToClock(it.da), {fill:"var(--accent)","font-weight":"700","font-size":"12.5"}, true); });
+    byTime.forEach(function(it){ if(it.idx!==selectedIdx) tryLabel(X(it.da), absToClock(it.da), {"font-size":"11"}); });
+    [[x0,"06"],[720,"12"],[1080,"18"],[1440,"00"],[x1,"06"]].forEach(function(pair){ tryLabel(X(pair[0]), pair[1], {}); });
+
+    /* drink dots on the axis (draggable) */
+    entries.forEach(function(en, idx){
       var da=drinkAbs(en.time);
-      el("circle",{cx:X(da),cy:H-padB,r:"4",fill:"var(--ink)"});
-      txt(X(da), H-padB+20, fmtTimeAbsShort(da), {"text-anchor":"middle","font-weight":"600",fill:"var(--ink)"});
+      var g=el("g",{tabindex:"0",role:"slider","aria-label":en.name+", "+en.mg+" milligrams, taken at "+absToClock(da)+". Arrow keys move it, Delete removes it."});
+      g.setAttribute("data-drag","drink"); g.setAttribute("data-idx", idx); g.style.cursor="grab";
+      sub(g,"rect",{x:X(da)-24,y:axisY+2,width:"48",height:"52",fill:"transparent"});
+      sub(g,"circle",{class:"dotring",cx:X(da),cy:axisY+18,r:"10.5",fill:"none",stroke:"transparent","stroke-width":"2"});
+      sub(g,"circle",{cx:X(da),cy:axisY+18,r: idx===selectedIdx?"7":"5.5", fill: idx===selectedIdx?"var(--accent)":"var(--ink)", stroke:"var(--surface)","stroke-width":"2"});
     });
-    /* axis labels */
-    [[360,"06"],[720,"12"],[1080,"18"],[1440,"00"],[1800,"06"]].forEach(function(pair){
-      if(entries.some(function(en){ return Math.abs(drinkAbs(en.time)-pair[0])<55; })) return;
-      txt(X(pair[0]), H-6, pair[1], {"text-anchor":"middle"});
-    });
-    el("line",{x1:padL,x2:W-padR,y1:H-padB,y2:H-padB,stroke:"var(--line2)","stroke-width":"1"});
+
+    /* hover / scrub readout */
+    var hg=el("g",{style:"display:none","pointer-events":"none"});
+    var hLine=sub(hg,"line",{y1:padT,y2:axisY,stroke:"var(--faint)","stroke-width":"1"});
+    var hDot=sub(hg,"circle",{r:"4",fill:"var(--ink)",stroke:"var(--surface)","stroke-width":"2"});
+    var hTxt=sub(hg,"text",{"font-size":"12","font-family":"'IBM Plex Mono',monospace","font-weight":"700",fill:"var(--ink)",style:"paint-order:stroke;stroke:var(--surface);stroke-width:4px"});
+    hoverEls={g:hg,line:hLine,dot:hDot,txt:hTxt};
+
+    if(pendingFocus!==null){
+      var fg=svg.querySelector('[data-idx="'+pendingFocus+'"]');
+      if(fg) fg.focus({preventScroll:true});
+      pendingFocus=null;
+    }
   }
+
+  /* ----- timeline pointer + keyboard control ----- */
+  var chartSvg = $("caffChart");
+  function dragTarget(e){ return (e.target && e.target.closest) ? e.target.closest("[data-drag]") : null; }
+  function updateHover(e){
+    if(!hoverEls) return;
+    if(dragTarget(e)){ hoverEls.g.style.display="none"; return; }
+    var r=chartSvg.getBoundingClientRect();
+    var sx=(e.clientX-r.left)*(TL.W/r.width), sy=(e.clientY-r.top)*(TL.H/r.height);
+    if(sx<TL.padL || sx>TL.W-TL.padR || sy>TL.axisY || sy<TL.padT-16){ hoverEls.g.style.display="none"; return; }
+    var t=TL.x0 + (sx-TL.padL)/(TL.W-TL.padL-TL.padR)*(TL.x1-TL.x0);
+    var v=levelAt(t, entries);
+    var x=tlXPos(t), y=TL.axisY - (v/lastYMax)*(TL.axisY-TL.padT);
+    hoverEls.line.setAttribute("x1",x); hoverEls.line.setAttribute("x2",x);
+    hoverEls.dot.setAttribute("cx",x); hoverEls.dot.setAttribute("cy",y);
+    var end = x > TL.W-200;
+    hoverEls.txt.setAttribute("x", end ? x-10 : x+10);
+    hoverEls.txt.setAttribute("y", Math.max(56, y-12));
+    hoverEls.txt.setAttribute("text-anchor", end ? "end" : "start");
+    hoverEls.txt.textContent = absToClock(t)+" · "+fmtInt(v)+" MG";
+    hoverEls.g.style.display="block";
+  }
+  chartSvg.addEventListener("pointerdown", function(e){
+    if(e.button!==undefined && e.button>0) return;
+    var g=dragTarget(e);
+    if(g){
+      dragInfo={kind:g.getAttribute("data-drag"), idx: parseInt(g.getAttribute("data-idx"),10)};
+      if(dragInfo.kind==="drink"){ selectedIdx=dragInfo.idx; renderDrinks(); renderSelBar(bedAbs()); }
+      try{ chartSvg.setPointerCapture(e.pointerId); }catch(err){}
+      e.preventDefault();
+    }
+    updateHover(e);
+  });
+  chartSvg.addEventListener("pointermove", function(e){
+    if(dragInfo){
+      var abs=snap5(clientToAbs(e.clientX));
+      if(dragInfo.kind==="drink"){
+        var en=entries[dragInfo.idx]; if(!en){ dragInfo=null; return; }
+        en.time=absToClock(abs); calcCaffeine();
+      } else if(dragInfo.kind==="bed"){
+        var bAbs=Math.min(1795, Math.max(720, abs));
+        $("bedtime").value=absToClock(bAbs); calcCaffeine();
+      }
+      if(hoverEls) hoverEls.g.style.display="none";
+      return;
+    }
+    updateHover(e);
+  });
+  function endDrag(){ if(dragInfo){ dragInfo=null; renderDrinks(); } }
+  chartSvg.addEventListener("pointerup", endDrag);
+  chartSvg.addEventListener("pointercancel", endDrag);
+  chartSvg.addEventListener("pointerleave", function(){ if(!dragInfo && hoverEls) hoverEls.g.style.display="none"; });
+  chartSvg.addEventListener("keydown", function(e){
+    var g=dragTarget(e); if(!g) return;
+    var kind=g.getAttribute("data-drag");
+    var step = e.shiftKey ? 60 : 15;
+    if(kind==="drink"){
+      var idx=parseInt(g.getAttribute("data-idx"),10), en=entries[idx]; if(!en) return;
+      var abs=drinkAbs(en.time);
+      if(e.key==="ArrowLeft") abs-=step; else if(e.key==="ArrowRight") abs+=step;
+      else if(e.key==="Home") abs=TL.x0; else if(e.key==="End") abs=TL.x1-5;
+      else if(e.key==="Delete" || e.key==="Backspace"){ e.preventDefault(); pendingFocus = entries.length>1 ? Math.min(idx, entries.length-2) : null; removeDrink(idx); return; }
+      else return;
+      e.preventDefault();
+      abs=Math.min(TL.x1-5, Math.max(TL.x0, snap5(abs)));
+      en.time=absToClock(abs); pendingFocus=idx; renderDrinks(); calcCaffeine();
+    } else if(kind==="bed"){
+      var bAbs=bedAbs();
+      if(e.key==="ArrowLeft") bAbs-=step; else if(e.key==="ArrowRight") bAbs+=step; else return;
+      e.preventDefault();
+      bAbs=Math.min(1795, Math.max(720, snap5(bAbs)));
+      $("bedtime").value=absToClock(bAbs); calcCaffeine();
+      var bh=chartSvg.querySelector('[data-drag="bed"]'); if(bh) bh.focus({preventScroll:true});
+    }
+  });
+
+  /* selected-drink bar buttons */
+  function nudgeSelected(delta){
+    var en=selEntry(); if(!en) return;
+    var abs=Math.min(TL.x1-5, Math.max(TL.x0, snap5(drinkAbs(en.time)+delta)));
+    en.time=absToClock(abs); renderDrinks(); calcCaffeine();
+  }
+  $("selMinus").addEventListener("click", function(){ nudgeSelected(-15); });
+  $("selPlus").addEventListener("click", function(){ nudgeSelected(15); });
+  $("selRemove").addEventListener("click", function(){ if(selectedIdx>=0) removeDrink(selectedIdx); });
 
   /* ---------- ALCOHOL ---------- */
   var alcPerMinLow=15, alcPerMinHigh=30;
