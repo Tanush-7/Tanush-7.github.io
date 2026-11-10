@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hybrid Work Day Tracker (WFH / Office / Leave)</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--office:#60a5fa;--leave:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.small{padding:6px 12px;font-size:.85rem}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.dow{text-align:center;color:var(--muted);font-size:.75rem;padding:2px}
+.day{aspect-ratio:1;border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.9rem;cursor:pointer;user-select:none;background:#100e22}
+.day:hover{border-color:var(--accent)}
+.day.wfh{background:#123c2c;border-color:var(--good)}
+.day.office{background:#17294a;border-color:var(--office)}
+.day.leave{background:#3d2f10;border-color:var(--leave)}
+.day .tag{font-size:.6rem;margin-top:2px;color:var(--muted)}
+.day.today{outline:2px solid var(--accent)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:.82rem;color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:8px}
+.stat{background:#221f42;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.stat b{display:block;font-size:1.3rem}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Hybrid Work Day Tracker</h1>
+<p class="sub">Tap a day to cycle through Office -> WFH -> Leave -> clear. Know exactly how many days you went in, worked from home, or took off this month.</p>
+
+<div class="card">
+  <div class="nav">
+    <button class="small" id="prev">&larr; Prev</button>
+    <strong id="monthLabel"></strong>
+    <button class="small" id="next">Next &rarr;</button>
+  </div>
+  <div class="cal" id="cal"></div>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--office)"></span>Office</span>
+    <span><span class="dot" style="background:var(--good)"></span>WFH</span>
+    <span><span class="dot" style="background:var(--leave)"></span>Leave</span>
+    <span>Today has a purple outline.</span>
+  </div>
+</div>
+
+<div class="card">
+  <strong id="statsTitle">This month</strong>
+  <div class="stats" id="stats"></div>
+  <p class="note" style="margin-top:8px">Counts only the days you marked. If your company tracks office-attendance minimums (e.g. "3 days a week"), compare these counts with the policy your HR gave you - policies differ between companies and teams.</p>
+</div>
+
+<div class="card">
+  <strong>Year so far</strong>
+  <div class="stats" id="yearStats"></div>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="small" id="exportBtn">Download CSV</button>
+    <button class="small" id="clearBtn">Clear everything</button>
+  </div>
+</div>
+
+<p class="note">Everything stays in your browser's local storage - nothing is uploaded. Built after a r/BangaloreMeetups thread about losing track of WFH vs office days in hybrid work. Free, no sign-up.</p>
+</div>
+
+<script>
+const KEY='hybridWorkTrackerV1';
+let marks={}; // iso date -> 'wfh'|'office'|'leave'
+try{marks=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const iso=(y,m,d)=>y+'-'+pad(m+1)+'-'+pad(d);
+const order=[null,'office','wfh','leave'];
+let view=new Date();view.setDate(1);
+function save(){localStorage.setItem(KEY,JSON.stringify(marks));}
+function render(){
+  const y=view.getFullYear(),m=view.getMonth();
+  $('monthLabel').textContent=view.toLocaleString('en',{month:'long',year:'numeric'});
+  $('statsTitle').textContent=view.toLocaleString('en',{month:'long'})+' summary';
+  const first=new Date(y,m,1).getDay();
+  const dim=new Date(y,m+1,0).getDate();
+  const todayIso=(()=>{const t=new Date();return iso(t.getFullYear(),t.getMonth(),t.getDate());})();
+  let html=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>'<div class="dow">'+d+'</div>').join('');
+  for(let i=0;i<first;i++)html+='<div></div>';
+  for(let d=1;d<=dim;d++){
+    const k=iso(y,m,d),v=marks[k];
+    html+='<div class="day '+(v||'')+(k===todayIso?' today':'')+'" data-k="'+k+'">'+d+
+      (v?'<span class="tag">'+(v==='wfh'?'WFH':v==='office'?'Office':'Leave')+'</span>':'')+'</div>';
+  }
+  $('cal').innerHTML=html;
+  document.querySelectorAll('.day').forEach(el=>el.onclick=()=>{
+    const k=el.dataset.k;const cur=marks[k]||null;
+    const nxt=order[(order.indexOf(cur)+1)%order.length];
+    if(nxt)marks[k]=nxt;else delete marks[k];
+    save();render();
+  });
+  const prefix=y+'-'+pad(m+1)+'-';
+  const counts={office:0,wfh:0,leave:0};
+  Object.keys(marks).forEach(k=>{if(k.startsWith(prefix))counts[marks[k]]++;});
+  const total=counts.office+counts.wfh;
+  $('stats').innerHTML=
+    stat('Office days',counts.office,'var(--office)')+
+    stat('WFH days',counts.wfh,'var(--good)')+
+    stat('Leave days',counts.leave,'var(--leave)')+
+    stat('Office share',total?Math.round(100*counts.office/total)+'%':'-','var(--accent)');
+  const ypre=y+'-';const yc={office:0,wfh:0,leave:0};
+  Object.keys(marks).forEach(k=>{if(k.startsWith(ypre))yc[marks[k]]++;});
+  $('yearStats').innerHTML=stat('Office',yc.office,'var(--office)')+stat('WFH',yc.wfh,'var(--good)')+stat('Leave',yc.leave,'var(--leave)');
+}
+function stat(label,val,color){return '<div class="stat" style="border-color:'+color+'"><b>'+val+'</b><span class="note">'+label+'</span></div>';}
+$('prev').onclick=()=>{view.setMonth(view.getMonth()-1);render();};
+$('next').onclick=()=>{view.setMonth(view.getMonth()+1);render();};
+$('exportBtn').onclick=()=>{
+  let csv='date,status\n';
+  Object.keys(marks).sort().forEach(k=>csv+=k+','+marks[k]+'\n');
+  const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='hybrid-work-days.csv';a.click();
+};
+$('clearBtn').onclick=()=>{if(confirm('Delete all marks?')){marks={};save();render();}};
+render();
+</script>
+</body>
+</html>
