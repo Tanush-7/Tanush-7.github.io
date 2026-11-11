@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gratuity Calculator (India)</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Gratuity Calculator (India)</h1>
+<p class="sub">Leaving a job after a few years and wondering what gratuity adds up to? Run the statutory formula here.</p>
+
+<div class="card">
+  <strong>Before you start</strong>
+  <p class="note" style="margin-top:6px">
+  Gratuity in India is now governed by the <strong>Code on Social Security, 2020</strong> (in force since 21 Nov 2025; it replaced the Payment of Gratuity Act, 1972). This tool applies Section 53 of the Code: for a monthly-rated employee, gratuity is <strong>(last drawn monthly wages / 26) x 15 x years of service</strong>. What is actually payable still depends on your contract, your employer, and - in a dispute - the competent authority. Verify current figures and your case with your employer or the labour authorities.
+  </p>
+</div>
+
+<div class="card">
+  <div class="grid3">
+    <div><label>Last drawn monthly wages (Rs)</label><input id="basic" type="number" min="0" step="500" value="50000"></div>
+    <div><label>Completed years of service</label><input id="years" type="number" min="0" max="50" value="6"></div>
+    <div><label>Extra months (0-11)</label><input id="months" type="number" min="0" max="11" value="7"></div>
+  </div>
+  <p class="note" style="margin-top:6px">"Wages" here means basic pay + dearness allowance + retaining allowance, if any. Under the Code's uniform definition (Section 2(88)), if your other allowances together exceed 50% of total remuneration, the excess is added back into wages - so for many salary structures the gratuity wage base is higher than just "basic". Use your payslip, and ask HR which figure they use.</p>
+  <label>Employment type</label>
+  <select id="ftype">
+    <option value="regular" selected>Regular (5-year rule applies)</option>
+    <option value="fte">Fixed-term contract (eligible after 1 year, pro-rata)</option>
+  </select>
+  <button class="primary" id="calc" style="margin-top:10px">Calculate</button>
+</div>
+
+<div class="card" id="out" style="display:none"></div>
+
+<div class="card">
+  <strong>The rules this calculator applies (Section 53, Code on Social Security 2020)</strong>
+  <table style="margin-top:8px">
+    <tr><th>Rule</th><th>What the Code says</th></tr>
+    <tr><td>Formula</td><td>15 days' wages for every completed year of service (or part exceeding 6 months). For monthly-rated employees: (monthly wages last drawn / 26) x 15, per year. The 26 represents working days in a month.</td></tr>
+    <tr><td>Rounding</td><td>Service in excess of 6 months counts as a full year (6 years 7 months counts as 7). Exactly 6 months does not round up.</td></tr>
+    <tr><td>Eligibility</td><td>5 years of continuous service, payable on superannuation, retirement or resignation. The 5 years are NOT required on death, disablement, or expiry of a fixed-term contract. Fixed-term employees become eligible after 1 year of service, paid pro-rata.</td></tr>
+    <tr><td>Continuous service</td><td>The Code counts a year as continuous if you actually worked at least 240 days in the 12 months (190 days for mines and &lt;6-day-week establishments) - this is the statutory basis of the "4 years 240 days" idea you may have seen.</td></tr>
+    <tr><td>Cap</td><td>Maximum gratuity is as notified by the Central Government - Rs 20 lakh per the Ministry of Labour FAQ (as on 25 Oct 2026). Amounts above the cap are not statutory gratuity, though contracts can give better terms.</td></tr>
+    <tr><td>Tax</td><td>Part of gratuity can be tax-exempt up to limits notified under the Income-tax Act 2025. Check the current limit on incometax.gov.in - this tool computes the gross amount only.</td></tr>
+  </table>
+</div>
+<p class="note">Runs entirely in your browser. Nothing is stored or sent anywhere.</p>
+</div>
+<script>
+function fmt(n){return 'Rs ' + Math.round(n).toLocaleString('en-IN');}
+function gratuity(wages, years, months){
+  const yrs = years + (months > 6 ? 1 : 0);
+  return {years: yrs, amount: (wages / 26) * 15 * yrs};
+}
+document.getElementById('calc').addEventListener('click', () => {
+  const wages = parseFloat(document.getElementById('basic').value) || 0;
+  const years = parseInt(document.getElementById('years').value) || 0;
+  const months = parseInt(document.getElementById('months').value) || 0;
+  const fte = document.getElementById('ftype').value === 'fte';
+  const out = document.getElementById('out');
+  if(wages <= 0 || (years === 0 && months === 0)){ out.style.display='block'; out.innerHTML = '<p class="note warn">Enter your last drawn monthly wages and your service period.</p>'; return; }
+  const r = gratuity(wages, years, months);
+  const capped = r.amount > 2000000;
+  let tenureNote = '';
+  if(!fte && years < 5){
+    tenureNote = '<p class="note warn" style="margin-top:8px">Heads up: regular employees generally need 5 years of continuous service before gratuity is payable. The 5 years are waived on death, disablement, or expiry of a fixed-term contract. A year counts as continuous if you worked at least 240 days in it - check your case with your employer or the labour authorities before counting on this amount.</p>';
+  } else if(fte && years < 1){
+    tenureNote = '<p class="note warn" style="margin-top:8px">Heads up: fixed-term employees become eligible after completing 1 year of service under the contract (paid pro-rata). Under 1 year, the statutory minimum is not met.</p>';
+  }
+  out.style.display = 'block';
+  out.innerHTML =
+    '<div class="win"><div class="note">Estimated gratuity (wages/26 x 15 x ' + r.years + ' year' + (r.years === 1 ? '' : 's') + ')</div>' +
+    '<div class="big">' + fmt(Math.min(r.amount, 2000000)) + '</div>' +
+    (capped ? '<div class="note warn" style="margin-top:4px">Raw figure ' + fmt(r.amount) + ' exceeds the notified Rs 20 lakh cap - shown capped. Contracts can offer better terms than the statute.</div>' : '') +
+    '</div>' +
+    '<table style="margin-top:10px">' +
+    '<tr><th>Step</th><th>Value</th></tr>' +
+    '<tr><td>Service counted (6+ months rounds up)</td><td>' + r.years + ' years</td></tr>' +
+    '<tr><td>Per-year gratuity (wages x 15/26)</td><td>' + fmt(wages * 15 / 26) + '</td></tr>' +
+    '<tr><td>Total (before cap)</td><td>' + fmt(r.amount) + '</td></tr></table>' +
+    tenureNote +
+    '<p class="note" style="margin-top:8px">Estimate under Section 53 of the Code on Social Security, 2020. Your employment terms, the wage base your employer certifies, and (for disputes) the competent authority decide what is actually paid.</p>';
+});
+</script>
+</body>
+</html>
