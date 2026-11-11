@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Offer Comparator - Weighted Decision Matrix</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+td input{padding:6px;font-size:.88rem}
+.lead td{color:var(--good);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Job Offer Comparator</h1>
+<p class="sub">Two offers and can't decide? Score each on what matters to you, set your own weights, and see the totals.</p>
+
+<div class="card">
+  <strong>Before you start</strong>
+  <p class="note" style="margin-top:6px">
+  This matrix only organises <strong>your</strong> ratings - it does not know which offer is better for you. Adjust the weights to what you actually value, score honestly, and treat the totals as a thinking aid, not a verdict. Pay figures you enter are your own numbers (use the in-hand figure from each offer letter); this tool does no tax math.
+  </p>
+</div>
+
+<div class="card">
+  <div class="grid3">
+    <div><label>Offer A name</label><input id="nameA" type="text" value="Offer A"></div>
+    <div><label>Offer B name</label><input id="nameB" type="text" value="Offer B"></div>
+    <div>&nbsp;</div>
+  </div>
+  <div class="grid2">
+    <div><label>A: in-hand pay (Rs / month, your number)</label><input id="payA" type="number" min="0" step="5000" value="0"></div>
+    <div><label>B: in-hand pay (Rs / month, your number)</label><input id="payB" type="number" min="0" step="5000" value="0"></div>
+  </div>
+</div>
+
+<div class="card">
+  <strong>Score each offer 1-10, set the weight each factor deserves</strong>
+  <table style="margin-top:8px" id="matrix">
+    <tr><th>Factor</th><th>Weight (1-10)</th><th id="headA">Offer A</th><th id="headB">Offer B</th></tr>
+  </table>
+  <button class="primary" id="calc" style="margin-top:10px">Compare</button>
+</div>
+
+<div class="card" id="out" style="display:none"></div>
+
+<div class="card">
+  <strong>How to read the result</strong>
+  <table style="margin-top:8px">
+    <tr><th>Idea</th><th>Meaning</th></tr>
+    <tr><td>Weighted score</td><td>Each factor's rating multiplied by its weight, added up. Higher means it fits your stated priorities better - nothing more.</td></tr>
+    <tr><td>Close scores</td><td>If the totals are within a few points, the matrix is telling you the choice is genuinely close; dig into the specific factors where they differ.</td></tr>
+    <tr><td>Pay delta</td><td>Simple arithmetic on the in-hand numbers you entered, shown per year so the trade-off against other factors is visible.</td></tr>
+  </table>
+</div>
+<p class="note">Runs entirely in your browser. Nothing is stored or sent anywhere.</p>
+</div>
+<script>
+const FACTORS = [
+  ['pay', 'Pay & benefits', 8],
+  ['growth', 'Learning & growth', 7],
+  ['wlb', 'Work-life balance', 7],
+  ['role', 'Role & responsibilities', 6],
+  ['location', 'Location & commute', 5],
+  ['stability', 'Company stability', 5],
+  ['culture', 'Team & culture', 6]
+];
+function fmt(n){return 'Rs ' + Math.round(n).toLocaleString('en-IN');}
+function buildMatrix(){
+  const t = document.getElementById('matrix');
+  FACTORS.forEach(f => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + f[1] + '</td>' +
+      '<td><input type="number" min="1" max="10" value="' + f[2] + '" id="w_' + f[0] + '"></td>' +
+      '<td><input type="number" min="1" max="10" value="5" id="a_' + f[0] + '"></td>' +
+      '<td><input type="number" min="1" max="10" value="5" id="b_' + f[0] + '"></td>';
+    t.appendChild(tr);
+  });
+}
+function score(prefix){
+  return FACTORS.reduce((sum, f) => {
+    const w = Math.min(10, Math.max(1, parseFloat(document.getElementById('w_' + f[0]).value) || 1));
+    const r = Math.min(10, Math.max(1, parseFloat(document.getElementById(prefix + f[0]).value) || 1));
+    return sum + w * r;
+  }, 0);
+}
+buildMatrix();
+document.getElementById('calc').addEventListener('click', () => {
+  const nameA = document.getElementById('nameA').value.trim() || 'Offer A';
+  const nameB = document.getElementById('nameB').value.trim() || 'Offer B';
+  const payA = parseFloat(document.getElementById('payA').value) || 0;
+  const payB = parseFloat(document.getElementById('payB').value) || 0;
+  const sa = score('a_'), sb = score('b_');
+  const winner = sa === sb ? null : (sa > sb ? nameA : nameB);
+  const max = FACTORS.reduce((s, f) => s + Math.min(10, Math.max(1, parseFloat(document.getElementById('w_' + f[0]).value) || 1)) * 10, 0);
+  const delta = (payA - payB) * 12;
+  const out = document.getElementById('out');
+  out.style.display = 'block';
+  out.innerHTML =
+    '<table><tr><th></th><th>' + escapeHtml(nameA) + '</th><th>' + escapeHtml(nameB) + '</th></tr>' +
+    '<tr' + (sa >= sb ? ' class="lead"' : '') + '><td>Weighted score</td><td' + (sa < sb ? ' class=""' : '') + '>' + sa + ' / ' + max + '</td>' +
+    '<td>' + sb + ' / ' + max + '</td></tr>' +
+    (payA > 0 && payB > 0 ? '<tr><td>In-hand pay / year</td><td>' + fmt(payA * 12) + '</td><td>' + fmt(payB * 12) + '</td></tr>' +
+    '<tr><td>Annual pay difference</td><td colspan="2">' + (delta === 0 ? 'Same' : (delta > 0 ? escapeHtml(nameA) + ' pays ' + fmt(delta) + ' more per year' : escapeHtml(nameB) + ' pays ' + fmt(-delta) + ' more per year')) + '</td></tr>' : '') +
+    '</table>' +
+    '<div class="win" style="margin-top:10px"><div class="note">' +
+    (winner ? '<strong>' + escapeHtml(winner) + '</strong> scores higher on your priorities, by ' + Math.abs(sa - sb) + ' points.' : 'Both offers tie at ' + sa + ' points on your priorities.') +
+    (Math.abs(sa - sb) <= max * 0.05 ? ' That is a close call - look at the individual factors where they differ rather than the total.' : '') +
+    '</div></div>' +
+    '<p class="note" style="margin-top:8px">These totals reflect only the ratings and weights you chose. Change a weight and the answer can flip - that is the point of the exercise.</p>';
+});
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</body>
+</html>
