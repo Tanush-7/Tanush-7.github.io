@@ -206,24 +206,18 @@
   .credly-note a { color: var(--bronze); font-weight: 600; text-decoration: none; }
   .credly-note a:hover { text-decoration: underline; }
 
-  /* ---- cert carousel: swipe + arrow buttons ---- */
-  .carousel-wrap { position: relative; }
-  .carousel {
-    display: flex; gap: 16px; overflow-x: auto;
-    scroll-snap-type: x mandatory; scroll-behavior: smooth;
-    padding: 4px 2px 18px; scrollbar-width: none;
-  }
-  .carousel::-webkit-scrollbar { display: none; }
+  /* ---- certifications: logo badge grid ---- */
+  .cert-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
   .cert-card {
-    flex: 0 0 240px; scroll-snap-align: start;
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: 10px; padding: 22px 18px; text-align: center;
+    background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line);
+    border-radius: 16px; padding: 20px 12px 18px; text-align: center;
     text-decoration: none; color: var(--text);
-    transition: border-color 0.18s ease, transform 0.18s ease;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
   }
-  .cert-card:hover { border-color: #2E2E2E; transform: translateY(-2px); }
+  .cert-card:hover { border-color: var(--bronze); transform: translateY(-3px); background: rgba(255, 255, 255, 0.07); }
   .logo-tile {
-    width: 72px; height: 72px; margin: 0 auto 14px; border-radius: 18px;
+    width: 76px; height: 76px; margin: 0 auto 14px; border-radius: 18px;
     background: var(--surface2); position: relative; overflow: hidden;
   }
   .logo-tile img {
@@ -235,29 +229,18 @@
     font-weight: 800; font-size: 1.15rem; color: var(--bronze);
   }
   .logo-tile .mono.small { font-size: 0.95rem; }
-  .cert-card strong { display: block; font-size: 1rem; line-height: 1.4; margin-bottom: 4px; }
-  .cert-card span { color: var(--muted); font-size: 0.88rem; line-height: 1.45; display: block; }
+  .cert-card strong { display: block; font-size: 0.95rem; line-height: 1.4; margin-bottom: 4px; }
+  .cert-card span { color: var(--muted); font-size: 0.84rem; line-height: 1.45; display: block; }
   .cert-card .pill {
     display: inline-block; margin-top: 12px;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.7rem;
     color: var(--green); border: 1px solid rgba(74, 222, 128, 0.35);
     border-radius: 999px; padding: 2px 10px;
   }
-  .car-btn {
-    position: absolute; top: 92px; z-index: 2;
-    width: 40px; height: 40px; border-radius: 50%;
-    border: 1px solid var(--line2); background: var(--surface); color: var(--text);
-    font-size: 1.3rem; line-height: 1; cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  }
-  .car-btn:hover { border-color: #3A3A3A; }
-  .car-btn:disabled { opacity: 0.35; cursor: default; }
-  .car-btn.prev { left: -8px; }
-  .car-btn.next { right: -8px; }
-  @media (max-width: 640px) {
-    .car-btn.prev { left: 0; }
-    .car-btn.next { right: 0; }
-  }
+  @media (max-width: 1100px) { .cert-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 900px) { .cert-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 640px) { .cert-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (prefers-reduced-motion: reduce) { .cert-card { transition: none; } }
 
   /* ---- branches: dark band, gold fan like reference ---- */
   .journey-band {
@@ -326,6 +309,7 @@
   <div class="wrap nav-inner">
     <a class="wordmark" href="#">tanush<span>.tech</span></a>
     <div class="links">
+      <a href="#certifications">Certifications</a>
       <a href="#projects">Projects</a>
       <a href="#about">About</a>
       <a href="#map">Map</a>
@@ -352,6 +336,110 @@
       <a class="social-btn" href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly ↗</a>
     </div>
   </header>
+
+  <section id="certifications">
+    <h2>Certifications</h2>
+    <p class="sec-sub">18 earned, 1 in progress. Tap any badge to verify it on Credly.</p>
+    <div class="cert-grid">
+        <a class="cert-card" href="https://www.credly.com/badges/8560358a-4c3a-46d4-810a-e36a53d6c6e9" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#5B4A8A">PMP</span><img src="https://images.credly.com/images/731e7ef4-9b0c-4d7b-ab65-23cc699c0aa3/blob" alt="PMP badge" onerror="this.style.display='none'"></div>
+          <strong>PMP</strong>
+          <span>Project Management Professional</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/19814f38-955e-4f69-985c-8248a6b34546" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/00634f82-b07f-4bbd-a6bb-53de397fc3a6/image.png" alt="AWS Cloud Practitioner badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Cloud Practitioner</strong>
+          <span>Amazon Web Services</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/27439424-d099-4372-a827-394dddb6c495" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/4d4693bb-530e-4bca-9327-de07f3aa2348/image.png" alt="AWS AI Practitioner badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Certified AI Practitioner</strong>
+          <span>Amazon Web Services</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/5f78fdfa-027d-4918-b24d-a7707c913cff" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#0078B4">PSM</span><img src="https://images.credly.com/images/a2790314-008a-4c3d-9553-f5e84eb359ba/image.png" alt="PSM I badge" onerror="this.style.display='none'"></div>
+          <strong>PSM I</strong>
+          <span>Professional Scrum Master</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/925365e1-e5db-4d1d-9dc5-a81f0e8c67fc" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#D97757">C</span><img src="https://images.credly.com/images/7583afbc-4aab-4c7d-8af4-d9af72786ab3/blob" alt="Claude Architect Professional badge" onerror="this.style.display='none'"></div>
+          <strong>Claude Certified Architect — Professional</strong>
+          <span>Anthropic</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/f57f1d7b-f34e-4f16-bc02-63a36cbe7506" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#D97757">C</span><img src="https://images.credly.com/images/f2040db3-3904-4240-8966-e87b1510bea0/blob" alt="Claude Architect Foundations badge" onerror="this.style.display='none'"></div>
+          <strong>Claude Certified Architect — Foundations</strong>
+          <span>Anthropic</span>
+        </a>
+        <div class="cert-card">
+          <div class="logo-tile"><span class="mono" style="color:#4285F4">G</span><img src="https://cdn.simpleicons.org/googlecloud/4285F4" alt="" onerror="this.style.display='none'"></div>
+          <strong>Google Professional Data Engineer</strong>
+          <span>Google Cloud</span>
+          <span class="pill">In progress</span>
+        </div>
+        <a class="cert-card" href="https://www.credly.com/badges/acab06ab-c407-42c5-93d2-1b77d39d710b" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono small" style="color:#D6336C">Pendo</span><img src="https://images.credly.com/images/d7e06f28-2a0b-41b1-9af3-bcd8024e7627/image.png" alt="AI for Product Management badge" onerror="this.style.display='none'"></div>
+          <strong>Pendo AI for Product Management</strong>
+          <span>Pendo</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/beb9e258-9f26-4fff-93c7-b428168855ec" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono small" style="color:#D6336C">Pendo</span><img src="https://images.credly.com/images/b3c64450-6392-48fc-862e-5945102d1043/image.png" alt="Digital Adoption badge" onerror="this.style.display='none'"></div>
+          <strong>Pendo Digital Adoption</strong>
+          <span>Pendo</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/9a7b49c0-7a43-4273-acd9-7aef1b3c788d" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#5B4A8A">PMI</span><img src="https://images.credly.com/images/f5c094f4-e07c-44e0-b685-4ffd8980fd53/blob" alt="PMI GenAI Overview badge" onerror="this.style.display='none'"></div>
+          <strong>PMI GenAI Overview</strong>
+          <span>For Project Managers</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/1aea6dcc-d6f1-49fe-adb7-7cbd1460d0bb" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#5B4A8A">PMI</span><img src="https://images.credly.com/images/aa42e8b5-b36d-4b8c-abbe-c6a6f51fd7d9/blob" alt="Talking to AI badge" onerror="this.style.display='none'"></div>
+          <strong>Talking to AI: Prompt Engineering</strong>
+          <span>For Project Managers</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/969191c0-f723-4e27-b0ce-16d3a21bba21" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/cb620644-88e4-4ee7-83a2-d33a6181e4b8/blob" alt="AWS Partner Agentic AI Essentials badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Partner: Agentic AI Essentials</strong>
+          <span>AWS Partner</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/e6af2e4d-b93e-433b-a971-43a1be38a8f3" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/4f0015a7-9a28-4f59-b292-95315ec19240/blob" alt="AWS Partner Agentic AI Sales badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Partner: Agentic AI Sales</strong>
+          <span>AWS Partner</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/8fe401ce-d0f4-4c88-a96a-00381f8a5a58" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/4b547104-5ce9-43d5-8708-a7abb4b0c7ec/blob" alt="AWS Partner Generative AI Essentials badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Partner: Generative AI Essentials</strong>
+          <span>AWS Partner</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/63caf126-fcd0-46d1-bcc0-e835044f45a5" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/fe3a7b0a-2856-4f77-bab7-347fa16de82b/blob" alt="AWS Partner Generative AI Sales badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Partner: Generative AI Sales</strong>
+          <span>AWS Partner</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/ef0ebbac-a617-434f-9be8-5eb08cd264c3" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/1ba189ae-4afb-4c3b-ae89-f3da3c054f05/blob" alt="AWS Partner Cloud Economics Essentials badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Partner: Cloud Economics Essentials</strong>
+          <span>AWS Partner</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/e2184fdc-b63d-4ff0-b491-51a63ff0937b" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/e51a8579-188d-4363-8ed1-12ad164ef57b/blob" alt="AWS Educate Cloud 101 badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Educate: Introduction to Cloud 101</strong>
+          <span>AWS Educate</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/52037bbb-a78c-475a-af57-867289e0e40e" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/247efe36-9fa6-4209-ad56-0fd522283872/blob" alt="AWS Educate ML Foundations badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Educate: Machine Learning Foundations</strong>
+          <span>AWS Educate</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/612c1bc5-87da-49d4-8b1d-b3b43933f9f7" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/e50c657a-edd9-4c93-b1cf-2b6634b54abf/blob" alt="AWS Educate Generative AI badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Educate: Introduction to Generative AI</strong>
+          <span>AWS Educate</span>
+        </a>
+    </div>
+    <p class="credly-note">Verified live on <a href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly ↗</a> — new badges appear there automatically.</p>
+  </section>
 
   <section id="projects">
     <h2>Projects</h2>
@@ -690,113 +778,6 @@
     </div>
   </section>
 
-  <section>
-    <h2>Certifications</h2>
-    <p class="sec-sub">Swipe, or use the arrows. Tap any badge to verify it on Credly.</p>
-    <div class="carousel-wrap">
-      <button class="car-btn prev" id="certPrev" aria-label="Previous certifications">‹</button>
-      <div class="carousel" id="certCarousel">
-        <a class="cert-card" href="https://www.credly.com/badges/8560358a-4c3a-46d4-810a-e36a53d6c6e9" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#5B4A8A">PMP</span><img src="https://images.credly.com/images/731e7ef4-9b0c-4d7b-ab65-23cc699c0aa3/blob" alt="PMP badge" onerror="this.style.display='none'"></div>
-          <strong>PMP</strong>
-          <span>Project Management Professional</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/19814f38-955e-4f69-985c-8248a6b34546" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/00634f82-b07f-4bbd-a6bb-53de397fc3a6/image.png" alt="AWS Cloud Practitioner badge" onerror="this.style.display='none'"></div>
-          <strong>AWS Cloud Practitioner</strong>
-          <span>Amazon Web Services</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/27439424-d099-4372-a827-394dddb6c495" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/4d4693bb-530e-4bca-9327-de07f3aa2348/image.png" alt="AWS AI Practitioner badge" onerror="this.style.display='none'"></div>
-          <strong>AWS Certified AI Practitioner</strong>
-          <span>Amazon Web Services</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/5f78fdfa-027d-4918-b24d-a7707c913cff" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#0078B4">PSM</span><img src="https://images.credly.com/images/a2790314-008a-4c3d-9553-f5e84eb359ba/image.png" alt="PSM I badge" onerror="this.style.display='none'"></div>
-          <strong>PSM I</strong>
-          <span>Professional Scrum Master</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/925365e1-e5db-4d1d-9dc5-a81f0e8c67fc" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#D97757">C</span><img src="https://images.credly.com/images/7583afbc-4aab-4c7d-8af4-d9af72786ab3/blob" alt="Claude Architect Professional badge" onerror="this.style.display='none'"></div>
-          <strong>Claude Certified Architect — Professional</strong>
-          <span>Anthropic</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/f57f1d7b-f34e-4f16-bc02-63a36cbe7506" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#D97757">C</span><img src="https://images.credly.com/images/f2040db3-3904-4240-8966-e87b1510bea0/blob" alt="Claude Architect Foundations badge" onerror="this.style.display='none'"></div>
-          <strong>Claude Certified Architect — Foundations</strong>
-          <span>Anthropic</span>
-        </a>
-        <div class="cert-card">
-          <div class="logo-tile"><span class="mono" style="color:#4285F4">G</span><img src="https://cdn.simpleicons.org/googlecloud/4285F4" alt="" onerror="this.style.display='none'"></div>
-          <strong>Google Professional Data Engineer</strong>
-          <span>Google Cloud</span>
-          <span class="pill">In progress</span>
-        </div>
-        <a class="cert-card" href="https://www.credly.com/badges/acab06ab-c407-42c5-93d2-1b77d39d710b" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono small" style="color:#D6336C">Pendo</span><img src="https://images.credly.com/images/d7e06f28-2a0b-41b1-9af3-bcd8024e7627/image.png" alt="AI for Product Management badge" onerror="this.style.display='none'"></div>
-          <strong>Pendo AI for Product Management</strong>
-          <span>Pendo</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/beb9e258-9f26-4fff-93c7-b428168855ec" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono small" style="color:#D6336C">Pendo</span><img src="https://images.credly.com/images/b3c64450-6392-48fc-862e-5945102d1043/image.png" alt="Digital Adoption badge" onerror="this.style.display='none'"></div>
-          <strong>Pendo Digital Adoption</strong>
-          <span>Pendo</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/9a7b49c0-7a43-4273-acd9-7aef1b3c788d" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#5B4A8A">PMI</span><img src="https://images.credly.com/images/f5c094f4-e07c-44e0-b685-4ffd8980fd53/blob" alt="PMI GenAI Overview badge" onerror="this.style.display='none'"></div>
-          <strong>PMI GenAI Overview</strong>
-          <span>For Project Managers</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/1aea6dcc-d6f1-49fe-adb7-7cbd1460d0bb" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#5B4A8A">PMI</span><img src="https://images.credly.com/images/aa42e8b5-b36d-4b8c-abbe-c6a6f51fd7d9/blob" alt="Talking to AI badge" onerror="this.style.display='none'"></div>
-          <strong>Talking to AI: Prompt Engineering</strong>
-          <span>For Project Managers</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/969191c0-f723-4e27-b0ce-16d3a21bba21" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/cb620644-88e4-4ee7-83a2-d33a6181e4b8/blob" alt="AWS Partner Agentic AI Essentials badge" onerror="this.style.display='none'"></div>
-          <strong>AWS Partner: Agentic AI Essentials</strong>
-          <span>AWS Partner</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/e6af2e4d-b93e-433b-a971-43a1be38a8f3" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/4f0015a7-9a28-4f59-b292-95315ec19240/blob" alt="AWS Partner Agentic AI Sales badge" onerror="this.style.display='none'"></div>
-          <strong>AWS Partner: Agentic AI Sales</strong>
-          <span>AWS Partner</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/8fe401ce-d0f4-4c88-a96a-00381f8a5a58" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/4b547104-5ce9-43d5-8708-a7abb4b0c7ec/blob" alt="AWS Partner Generative AI Essentials badge" onerror="this.style.display='none'"></div>
-          <strong>AWS Partner: Generative AI Essentials</strong>
-          <span>AWS Partner</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/63caf126-fcd0-46d1-bcc0-e835044f45a5" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/fe3a7b0a-2856-4f77-bab7-347fa16de82b/blob" alt="AWS Partner Generative AI Sales badge" onerror="this.style.display='none'"></div>
-          <strong>AWS Partner: Generative AI Sales</strong>
-          <span>AWS Partner</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/ef0ebbac-a617-434f-9be8-5eb08cd264c3" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/1ba189ae-4afb-4c3b-ae89-f3da3c054f05/blob" alt="AWS Partner Cloud Economics Essentials badge" onerror="this.style.display='none'"></div>
-          <strong>AWS Partner: Cloud Economics Essentials</strong>
-          <span>AWS Partner</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/e2184fdc-b63d-4ff0-b491-51a63ff0937b" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/e51a8579-188d-4363-8ed1-12ad164ef57b/blob" alt="AWS Educate Cloud 101 badge" onerror="this.style.display='none'"></div>
-          <strong>AWS Educate: Introduction to Cloud 101</strong>
-          <span>AWS Educate</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/52037bbb-a78c-475a-af57-867289e0e40e" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/247efe36-9fa6-4209-ad56-0fd522283872/blob" alt="AWS Educate ML Foundations badge" onerror="this.style.display='none'"></div>
-          <strong>AWS Educate: Machine Learning Foundations</strong>
-          <span>AWS Educate</span>
-        </a>
-        <a class="cert-card" href="https://www.credly.com/badges/612c1bc5-87da-49d4-8b1d-b3b43933f9f7" target="_blank" rel="noopener">
-          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/e50c657a-edd9-4c93-b1cf-2b6634b54abf/blob" alt="AWS Educate Generative AI badge" onerror="this.style.display='none'"></div>
-          <strong>AWS Educate: Introduction to Generative AI</strong>
-          <span>AWS Educate</span>
-        </a>
-      </div>
-      <button class="car-btn next" id="certNext" aria-label="Next certifications">›</button>
-    </div>
-    <p class="credly-note">Verified live on <a href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly ↗</a> — new badges appear there automatically.</p>
-  </section>
 
 </div>
 
@@ -1105,24 +1086,6 @@
         el.classList.remove('fade');
       }, 400);
     }, 2800);
-  })();
-</script>
-<script>
-  (function () {
-    var track = document.getElementById('certCarousel');
-    var prev = document.getElementById('certPrev');
-    var next = document.getElementById('certNext');
-    if (!track || !prev || !next) return;
-    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var behavior = reduced ? 'auto' : 'smooth';
-    function update() {
-      prev.disabled = track.scrollLeft <= 0;
-      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
-    }
-    prev.addEventListener('click', function () { track.scrollBy({ left: -256, behavior: behavior }); });
-    next.addEventListener('click', function () { track.scrollBy({ left: 256, behavior: behavior }); });
-    track.addEventListener('scroll', update);
-    update();
   })();
 </script>
 <script>
