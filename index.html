@@ -101,6 +101,7 @@
   .rotator-line { font-size: 1.05rem; color: var(--muted); margin-top: 14px; }
   .rotator { color: var(--accent); font-weight: 600; transition: opacity 0.4s ease; }
   .rotator.fade { opacity: 0; }
+  .hero-cta { margin-top: 26px; }
   .hero-photo { position: relative; }
   .hero-photo::before {
     content: ""; position: absolute; inset: -14px -14px 14px 14px;
@@ -307,6 +308,7 @@
     .cert-card.cert-in { animation: none; }
     .cert-toggle::before { animation: none; }
     .cert-toggle-chev { transition: none; }
+    .beam-btn::before, .beam-btn::after { animation: none; }
   }
   @media (max-width: 1100px) { .cert-grid { grid-template-columns: repeat(4, 1fr); } }
   @media (max-width: 900px) { .cert-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -325,16 +327,33 @@
   .cta h2 em { font-style: normal; color: var(--accent); }
   .cta-sub { color: var(--muted); max-width: 52ch; margin: 12px auto 28px; font-size: 1.05rem; }
   .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .cta-btn {
-    display: inline-block; padding: 12px 26px; border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.98rem;
-    transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  /* ---- beam button: light travelling around the border ---- */
+  .beam-btn {
+    position: relative; display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 28px; border-radius: 999px; cursor: pointer;
+    text-decoration: none; font-weight: 600; font-size: 0.98rem;
+    transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
   }
-  .cta-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .cta-btn.primary { background: var(--accent); border-color: var(--accent); color: #000; }
-  .cta-btn.primary:hover { background: #ff6d33; }
+  .beam-btn > span { position: relative; z-index: 1; }
+  .beam-btn::before, .beam-btn::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px;
+    background: conic-gradient(from var(--angle, 0deg), transparent 0deg, var(--beam, var(--accent)) 36deg, transparent 90deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: spinBorder 3.5s linear infinite; pointer-events: none;
+  }
+  .beam-btn::after { filter: blur(7px); opacity: 0.7; }
+  .beam-btn:hover { transform: translateY(-2px); }
+  .beam-btn.primary { background: var(--accent); border: 1px solid var(--accent); color: #000; --beam: #FFFFFF; }
+  .beam-btn.primary:hover { background: #ff6d33; }
+  .beam-btn.ghost {
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    color: var(--text); --beam: var(--accent);
+  }
+  .beam-btn.ghost:hover { border-color: var(--accent); }
 
   /* ---- footer / contact ---- */
   footer { padding: 48px 0 64px; }
@@ -394,6 +413,9 @@
           I also write about the business behind technology and health.
         </p>
         <p class="rotator-line">Currently exploring <span class="rotator" id="rotator">AI systems</span>.</p>
+        <div class="hero-cta">
+          <a class="beam-btn primary" href="#projects"><span>See my tools ↗</span></a>
+        </div>
         <div class="social-row">
           <a class="social-btn" href="https://www.linkedin.com/in/tanush-r/" target="_blank" rel="noopener">LinkedIn ↗</a>
           <a class="social-btn" href="https://x.com/tanushR_" target="_blank" rel="noopener">X ↗</a>
@@ -871,8 +893,8 @@
       <h2>Let&rsquo;s <em>build</em> something.</h2>
       <p class="cta-sub">Have an idea, a tool you need, or a role that needs a builder? My inbox is open.</p>
       <div class="cta-buttons">
-        <a class="cta-btn primary" href="#projects">See my tools ↗</a>
-        <a class="cta-btn" href="mailto:tanutanush07@gmail.com">Email me ↗</a>
+        <a class="beam-btn primary" href="#projects"><span>See my tools ↗</span></a>
+        <a class="beam-btn ghost" href="mailto:tanutanush07@gmail.com"><span>Email me ↗</span></a>
       </div>
     </div>
   </section>
