@@ -34,7 +34,7 @@
     -webkit-font-smoothing: antialiased;
   }
   ::selection { background: rgba(201, 169, 106, 0.35); color: #fff; }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
   .serif { font-family: "Inter Tight", "Inter", -apple-system, sans-serif; }
 
   /* ---- sticky nav ---- */
@@ -120,12 +120,22 @@
   .goal-line strong { color: var(--bronze); }
 
   /* ---- project cards ---- */
-  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .card {
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: 10px; padding: 22px;
+    border-radius: 10px; padding: 16px 18px;
     transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
   }
+  .card.extra { display: none; }
+  .cards.show-all .card.extra { display: block; }
+  .show-all-btn {
+    display: block; margin: 20px auto 0; padding: 10px 22px;
+    border-radius: 999px; border: 1px solid var(--line2);
+    background: transparent; color: var(--text);
+    font: 600 0.95rem "Inter", -apple-system, sans-serif; cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
+  }
+  .show-all-btn:hover { background: var(--text); color: #000; }
   .card:hover { border-color: #2E2E2E; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6); }
   .card.featured { grid-column: 1 / -1; position: relative; background: #0D0D0D; }
   .card.featured::before {
@@ -140,16 +150,16 @@
   }
   @property --glow-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
   @keyframes glow-spin { to { --glow-angle: 360deg; } }
-  .card h3 { font-family: "Inter Tight", "Inter", -apple-system, sans-serif; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
-  .card p { color: var(--muted); font-size: 0.96rem; margin-bottom: 14px; }
-  .card .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .card h3 { font-family: "Inter Tight", "Inter", -apple-system, sans-serif; font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .card p { color: var(--muted); font-size: 0.88rem; margin-bottom: 10px; }
+  .card .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
   .card .tag {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.72rem; color: var(--bronze);
     border: 1px solid var(--line2); border-radius: 999px; padding: 2px 10px;
   }
   .card .tag.live { color: var(--green); border-color: rgba(74, 222, 128, 0.35); }
-  .card a { color: var(--bronze); font-weight: 600; text-decoration: none; margin-right: 18px; font-size: 0.95rem; }
+  .card a { color: var(--bronze); font-weight: 600; text-decoration: none; margin-right: 18px; font-size: 0.9rem; }
   .card a:hover { text-decoration: underline; }
 
   /* ---- about / now ---- */
@@ -263,6 +273,9 @@
   @media (max-width: 680px) {
     .journey-svg { display: none; }
     .journey-svg-mobile { display: block; }
+  }
+  @media (max-width: 1100px) {
+    .cards { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 640px) {
     .cards { grid-template-columns: 1fr; }
@@ -401,244 +414,245 @@
         <a href="https://tanush.tech/weekend-crew-finder/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/weekend-crew-finder" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Flatmate and PG Matcher</h3>
         <p>Match flats, PGs, and co-living in Bengaluru to your routine: budget, office hub, shift, food, sleep, noise, and guests.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/flatmate-and-pg-matcher/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/flatmate-and-pg-matcher" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Workout Tracker</h3>
         <p>A workout tracker that runs in the browser. Log sessions, keep the habit visible.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush-7.github.io/workout-tracker/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/workout-tracker" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Cooker Whistle Counter</h3>
         <p>Counts pressure-cooker whistles with your mic and alerts at your target, with a manual tap mode and honest limits. A supervised cooking aid, not a safety device.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/cooker-whistle-counter/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/cooker-whistle-counter" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Plant Watering Tracker</h3>
         <p>Custom watering schedules, care notes, tags and progress photos for every plant. Everything is stored on your device only.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/plant-watering-tracker/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/plant-watering-tracker" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Rent &amp; Utility Tracker</h3>
         <p>For landlords and PG owners: track rent, electricity, water and other charges per room, month by month. Data stays on this device; export CSV anytime.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/rent-utility-tracker/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/rent-utility-tracker" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Fix My Documents (India)</h3>
         <p>Which portal, what you'll typically need, and in what order, for correcting Aadhaar, PAN, passport and voter ID. Links only to official portals.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/india-doc-fix-guide/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/india-doc-fix-guide" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>After a Death in the Family</h3>
         <p>An ordered checklist of the formalities families in India face after a death, from the death certificate to banks, insurance and taxes. Progress saved on this device.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/bereavement-checklist-india/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/bereavement-checklist-india" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>BESCOM Bill Checker</h3>
         <p>Rebuilds your BESCOM bill line by line from the real KERC tariff, models Gruha Jyothi, and tells you if what BESCOM charged matches.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/bescom-bill-checker/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/bescom-bill-checker" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Packers and Movers Estimator</h3>
         <p>Local and intercity shifting costs for Bengaluru by home size and distance, with GST, add-ons, and a quote-fairness checker.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/packers-and-movers-estimator/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/packers-and-movers-estimator" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Airport Commute Comparer</h3>
         <p>Vayu Vajra vs cab vs train vs Metro plus bus to Kempegowda airport, ranked by cost, time, reliability and exact leave-by time.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/airport-commute-comparer/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/airport-commute-comparer" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Broadband Comparer</h3>
         <p>JioFiber, Airtel, ACT, BSNL and Hathway across Bengaluru localities, with a GST and installation true-cost calculator.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/broadband-comparer/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/broadband-comparer" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Home Loan Prepayment Calculator</h3>
         <p>Monthly extra, lump sum and annual bonus prepayments, with interest saved, tenure saved and a year-by-year table.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/home-loan-prepayment-calculator/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/home-loan-prepayment-calculator" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>BBMP Property Tax Estimator</h3>
         <p>The real Unit Area Value formula across zones A to F, for residential, commercial and vacant land, with rebate and late penalty.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/bbmp-property-tax-estimator/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/bbmp-property-tax-estimator" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Home Help Cost Planner</h3>
         <p>What a maid, cook, cleaner or driver actually costs in Bengaluru, by area, home size and visits per week.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/home-help-cost-planner/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/home-help-cost-planner" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Gym Cost Comparer</h3>
         <p>Cultpass, Anytime, Gold's, Snap, F45 and local gyms ranked by true cost per visit, with joining fees and lock-in.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/gym-cost-comparer/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/gym-cost-comparer" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Furniture Rent vs Buy</h3>
         <p>Renting vs buying furniture for a Bengaluru flat, with breakeven month, upfront cash and a verdict per item.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/furniture-rent-vs-buy/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/furniture-rent-vs-buy" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Weekend Trip Planner</h3>
         <p>Twelve getaways from Bengaluru with per-person cost splits, leave-by times and hour-by-hour plans for 1 to 3 days.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/weekend-trip-planner/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/weekend-trip-planner" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Noise Event Logger</h3>
         <p>Timestamped log of loud-noise events, kept on your device and exportable as CSV or a printable report. Manual entries always work; mic auto-detection is experimental. Relative, uncalibrated levels; a personal record, not a legal measurement.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/noise-event-logger/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/noise-event-logger" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Lost Pet Poster Generator</h3>
         <p>Fill a short form, get a print-ready A4 lost-pet poster. Photo and details stay in your browser and print cleanly.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/lost-pet-poster-generator/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/lost-pet-poster-generator" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Loan Part-Prepayment Calculator</h3>
         <p>Compare the two ways a lender can apply a prepayment: same EMI with a shorter tenure, or a lower EMI on the same tenure, with interest saved and a year-wise schedule.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/loan-prepayment-calculator/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/loan-prepayment-calculator" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Retirement Corpus Calculator (India)</h3>
         <p>Inflation-adjusted expense at retirement, the corpus it implies, and the step-up SIP to get there, in INR. A projection from your assumptions, not advice.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/retirement-corpus-calculator-india/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/retirement-corpus-calculator-india" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>HSN &amp; GST Rate Verification Assistant</h3>
         <p>Decode an HSN code, reach the official GST portal and CBIC notifications, and keep a worksheet of the rates you verified yourself. Asserts no rates of its own.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/hsn-gst-assistant/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hsn-gst-assistant" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Credit Card Statement Cycle Tracker</h3>
         <p>Group spends by your card&rsquo;s real statement cycle (say the 20th to the 19th), watch the current bill build up and see the estimated due date. Entries stay in your browser.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/credit-card-statement-tracker/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/credit-card-statement-tracker" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Hybrid Work Day Tracker</h3>
         <p>Tap days to mark Office, WFH or Leave and get monthly and year-to-date counts, so hybrid attendance targets stop being guesswork. Entries stay in your browser.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/hybrid-work-day-tracker/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hybrid-work-day-tracker" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Notice Period &amp; Last Working Day Calculator</h3>
         <p>Resignation date plus notice length gives the standard last working day, with days served and remaining tracked, and employer-approved leave adjustment. Date math only; your appointment letter and HR confirmation govern.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/notice-period-calculator/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/notice-period-calculator" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Fuel Mileage &amp; Cost-per-KM Tracker</h3>
         <p>Log full-tank refills with the odometer and get real-world km/l, cost per km and tracked fuel spend. Entries stay in your browser.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/fuel-mileage-tracker/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/fuel-mileage-tracker" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Net Worth Snapshot Calculator</h3>
         <p>Assets minus liabilities at current values, with Indian categories like EPF, PPF, FD and gold, and a CSV export. Entries stay in your browser.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/net-worth-calculator-india/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/net-worth-calculator-india" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Gratuity Calculator (India)</h3>
         <p>Last drawn wages and service years through the statutory formula under the Code on Social Security, 2020: 15 days' wages per year, 6-month rounding, fixed-term and eligibility rules, Rs 20 lakh cap. Gross estimate only; tax and disputes are separate.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/gratuity-calculator-india/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/gratuity-calculator-india" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>HRA Exemption Calculator</h3>
         <p>Old-regime HRA exemption as the least of three tests, with the expanded 8-city 50% list from the Income-tax Rules 2026, plus receipt, landlord-PAN and family-rent notes.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/hra-exemption-calculator/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hra-exemption-calculator" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Freelancer Presumptive Tax Estimator</h3>
         <p>Section 58 presumptive income (the old 44ADA) at 50% of receipts with eligibility limits, plus the advance-tax due date - one instalment by 15 March for presumptive declarants under Section 408(2).</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/freelance-tax-44ada-estimator/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/freelance-tax-44ada-estimator" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Vehicle Document Expiry Tracker</h3>
         <p>PUC, insurance, driving licence and RC expiry dates with days-left status pills, sorted so the most urgent is on top. Entries stay in your browser; CSV export included. Verify official status on Parivahan.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/car-document-expiry-tracker/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/car-document-expiry-tracker" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>Job Offer Comparator</h3>
         <p>Score two offers on pay, growth, work-life balance and more with your own weights, see weighted totals and the annual in-hand difference. A thinking aid, not a verdict.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
         <a href="https://tanush.tech/job-offer-comparator/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/job-offer-comparator" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>tanush.tech — earlier version</h3>
         <p>An earlier build of this personal site, kept in the open.</p>
         <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML</span></div>
         <a href="https://tanush-7.github.io/tanush-tech/" target="_blank" rel="noopener">Visit ↗</a>
         <a href="https://github.com/Tanush-7/tanush-tech" target="_blank" rel="noopener">Code ↗</a>
       </div>
-      <div class="card">
+      <div class="card extra">
         <h3>This site</h3>
         <p>The site you're reading — design, branches map, and project index, all in one HTML file.</p>
         <div class="tags"><span class="tag">HTML</span></div>
         <a href="https://github.com/Tanush-7/Tanush-7.github.io" target="_blank" rel="noopener">Code ↗</a>
       </div>
     </div>
+    <button class="show-all-btn" id="showAllProjects" aria-expanded="false">Show all projects</button>
     <p class="goal-line"><strong>Target:</strong> 20 more builds before the year ends.</p>
   </section>
 
@@ -1092,6 +1106,18 @@
     next.addEventListener('click', function () { track.scrollBy({ left: 256, behavior: behavior }); });
     track.addEventListener('scroll', update);
     update();
+  })();
+</script>
+<script>
+  (function () {
+    var grid = document.querySelector('#projects .cards');
+    var btn = document.getElementById('showAllProjects');
+    if (!grid || !btn) return;
+    btn.addEventListener('click', function () {
+      var open = grid.classList.toggle('show-all');
+      btn.textContent = open ? 'Show less' : 'Show all projects';
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
   })();
 </script>
 </body>
