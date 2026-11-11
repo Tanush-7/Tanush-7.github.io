@@ -81,10 +81,14 @@ document.getElementById('calc').addEventListener('click', () => {
   const totalTax = parseFloat(document.getElementById('totalTax').value) || 0;
   const out = document.getElementById('out');
   if(receipts <= 0){ out.style.display='block'; out.innerHTML = '<p class="note warn">Enter your gross annual receipts.</p>'; return; }
+  if(receipts > 7500000){
+    out.style.display = 'block';
+    out.innerHTML = '<p class="note warn">Receipts above Rs 75 lakh: the presumptive scheme (Section 58(2), Table Sl. No. 3) is not available at this level, so this estimator cannot show a presumptive income or an advance-tax instalment for you. Regular provisions apply instead - books of account and audit under Sections 62 and 63, and the four-instalment advance-tax schedule if your tax liability crosses Rs 10,000. Confirm your computation on incometax.gov.in or with a CA.</p>';
+    return;
+  }
   const income = presumptive(receipts, rate);
   let limitNote = '';
-  if(receipts > 7500000){ limitNote = '<p class="note warn" style="margin-top:8px">Receipts above Rs 75 lakh: the presumptive scheme is not available at this level - books and audit apply.</p>'; }
-  else if(receipts > 5000000){ limitNote = '<p class="note" style="margin-top:8px">Receipts between Rs 50 and 75 lakh: the scheme applies only if your cash receipts stay within 5% of gross receipts.</p>'; }
+  if(receipts > 5000000){ limitNote = '<p class="note" style="margin-top:8px">Receipts between Rs 50 and 75 lakh: the scheme applies only if your cash receipts stay within 5% of gross receipts.</p>'; }
   let html = '<div class="win"><div class="note">Presumptive taxable income (' + rate + '% of receipts)</div><div class="big">' + fmt(income) + '</div></div>' + limitNote;
   if(totalTax > 0){
     const due = Math.max(0, totalTax - tds);
