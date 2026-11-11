@@ -120,114 +120,65 @@
   .goal-line strong { color: var(--bronze); }
 
   /* ---- project cards ---- */
-  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .card {
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: 14px; overflow: hidden;
-    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  /* ---- folders: interactive project holder ---- */
+  .folders {
+    position: relative; display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 150px 20px; padding: 150px 24px 32px;
+    background: #0A0A0A; border: 1px solid var(--line); border-radius: 18px;
   }
-  .card:hover { border-color: #2E2E2E; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6); }
-  .card.extra { display: none; }
-  .cards.show-all .card.extra { display: block; }
-  .show-all-btn {
-    display: block; margin: 20px auto 0; padding: 10px 22px;
-    border-radius: 999px; border: 1px solid var(--line2);
-    background: transparent; color: var(--text);
-    font: 600 0.95rem "Inter", -apple-system, sans-serif; cursor: pointer;
-    transition: background 0.18s ease, color 0.18s ease;
-  }
-  .show-all-btn:hover { background: var(--text); color: #000; }
-  .card.featured { position: relative; background: #0D0D0D; box-shadow: 0 0 44px rgba(201, 169, 106, 0.10), 0 0 90px rgba(167, 139, 250, 0.07); }
-  .card.featured::before {
-    content: ""; position: absolute; inset: -1px; border-radius: 15px; padding: 1px;
-    background: conic-gradient(from var(--glow-angle, 0deg), transparent 0deg, rgba(201, 169, 106, 0.05) 296deg, rgba(201, 169, 106, 0.95) 332deg, transparent 360deg);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    animation: glow-spin 5s linear infinite;
-    pointer-events: none;
-  }
-  .card.featured::after {
-    content: ""; position: absolute; inset: -1px; border-radius: 15px; padding: 1px;
-    background: conic-gradient(from var(--glow-angle2, 180deg), transparent 0deg, rgba(167, 139, 250, 0.05) 296deg, rgba(167, 139, 250, 0.9) 332deg, transparent 360deg);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    animation: glow-spin2 7s linear infinite;
-    pointer-events: none;
-  }
-  @property --glow-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-  @property --glow-angle2 { syntax: "<angle>"; initial-value: 180deg; inherits: false; }
-  @keyframes glow-spin { to { --glow-angle: 360deg; } }
-  @keyframes glow-spin2 { to { --glow-angle2: 540deg; } }
-  @media (prefers-reduced-motion: reduce) {
-    .card.featured::before, .card.featured::after { animation: none; }
-  }
-  .led { height: 120px; background: #050505; border-bottom: 1px solid var(--line); }
-  .led canvas { display: block; width: 100%; height: 100%; }
-  .card-body { padding: 16px 18px 14px; }
-  .card-meta {
-    display: flex; justify-content: space-between; gap: 10px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--faint); margin-bottom: 10px;
-  }
-  .card-meta span:first-child { color: var(--bronze); }
-  .card h3 { font-family: "Inter Tight", "Inter", -apple-system, sans-serif; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
-  .card p { color: var(--muted); font-size: 0.88rem; margin-bottom: 12px; }
-  .card-foot {
-    display: flex; justify-content: space-between; align-items: center; gap: 10px;
-    border-top: 1px solid var(--line); padding-top: 10px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint);
-  }
-  .card-foot .dot { color: var(--green); font-style: normal; }
-  .card-links { white-space: nowrap; }
-  .card-links a { color: var(--bronze); font-weight: 600; text-decoration: none; margin-left: 14px; font-size: 0.85rem; font-family: "Inter", -apple-system, sans-serif; letter-spacing: 0; text-transform: none; }
-  .card-links a:hover { text-decoration: underline; }
-
-  /* ---- halo carousel: featured builds on an arc ---- */
-  .halo { margin-bottom: 44px; }
-  .halo-stage {
-    position: relative; height: 480px; overflow: hidden;
-    cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none;
-  }
-  .halo-stage.dragging { cursor: grabbing; }
-  .halo-hub {
-    position: absolute; left: 50%; top: 60%; transform: translate(-50%, -50%);
-    text-align: center; z-index: 1; pointer-events: none; width: 92%;
-  }
-  .halo-kicker {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--bronze); margin-bottom: 10px;
-  }
-  .halo-title {
-    font-family: "Inter Tight", "Inter", -apple-system, sans-serif;
-    font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text);
-  }
-  .halo-sub { color: var(--muted); font-size: 0.92rem; margin-top: 6px; }
-  .halo-card {
-    position: absolute; left: 50%; top: 0; width: 210px;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  .folder { position: relative; height: 190px; outline: none; }
+  .folder:focus-visible { outline: 1px solid var(--bronze); outline-offset: 4px; border-radius: 12px; }
+  .folder-back { position: absolute; left: 0; right: 0; top: 14px; bottom: 0; background: #111111; border: 1px solid var(--line); border-radius: 12px; }
+  .folder-back::before { content: ""; position: absolute; top: -11px; left: 14px; width: 88px; height: 12px; background: #111111; border: 1px solid var(--line); border-bottom: none; border-radius: 8px 8px 0 0; }
+  .folder-files { position: absolute; left: 50%; top: 0; z-index: 2; }
+  .file {
+    position: absolute; left: 0; top: 0; width: 150px;
+    background: #0D0D0D; border: 1px solid rgba(255, 255, 255, 0.28); border-radius: 10px;
     overflow: hidden; text-decoration: none; color: var(--text);
-    will-change: transform, opacity;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+    transform: translate(-50%, 30px) rotate(var(--ri, 0deg));
+    transform-origin: 50% 100%; z-index: var(--zi, 1);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .halo-card:hover { border-color: #2E2E2E; }
-  .halo-led { display: block; height: 110px; background: #050505; border-bottom: 1px solid var(--line); }
-  .halo-led canvas { display: block; width: 100%; height: 100%; }
-  .halo-name { display: block; font-family: "Inter Tight", "Inter", -apple-system, sans-serif; font-weight: 700; font-size: 1.02rem; padding: 12px 14px 2px; }
-  .halo-line { display: block; color: var(--muted); font-size: 0.82rem; line-height: 1.45; padding: 0 14px 14px; }
-  .halo-dots { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
-  .halo-dots button { width: 6px; height: 6px; border-radius: 50%; border: none; background: var(--line2); cursor: pointer; padding: 0; }
-  .halo-dots button.active { background: var(--bronze); }
+  .file:hover, .file:focus-visible { z-index: 60; }
+  .folder.open .file { transform: translate(calc(-50% + var(--dx, 0px)), -118px) rotate(var(--rot, 0deg)); }
+  .folder:not(.open):hover .file:last-child { transform: translate(-50%, 12px) rotate(-4deg); }
+  .file-name { display: block; padding: 8px 10px 9px; font-size: 0.78rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .folder-front {
+    position: absolute; left: 0; right: 0; top: 48px; bottom: 0; z-index: 3;
+    border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    cursor: pointer; display: flex; flex-direction: column; justify-content: flex-end; padding: 14px 16px;
+  }
+  .folder[data-tint="bronze"] .folder-front { background: rgba(201, 169, 106, 0.14); border-color: rgba(201, 169, 106, 0.35); }
+  .folder[data-tint="black"] .folder-front { background: rgba(0, 0, 0, 0.5); border-color: rgba(255, 255, 255, 0.10); }
+  .folder-toggle {
+    position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    color: var(--text); font-size: 1.05rem; line-height: 1; cursor: pointer;
+    display: grid; place-items: center; padding: 0;
+  }
+  .folder-toggle:hover { background: rgba(255, 255, 255, 0.18); }
+  .folder-name { display: block; font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; }
+  .folder-count { display: block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.68rem; letter-spacing: 0.1em; color: var(--muted); margin-top: 2px; }
+  .folder-picked { position: absolute; left: 0; right: 0; bottom: -24px; min-height: 1em; text-align: center; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.7rem; letter-spacing: 0.12em; color: var(--bronze); }
+  .folders-foot { display: flex; justify-content: flex-end; margin-top: 14px; }
+  .replay-btn {
+    padding: 9px 18px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    color: var(--text); font: 600 0.9rem "Inter", -apple-system, sans-serif;
+  }
+  .replay-btn:hover { background: rgba(255, 255, 255, 0.16); }
+  .led { display: block; height: 62px; background: #050505; border-bottom: 1px solid var(--line); }
+  .led canvas { display: block; width: 100%; height: 100%; }
   @media (max-width: 640px) {
-    .halo-stage { height: 420px; }
-    .halo-card { width: 172px; }
-    .halo-led { height: 92px; }
-    .halo-title { font-size: 1.5rem; }
+    .folders { grid-template-columns: 1fr; padding: 140px 16px 28px; gap: 150px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .file { transition: none; }
   }
 
   /* ---- about / now ---- */
@@ -396,479 +347,352 @@
 
   <section id="projects">
     <h2>Projects</h2>
-    <p class="sec-sub">Best work first. Everything here is live or in the open, with code linked.</p>
-    <div class="halo" id="halo">
-      <div class="halo-stage" id="haloStage">
-        <div class="halo-hub">
-          <div class="halo-kicker">Featured builds</div>
-          <h3 class="halo-title">The ones people actually use</h3>
-          <p class="halo-sub">Drag to spin, or let it drift.</p>
+    <p class="sec-sub">Hover to peek \u00b7 click to open and spread the files. Everything here is live.</p>
+    <div class="folders" id="folders">
+      <div class="folder" data-folder data-name="Cars" data-tint="clear" tabindex="0" role="button" aria-label="Cars folder, 3 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener" data-name="CarScope India" style="--dx:-88px;--rot:-12.0deg;--ri:-2.0deg;--zi:1">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">CarScope India</span>
+          </a>
+          <a class="file" href="https://tanush.tech/fuel-mileage-tracker/" target="_blank" rel="noopener" data-name="Fuel Mileage &amp; Cost-per-KM Tracker" style="--dx:0px;--rot:0.0deg;--ri:0.0deg;--zi:2">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Fuel Mileage &amp; Cost-per-KM Tracker</span>
+          </a>
+          <a class="file" href="https://tanush.tech/car-document-expiry-tracker/" target="_blank" rel="noopener" data-name="Vehicle Document Expiry Tracker" style="--dx:88px;--rot:12.0deg;--ri:2.0deg;--zi:3">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Vehicle Document Expiry Tracker</span>
+          </a>
         </div>
-      <a class="halo-card" href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener" data-i="0">
-        <span class="halo-led"><canvas data-fx="0"></canvas></span>
-        <span class="halo-name">CarScope India</span>
-        <span class="halo-line">Live car prices, 77 models</span>
-      </a>
-      <a class="halo-card" href="https://tanush.tech/vice-cost-calculator/" target="_blank" rel="noopener" data-i="1">
-        <span class="halo-led"><canvas data-fx="1"></canvas></span>
-        <span class="halo-name">Vice Cost Calculator</span>
-        <span class="halo-line">Caffeine, beer, cigarettes in years</span>
-      </a>
-      <a class="halo-card" href="https://tanush.tech/bengaluru-deposit-checker/" target="_blank" rel="noopener" data-i="2">
-        <span class="halo-led"><canvas data-fx="2"></canvas></span>
-        <span class="halo-name">Deposit &amp; Broker Checker</span>
-        <span class="halo-line">Flags the 10-month deposit trap</span>
-      </a>
-      <a class="halo-card" href="https://tanush.tech/salary-trap-analyser/" target="_blank" rel="noopener" data-i="3">
-        <span class="halo-led"><canvas data-fx="0"></canvas></span>
-        <span class="halo-name">Salary Trap Analyser</span>
-        <span class="halo-line">Why a hike still leaves little free</span>
-      </a>
-      <a class="halo-card" href="https://tanush.tech/buy-vs-rent-bengaluru/" target="_blank" rel="noopener" data-i="4">
-        <span class="halo-led"><canvas data-fx="1"></canvas></span>
-        <span class="halo-name">Buy vs Rent — Bengaluru 2BHK</span>
-        <span class="halo-line">Year by year to breakeven</span>
-      </a>
-      <a class="halo-card" href="https://tanush.tech/bescom-bill-checker/" target="_blank" rel="noopener" data-i="5">
-        <span class="halo-led"><canvas data-fx="2"></canvas></span>
-        <span class="halo-name">BESCOM Bill Checker</span>
-        <span class="halo-line">Rebuilds your bill from the KERC tariff</span>
-      </a>
-      <a class="halo-card" href="https://tanush.tech/home-loan-prepayment-calculator/" target="_blank" rel="noopener" data-i="6">
-        <span class="halo-led"><canvas data-fx="0"></canvas></span>
-        <span class="halo-name">Home Loan Prepayment Calculator</span>
-        <span class="halo-line">Interest saved, tenure saved</span>
-      </a>
-      <a class="halo-card" href="https://tanush.tech/bangalore-traffic-pulse/" target="_blank" rel="noopener" data-i="7">
-        <span class="halo-led"><canvas data-fx="1"></canvas></span>
-        <span class="halo-name">Bangalore Traffic Pulse</span>
-        <span class="halo-line">Live traffic for your commute</span>
-      </a>
-      <a class="halo-card" href="https://tanush.tech/wedding-budget-planner/" target="_blank" rel="noopener" data-i="8">
-        <span class="halo-led"><canvas data-fx="2"></canvas></span>
-        <span class="halo-name">Wedding Budget Planner</span>
-        <span class="halo-line">Bengaluru wedding, mapped to salary</span>
-      </a>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Cars folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Cars</span>
+            <span class="folder-count">3 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-      <div class="halo-dots" id="haloDots"></div>
-    </div>
-    <div class="cards">
-      <div class="card featured">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.01 — CARS</span><span>01 / 46</span></div>
-        <h3>CarScope India</h3>
-        <p>Live car-price comparison for the Indian market. Compare prices across the market instead of visiting listing after listing.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · TYPESCRIPT</span><span class="card-links"><a href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/india-car-market" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="Bengaluru Commute" data-tint="bronze" tabindex="0" role="button" aria-label="Bengaluru Commute folder, 4 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/bengaluru-rent-commute-calculator/" target="_blank" rel="noopener" data-name="Bengaluru Rent Commute Calculator" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Bengaluru Rent Commute Calculator</span>
+          </a>
+          <a class="file" href="https://tanush.tech/bengaluru-commute-optimiser/" target="_blank" rel="noopener" data-name="Bengaluru Commute Optimiser" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Bengaluru Commute Optimiser</span>
+          </a>
+          <a class="file" href="https://tanush.tech/bangalore-traffic-pulse/" target="_blank" rel="noopener" data-name="Bangalore Traffic Pulse" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Bangalore Traffic Pulse</span>
+          </a>
+          <a class="file" href="https://tanush.tech/airport-commute-comparer/" target="_blank" rel="noopener" data-name="Airport Commute Comparer" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Airport Commute Comparer</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Bengaluru Commute folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Bengaluru Commute</span>
+            <span class="folder-count">4 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.02 — LIFE</span><span>02 / 46</span></div>
-        <h3>Wedding Budget Planner</h3>
-        <p>Bengaluru wedding budget planner for a 2027-2028 wedding. Venue and vendor costs mapped against salary, savings, and EMIs.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/wedding-budget-planner/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/wedding-budget-planner" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="Bengaluru Home" data-tint="black" tabindex="0" role="button" aria-label="Bengaluru Home folder, 5 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/bescom-bill-checker/" target="_blank" rel="noopener" data-name="BESCOM Bill Checker" style="--dx:-88px;--rot:-12.0deg;--ri:-4.0deg;--zi:1">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">BESCOM Bill Checker</span>
+          </a>
+          <a class="file" href="https://tanush.tech/bbmp-property-tax-estimator/" target="_blank" rel="noopener" data-name="BBMP Property Tax Estimator" style="--dx:-44px;--rot:-6.0deg;--ri:-2.0deg;--zi:2">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">BBMP Property Tax Estimator</span>
+          </a>
+          <a class="file" href="https://tanush.tech/water-bill-and-tanker-tracker/" target="_blank" rel="noopener" data-name="Water Bill and Tanker Tracker" style="--dx:0px;--rot:0.0deg;--ri:0.0deg;--zi:3">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Water Bill and Tanker Tracker</span>
+          </a>
+          <a class="file" href="https://tanush.tech/broadband-comparer/" target="_blank" rel="noopener" data-name="Broadband Comparer" style="--dx:44px;--rot:6.0deg;--ri:2.0deg;--zi:4">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Broadband Comparer</span>
+          </a>
+          <a class="file" href="https://tanush.tech/home-help-cost-planner/" target="_blank" rel="noopener" data-name="Home Help Cost Planner" style="--dx:88px;--rot:12.0deg;--ri:4.0deg;--zi:5">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Home Help Cost Planner</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Bengaluru Home folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Bengaluru Home</span>
+            <span class="folder-count">5 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.03 — BENGALURU</span><span>03 / 46</span></div>
-        <h3>Bengaluru Rent Commute Calculator</h3>
-        <p>What a Bengaluru flat really costs: rent plus commute by area, office, and travel mode, with a Namma Metro picker and household bills.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bengaluru-rent-commute-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/bengaluru-rent-commute-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="Bengaluru Living" data-tint="clear" tabindex="0" role="button" aria-label="Bengaluru Living folder, 4 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/bengaluru-deposit-checker/" target="_blank" rel="noopener" data-name="Deposit &amp; Broker Checker" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Deposit &amp; Broker Checker</span>
+          </a>
+          <a class="file" href="https://tanush.tech/flatmate-and-pg-matcher/" target="_blank" rel="noopener" data-name="Flatmate and PG Matcher" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Flatmate and PG Matcher</span>
+          </a>
+          <a class="file" href="https://tanush.tech/packers-and-movers-estimator/" target="_blank" rel="noopener" data-name="Packers and Movers Estimator" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Packers and Movers Estimator</span>
+          </a>
+          <a class="file" href="https://tanush.tech/furniture-rent-vs-buy/" target="_blank" rel="noopener" data-name="Furniture Rent vs Buy" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Furniture Rent vs Buy</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Bengaluru Living folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Bengaluru Living</span>
+            <span class="folder-count">4 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.04 — BENGALURU</span><span>04 / 46</span></div>
-        <h3>Deposit &amp; Broker Checker</h3>
-        <p>Flags a 10-month deposit, hidden one-time charges and tanker water dependence before you pay a token on a Bengaluru flat.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bengaluru-deposit-checker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/bengaluru-deposit-checker" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="Money Moves" data-tint="bronze" tabindex="0" role="button" aria-label="Money Moves folder, 4 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/salary-trap-analyser/" target="_blank" rel="noopener" data-name="Salary Trap Analyser" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Salary Trap Analyser</span>
+          </a>
+          <a class="file" href="https://tanush.tech/buy-vs-rent-bengaluru/" target="_blank" rel="noopener" data-name="Buy vs Rent — Bengaluru 2BHK" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Buy vs Rent — Bengaluru 2BHK</span>
+          </a>
+          <a class="file" href="https://tanush.tech/home-loan-prepayment-calculator/" target="_blank" rel="noopener" data-name="Home Loan Prepayment Calculator" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Home Loan Prepayment Calculator</span>
+          </a>
+          <a class="file" href="https://tanush.tech/loan-prepayment-calculator/" target="_blank" rel="noopener" data-name="Loan Part-Prepayment Calculator" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Loan Part-Prepayment Calculator</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Money Moves folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Money Moves</span>
+            <span class="folder-count">4 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.05 — BENGALURU</span><span>05 / 46</span></div>
-        <h3>Bengaluru Commute Optimiser</h3>
-        <p>Auto vs cab vs Namma Metro plus last-mile, on monthly cost and hours, for your exact route at peak and off-peak.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bengaluru-commute-optimiser/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/bengaluru-commute-optimiser" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="Money Tools" data-tint="black" tabindex="0" role="button" aria-label="Money Tools folder, 4 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/net-worth-calculator-india/" target="_blank" rel="noopener" data-name="Net Worth Snapshot Calculator" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Net Worth Snapshot Calculator</span>
+          </a>
+          <a class="file" href="https://tanush.tech/retirement-corpus-calculator-india/" target="_blank" rel="noopener" data-name="Retirement Corpus Calculator (India)" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Retirement Corpus Calculator (India)</span>
+          </a>
+          <a class="file" href="https://tanush.tech/credit-card-statement-tracker/" target="_blank" rel="noopener" data-name="Credit Card Statement Cycle Tracker" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Credit Card Statement Cycle Tracker</span>
+          </a>
+          <a class="file" href="https://tanush.tech/hsn-gst-assistant/" target="_blank" rel="noopener" data-name="HSN &amp; GST Rate Verification Assistant" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">HSN &amp; GST Rate Verification Assistant</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Money Tools folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Money Tools</span>
+            <span class="folder-count">4 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.06 — BENGALURU</span><span>06 / 46</span></div>
-        <h3>Bangalore Traffic Pulse</h3>
-        <p>Live traffic for a Bengaluru commute: congestion, speed and delay on your route, with a map and 5-minute refresh. Paste your free Google Maps key for live times.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bangalore-traffic-pulse/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/bangalore-traffic-pulse" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="Tax &amp; Pay" data-tint="clear" tabindex="0" role="button" aria-label="Tax &amp; Pay folder, 4 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/gratuity-calculator-india/" target="_blank" rel="noopener" data-name="Gratuity Calculator (India)" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Gratuity Calculator (India)</span>
+          </a>
+          <a class="file" href="https://tanush.tech/hra-exemption-calculator/" target="_blank" rel="noopener" data-name="HRA Exemption Calculator" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">HRA Exemption Calculator</span>
+          </a>
+          <a class="file" href="https://tanush.tech/freelance-tax-44ada-estimator/" target="_blank" rel="noopener" data-name="Freelancer Presumptive Tax Estimator" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Freelancer Presumptive Tax Estimator</span>
+          </a>
+          <a class="file" href="https://tanush.tech/job-offer-comparator/" target="_blank" rel="noopener" data-name="Job Offer Comparator" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Job Offer Comparator</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Tax &amp; Pay folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Tax &amp; Pay</span>
+            <span class="folder-count">4 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.07 — LIFE</span><span>07 / 46</span></div>
-        <h3>Vice Cost Calculator</h3>
-        <p>Caffeine from coffee, matcha and tea against your bedtime, plus what beer and cigarettes cost in years, with sourced numbers.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/vice-cost-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/vice-cost-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="Career" data-tint="bronze" tabindex="0" role="button" aria-label="Career folder, 3 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/burnout-and-switch-runway-planner/" target="_blank" rel="noopener" data-name="Burnout and Switch Runway Planner" style="--dx:-88px;--rot:-12.0deg;--ri:-2.0deg;--zi:1">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Burnout and Switch Runway Planner</span>
+          </a>
+          <a class="file" href="https://tanush.tech/hybrid-work-day-tracker/" target="_blank" rel="noopener" data-name="Hybrid Work Day Tracker" style="--dx:0px;--rot:0.0deg;--ri:0.0deg;--zi:2">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Hybrid Work Day Tracker</span>
+          </a>
+          <a class="file" href="https://tanush.tech/notice-period-calculator/" target="_blank" rel="noopener" data-name="Notice Period &amp; Last Working Day Calculator" style="--dx:88px;--rot:12.0deg;--ri:2.0deg;--zi:3">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Notice Period &amp; Last Working Day Calculator</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Career folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Career</span>
+            <span class="folder-count">3 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.08 — MONEY</span><span>08 / 46</span></div>
-        <h3>Salary Trap Analyser</h3>
-        <p>Paste pay, rent, EMIs and SIPs. See the real in-hand and why a hike still leaves only a few thousand free.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/salary-trap-analyser/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/salary-trap-analyser" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="Life" data-tint="black" tabindex="0" role="button" aria-label="Life folder, 4 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/wedding-budget-planner/" target="_blank" rel="noopener" data-name="Wedding Budget Planner" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Wedding Budget Planner</span>
+          </a>
+          <a class="file" href="https://tanush.tech/weekend-crew-finder/" target="_blank" rel="noopener" data-name="Weekend Crew Finder" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Weekend Crew Finder</span>
+          </a>
+          <a class="file" href="https://tanush.tech/weekend-trip-planner/" target="_blank" rel="noopener" data-name="Weekend Trip Planner" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Weekend Trip Planner</span>
+          </a>
+          <a class="file" href="https://tanush.tech/lost-pet-poster-generator/" target="_blank" rel="noopener" data-name="Lost Pet Poster Generator" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Lost Pet Poster Generator</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Life folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Life</span>
+            <span class="folder-count">4 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.09 — MONEY</span><span>09 / 46</span></div>
-        <h3>Buy vs Rent — Bengaluru 2BHK</h3>
-        <p>Price, EMI, maintenance and tanker water against rent growth and an invested down payment, year by year to breakeven.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/buy-vs-rent-bengaluru/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/buy-vs-rent-bengaluru" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="Home &amp; Daily" data-tint="clear" tabindex="0" role="button" aria-label="Home &amp; Daily folder, 5 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/cooker-whistle-counter/" target="_blank" rel="noopener" data-name="Cooker Whistle Counter" style="--dx:-88px;--rot:-12.0deg;--ri:-4.0deg;--zi:1">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Cooker Whistle Counter</span>
+          </a>
+          <a class="file" href="https://tanush.tech/plant-watering-tracker/" target="_blank" rel="noopener" data-name="Plant Watering Tracker" style="--dx:-44px;--rot:-6.0deg;--ri:-2.0deg;--zi:2">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Plant Watering Tracker</span>
+          </a>
+          <a class="file" href="https://tanush.tech/noise-event-logger/" target="_blank" rel="noopener" data-name="Noise Event Logger" style="--dx:0px;--rot:0.0deg;--ri:0.0deg;--zi:3">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Noise Event Logger</span>
+          </a>
+          <a class="file" href="https://tanush.tech/rent-utility-tracker/" target="_blank" rel="noopener" data-name="Rent &amp; Utility Tracker" style="--dx:44px;--rot:6.0deg;--ri:2.0deg;--zi:4">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Rent &amp; Utility Tracker</span>
+          </a>
+          <a class="file" href="https://tanush.tech/gym-cost-comparer/" target="_blank" rel="noopener" data-name="Gym Cost Comparer" style="--dx:88px;--rot:12.0deg;--ri:4.0deg;--zi:5">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Gym Cost Comparer</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Home &amp; Daily folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Home &amp; Daily</span>
+            <span class="folder-count">5 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.10 — BENGALURU</span><span>10 / 46</span></div>
-        <h3>Water Bill and Tanker Tracker</h3>
-        <p>Checks any Bengaluru monthly water charge against a fair range, logs bills and tanker deliveries, and writes the message to your landlord.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/water-bill-and-tanker-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/water-bill-and-tanker-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="Wellness" data-tint="bronze" tabindex="0" role="button" aria-label="Wellness folder, 2 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/vice-cost-calculator/" target="_blank" rel="noopener" data-name="Vice Cost Calculator" style="--dx:-88px;--rot:-12.0deg;--ri:-1.0deg;--zi:1">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">Vice Cost Calculator</span>
+          </a>
+          <a class="file" href="https://tanush-7.github.io/workout-tracker/" target="_blank" rel="noopener" data-name="Workout Tracker" style="--dx:88px;--rot:12.0deg;--ri:1.0deg;--zi:2">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">Workout Tracker</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open Wellness folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">Wellness</span>
+            <span class="folder-count">2 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.11 — CAREER</span><span>11 / 46</span></div>
-        <h3>Burnout and Switch Runway Planner</h3>
-        <p>Burnout score from work hours, commute, and recovery, months of runway if you quit today, and a 90-day switch plan.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/burnout-and-switch-runway-planner/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/burnout-and-switch-runway-planner" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.12 — LIFE</span><span>12 / 46</span></div>
-        <h3>Weekend Crew Finder</h3>
-        <p>Find a weekend crew in Bengaluru for badminton, runs, treks, football, cycling, and board games. Match by area, day, level, and budget.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/weekend-crew-finder/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/weekend-crew-finder" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.13 — BENGALURU</span><span>13 / 46</span></div>
-        <h3>Flatmate and PG Matcher</h3>
-        <p>Match flats, PGs, and co-living in Bengaluru to your routine: budget, office hub, shift, food, sleep, noise, and guests.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/flatmate-and-pg-matcher/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/flatmate-and-pg-matcher" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.14 — HEALTH</span><span>14 / 46</span></div>
-        <h3>Workout Tracker</h3>
-        <p>A workout tracker that runs in the browser. Log sessions, keep the habit visible.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush-7.github.io/workout-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/workout-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.15 — HOME</span><span>15 / 46</span></div>
-        <h3>Cooker Whistle Counter</h3>
-        <p>Counts pressure-cooker whistles with your mic and alerts at your target, with a manual tap mode and honest limits. A supervised cooking aid, not a safety device.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/cooker-whistle-counter/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/cooker-whistle-counter" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.16 — HOME</span><span>16 / 46</span></div>
-        <h3>Plant Watering Tracker</h3>
-        <p>Custom watering schedules, care notes, tags and progress photos for every plant. Everything is stored on your device only.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/plant-watering-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/plant-watering-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.17 — MONEY</span><span>17 / 46</span></div>
-        <h3>Rent &amp; Utility Tracker</h3>
-        <p>For landlords and PG owners: track rent, electricity, water and other charges per room, month by month. Data stays on this device; export CSV anytime.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/rent-utility-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/rent-utility-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.18 — INDIA</span><span>18 / 46</span></div>
-        <h3>Fix My Documents (India)</h3>
-        <p>Which portal, what you'll typically need, and in what order, for correcting Aadhaar, PAN, passport and voter ID. Links only to official portals.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/india-doc-fix-guide/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/india-doc-fix-guide" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.19 — INDIA</span><span>19 / 46</span></div>
-        <h3>After a Death in the Family</h3>
-        <p>An ordered checklist of the formalities families in India face after a death, from the death certificate to banks, insurance and taxes. Progress saved on this device.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bereavement-checklist-india/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/bereavement-checklist-india" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.20 — BENGALURU</span><span>20 / 46</span></div>
-        <h3>BESCOM Bill Checker</h3>
-        <p>Rebuilds your BESCOM bill line by line from the real KERC tariff, models Gruha Jyothi, and tells you if what BESCOM charged matches.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bescom-bill-checker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/bescom-bill-checker" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.21 — BENGALURU</span><span>21 / 46</span></div>
-        <h3>Packers and Movers Estimator</h3>
-        <p>Local and intercity shifting costs for Bengaluru by home size and distance, with GST, add-ons, and a quote-fairness checker.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/packers-and-movers-estimator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/packers-and-movers-estimator" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.22 — BENGALURU</span><span>22 / 46</span></div>
-        <h3>Airport Commute Comparer</h3>
-        <p>Vayu Vajra vs cab vs train vs Metro plus bus to Kempegowda airport, ranked by cost, time, reliability and exact leave-by time.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/airport-commute-comparer/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/airport-commute-comparer" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.23 — BENGALURU</span><span>23 / 46</span></div>
-        <h3>Broadband Comparer</h3>
-        <p>JioFiber, Airtel, ACT, BSNL and Hathway across Bengaluru localities, with a GST and installation true-cost calculator.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/broadband-comparer/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/broadband-comparer" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.24 — MONEY</span><span>24 / 46</span></div>
-        <h3>Home Loan Prepayment Calculator</h3>
-        <p>Monthly extra, lump sum and annual bonus prepayments, with interest saved, tenure saved and a year-by-year table.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/home-loan-prepayment-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/home-loan-prepayment-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.25 — BENGALURU</span><span>25 / 46</span></div>
-        <h3>BBMP Property Tax Estimator</h3>
-        <p>The real Unit Area Value formula across zones A to F, for residential, commercial and vacant land, with rebate and late penalty.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bbmp-property-tax-estimator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/bbmp-property-tax-estimator" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.26 — BENGALURU</span><span>26 / 46</span></div>
-        <h3>Home Help Cost Planner</h3>
-        <p>What a maid, cook, cleaner or driver actually costs in Bengaluru, by area, home size and visits per week.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/home-help-cost-planner/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/home-help-cost-planner" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.27 — LIFE</span><span>27 / 46</span></div>
-        <h3>Gym Cost Comparer</h3>
-        <p>Cultpass, Anytime, Gold's, Snap, F45 and local gyms ranked by true cost per visit, with joining fees and lock-in.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/gym-cost-comparer/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/gym-cost-comparer" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.28 — HOME</span><span>28 / 46</span></div>
-        <h3>Furniture Rent vs Buy</h3>
-        <p>Renting vs buying furniture for a Bengaluru flat, with breakeven month, upfront cash and a verdict per item.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/furniture-rent-vs-buy/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/furniture-rent-vs-buy" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.29 — LIFE</span><span>29 / 46</span></div>
-        <h3>Weekend Trip Planner</h3>
-        <p>Twelve getaways from Bengaluru with per-person cost splits, leave-by times and hour-by-hour plans for 1 to 3 days.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/weekend-trip-planner/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/weekend-trip-planner" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.30 — HOME</span><span>30 / 46</span></div>
-        <h3>Noise Event Logger</h3>
-        <p>Timestamped log of loud-noise events, kept on your device and exportable as CSV or a printable report. Manual entries always work; mic auto-detection is experimental. Relative, uncalibrated levels; a personal record, not a legal measurement.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/noise-event-logger/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/noise-event-logger" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.31 — LIFE</span><span>31 / 46</span></div>
-        <h3>Lost Pet Poster Generator</h3>
-        <p>Fill a short form, get a print-ready A4 lost-pet poster. Photo and details stay in your browser and print cleanly.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/lost-pet-poster-generator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/lost-pet-poster-generator" target="_blank" rel="noopener">Code ↗</a></span></div>
+      <div class="folder" data-folder data-name="India &amp; Site" data-tint="black" tabindex="0" role="button" aria-label="India &amp; Site folder, 4 items">
+        <div class="folder-back"></div>
+        <div class="folder-files">
+          <a class="file" href="https://tanush.tech/india-doc-fix-guide/" target="_blank" rel="noopener" data-name="Fix My Documents (India)" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">Fix My Documents (India)</span>
+          </a>
+          <a class="file" href="https://tanush.tech/bereavement-checklist-india/" target="_blank" rel="noopener" data-name="After a Death in the Family" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
+            <span class="led"><canvas data-fx="1"></canvas></span>
+            <span class="file-name">After a Death in the Family</span>
+          </a>
+          <a class="file" href="https://tanush-7.github.io/tanush-tech/" target="_blank" rel="noopener" data-name="tanush.tech — earlier version" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
+            <span class="led"><canvas data-fx="2"></canvas></span>
+            <span class="file-name">tanush.tech — earlier version</span>
+          </a>
+          <a class="file" href="https://github.com/Tanush-7/Tanush-7.github.io" target="_blank" rel="noopener" data-name="This site" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
+            <span class="led"><canvas data-fx="0"></canvas></span>
+            <span class="file-name">This site</span>
+          </a>
+        </div>
+        <div class="folder-front">
+          <button class="folder-toggle" type="button" aria-label="Open India &amp; Site folder" aria-expanded="false">+</button>
+          <div class="folder-label">
+            <span class="folder-name">India &amp; Site</span>
+            <span class="folder-count">4 items</span>
+          </div>
+        </div>
+        <div class="folder-picked" aria-live="polite"></div>
       </div>
     </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.32 — MONEY</span><span>32 / 46</span></div>
-        <h3>Loan Part-Prepayment Calculator</h3>
-        <p>Compare the two ways a lender can apply a prepayment: same EMI with a shorter tenure, or a lower EMI on the same tenure, with interest saved and a year-wise schedule.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/loan-prepayment-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/loan-prepayment-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
+    <div class="folders-foot">
+      <button class="replay-btn" id="replayFolders" type="button">↺ Replay</button>
     </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.33 — MONEY</span><span>33 / 46</span></div>
-        <h3>Retirement Corpus Calculator (India)</h3>
-        <p>Inflation-adjusted expense at retirement, the corpus it implies, and the step-up SIP to get there, in INR. A projection from your assumptions, not advice.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/retirement-corpus-calculator-india/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/retirement-corpus-calculator-india" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.34 — MONEY</span><span>34 / 46</span></div>
-        <h3>HSN &amp; GST Rate Verification Assistant</h3>
-        <p>Decode an HSN code, reach the official GST portal and CBIC notifications, and keep a worksheet of the rates you verified yourself. Asserts no rates of its own.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/hsn-gst-assistant/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hsn-gst-assistant" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.35 — MONEY</span><span>35 / 46</span></div>
-        <h3>Credit Card Statement Cycle Tracker</h3>
-        <p>Group spends by your card&rsquo;s real statement cycle (say the 20th to the 19th), watch the current bill build up and see the estimated due date. Entries stay in your browser.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/credit-card-statement-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/credit-card-statement-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.36 — CAREER</span><span>36 / 46</span></div>
-        <h3>Hybrid Work Day Tracker</h3>
-        <p>Tap days to mark Office, WFH or Leave and get monthly and year-to-date counts, so hybrid attendance targets stop being guesswork. Entries stay in your browser.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/hybrid-work-day-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hybrid-work-day-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.37 — CAREER</span><span>37 / 46</span></div>
-        <h3>Notice Period &amp; Last Working Day Calculator</h3>
-        <p>Resignation date plus notice length gives the standard last working day, with days served and remaining tracked, and employer-approved leave adjustment. Date math only; your appointment letter and HR confirmation govern.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/notice-period-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/notice-period-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.38 — CARS</span><span>38 / 46</span></div>
-        <h3>Fuel Mileage &amp; Cost-per-KM Tracker</h3>
-        <p>Log full-tank refills with the odometer and get real-world km/l, cost per km and tracked fuel spend. Entries stay in your browser.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/fuel-mileage-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/fuel-mileage-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.39 — MONEY</span><span>39 / 46</span></div>
-        <h3>Net Worth Snapshot Calculator</h3>
-        <p>Assets minus liabilities at current values, with Indian categories like EPF, PPF, FD and gold, and a CSV export. Entries stay in your browser.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/net-worth-calculator-india/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/net-worth-calculator-india" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.40 — LIFE</span><span>40 / 46</span></div>
-        <h3>Gratuity Calculator (India)</h3>
-        <p>Last drawn wages and service years through the statutory formula under the Code on Social Security, 2020: 15 days' wages per year, 6-month rounding, fixed-term and eligibility rules, Rs 20 lakh cap. Gross estimate only; tax and disputes are separate.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/gratuity-calculator-india/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/gratuity-calculator-india" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.41 — LIFE</span><span>41 / 46</span></div>
-        <h3>HRA Exemption Calculator</h3>
-        <p>Old-regime HRA exemption as the least of three tests, with the expanded 8-city 50% list from the Income-tax Rules 2026, plus receipt, landlord-PAN and family-rent notes.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/hra-exemption-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hra-exemption-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.42 — LIFE</span><span>42 / 46</span></div>
-        <h3>Freelancer Presumptive Tax Estimator</h3>
-        <p>Section 58 presumptive income (the old 44ADA) at 50% of receipts with eligibility limits, plus the advance-tax due date - one instalment by 15 March for presumptive declarants under Section 408(2).</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/freelance-tax-44ada-estimator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/freelance-tax-44ada-estimator" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.43 — LIFE</span><span>43 / 46</span></div>
-        <h3>Vehicle Document Expiry Tracker</h3>
-        <p>PUC, insurance, driving licence and RC expiry dates with days-left status pills, sorted so the most urgent is on top. Entries stay in your browser; CSV export included. Verify official status on Parivahan.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/car-document-expiry-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/car-document-expiry-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="1"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.44 — LIFE</span><span>44 / 46</span></div>
-        <h3>Job Offer Comparator</h3>
-        <p>Score two offers on pay, growth, work-life balance and more with your own weights, see weighted totals and the annual in-hand difference. A thinking aid, not a verdict.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/job-offer-comparator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/job-offer-comparator" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="2"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.45 — SITE</span><span>45 / 46</span></div>
-        <h3>tanush.tech — earlier version</h3>
-        <p>An earlier build of this personal site, kept in the open.</p>
-        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML</span><span class="card-links"><a href="https://tanush-7.github.io/tanush-tech/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/tanush-tech" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-      <div class="card extra">
-      <div class="led"><canvas data-fx="0"></canvas></div>
-      <div class="card-body">
-        <div class="card-meta"><span>CH.46 — SITE</span><span>46 / 46</span></div>
-        <h3>This site</h3>
-        <p>The site you're reading — design, branches map, and project index, all in one HTML file.</p>
-        <div class="card-foot"><span>HTML</span><span class="card-links"><a href="https://github.com/Tanush-7/Tanush-7.github.io" target="_blank" rel="noopener">Code ↗</a></span></div>
-      </div>
-    </div>
-    </div>
-    <button class="show-all-btn" id="showAllProjects" aria-expanded="false">Show all projects</button>
     <p class="goal-line"><strong>Target:</strong> 20 more builds before the year ends.</p>
   </section>
 
@@ -1326,20 +1150,8 @@
 </script>
 <script>
   (function () {
-    var grid = document.querySelector('#projects .cards');
-    var btn = document.getElementById('showAllProjects');
-    if (!grid || !btn) return;
-    btn.addEventListener('click', function () {
-      var open = grid.classList.toggle('show-all');
-      btn.textContent = open ? 'Show less' : 'Show all projects';
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-  })();
-</script>
-<script>
-  (function () {
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var panels = Array.prototype.slice.call(document.querySelectorAll(".led canvas, .halo-led canvas"));
+    var panels = Array.prototype.slice.call(document.querySelectorAll(".led canvas"));
     if (!panels.length) return;
     var COLORS = ["#E8B84B", "#34D399", "#A78BFA"];
     function setup(cv) {
@@ -1427,114 +1239,43 @@
 </script>
 <script>
   (function () {
-    var stage = document.getElementById("haloStage");
-    var dotsWrap = document.getElementById("haloDots");
-    if (!stage) return;
-    var cards = Array.prototype.slice.call(stage.querySelectorAll(".halo-card"));
-    var n = cards.length;
-    if (!n) return;
-    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var step = 11, offset = 0, velocity = 0, dragging = false, lastX = 0, lastMove = 0, idleSince = Date.now();
-    var maxOff = ((n - 1) / 2) * step + 15;
-    function geom() {
-      var w = stage.clientWidth;
-      var R = Math.max(w * 0.58, 380);
-      return { R: R, cy: R + 20, cx: w / 2 };
-    }
-    function layout() {
-      var g = geom();
-      var maxA = ((n - 1) / 2) * step;
-      cards.forEach(function (el, i) {
-        var a = (i - (n - 1) / 2) * step + offset;
-        var rad = a * Math.PI / 180;
-        var dx = g.R * Math.sin(rad);
-        var y = g.cy - g.R * Math.cos(rad);
-        var k = Math.min(1, Math.abs(a) / (maxA + 15));
-        var s = 1 - 0.16 * k;
-        el.style.transform = "translate(-50%, 0) translate(" + dx.toFixed(1) + "px, " + y.toFixed(1) + "px) rotate(" + a.toFixed(2) + "deg) scale(" + s.toFixed(3) + ")";
-        el.style.opacity = (1 - 0.4 * k).toFixed(2);
-        el.style.zIndex = String(100 - Math.round(Math.abs(a)));
-        el.classList.toggle("is-center", Math.abs(a) < step / 2);
-      });
-      var center = 0, best = 1e9;
-      cards.forEach(function (el, i) {
-        var a = Math.abs((i - (n - 1) / 2) * step + offset);
-        if (a < best) { best = a; center = i; }
-      });
-      Array.prototype.forEach.call(dotsWrap.children, function (d, i) {
-        d.classList.toggle("active", i === center);
-      });
-    }
-    var dots = cards.map(function (_, i) {
-      var b = document.createElement("button");
-      b.setAttribute("aria-label", "Show card " + (i + 1));
-      b.addEventListener("click", function () { goTo(i); });
-      dotsWrap.appendChild(b);
-      return b;
-    });
-    var tween = null;
-    function goTo(i) {
-      var target = -((i - (n - 1) / 2) * step);
-      var start = offset, t0 = null;
-      if (tween) cancelAnimationFrame(tween);
-      function frame(ts) {
-        if (!t0) t0 = ts;
-        var p = Math.min(1, (ts - t0) / 450);
-        var e = 1 - Math.pow(1 - p, 3);
-        offset = start + (target - start) * e;
-        layout();
-        if (p < 1) tween = requestAnimationFrame(frame); else tween = null;
+    var folders = Array.prototype.slice.call(document.querySelectorAll("[data-folder]"));
+    if (!folders.length) return;
+    folders.forEach(function (f) {
+      var front = f.querySelector(".folder-front");
+      var toggle = f.querySelector(".folder-toggle");
+      var picked = f.querySelector(".folder-picked");
+      function setOpen(open) {
+        f.classList.toggle("open", open);
+        toggle.textContent = open ? "\u00d7" : "+";
+        toggle.setAttribute("aria-label", (open ? "Close " : "Open ") + f.getAttribute("data-name") + " folder");
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        if (!open) picked.textContent = "";
       }
-      tween = requestAnimationFrame(frame);
-    }
-    function clamp() { offset = Math.max(-maxOff, Math.min(maxOff, offset)); }
-    stage.addEventListener("pointerdown", function (e) {
-      dragging = true; lastX = e.clientX; lastMove = Date.now(); velocity = 0;
-      stage.classList.add("dragging");
-      stage.setPointerCapture(e.pointerId);
-      if (tween) { cancelAnimationFrame(tween); tween = null; }
+      function toggleOpen() { setOpen(!f.classList.contains("open")); }
+      front.addEventListener("click", function () { toggleOpen(); });
+      toggle.addEventListener("click", function (e) { e.stopPropagation(); toggleOpen(); });
+      f.addEventListener("keydown", function (e) {
+        if (e.target === f && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggleOpen(); }
+      });
+      f.querySelectorAll(".file").forEach(function (file) {
+        file.addEventListener("click", function (e) { e.stopPropagation(); });
+        file.addEventListener("mouseenter", function () { picked.textContent = file.getAttribute("data-name"); });
+        file.addEventListener("focus", function () { picked.textContent = file.getAttribute("data-name"); });
+        file.addEventListener("mouseleave", function () { picked.textContent = ""; });
+      });
     });
-    stage.addEventListener("pointermove", function (e) {
-      if (!dragging) return;
-      var now = Date.now();
-      var dx = e.clientX - lastX;
-      velocity = dx / Math.max(1, now - lastMove);
-      lastX = e.clientX; lastMove = now;
-      offset += dx / 3.5;
-      clamp();
-      layout();
+    var replay = document.getElementById("replayFolders");
+    if (replay) replay.addEventListener("click", function () {
+      folders.forEach(function (f) {
+        f.classList.remove("open");
+        var t = f.querySelector(".folder-toggle");
+        t.textContent = "+";
+        t.setAttribute("aria-label", "Open " + f.getAttribute("data-name") + " folder");
+        t.setAttribute("aria-expanded", "false");
+        f.querySelector(".folder-picked").textContent = "";
+      });
     });
-    function endDrag() {
-      if (!dragging) return;
-      dragging = false;
-      stage.classList.remove("dragging");
-      idleSince = Date.now();
-    }
-    stage.addEventListener("pointerup", endDrag);
-    stage.addEventListener("pointercancel", endDrag);
-    stage.addEventListener("click", function (e) {
-      if (Math.abs(velocity) > 0.4) { e.preventDefault(); e.stopPropagation(); }
-    }, true);
-    var raf = null;
-    function tick() {
-      if (!dragging && !reduce) {
-        if (Math.abs(velocity) > 0.02) {
-          offset += velocity * 16;
-          velocity *= 0.94;
-          clamp();
-          layout();
-        } else if (Date.now() - idleSince > 3000) {
-          offset += 0.28;
-          if (offset > maxOff) offset = -maxOff;
-          clamp();
-          layout();
-        }
-      }
-      raf = requestAnimationFrame(tick);
-    }
-    layout();
-    window.addEventListener("resize", layout);
-    if (!reduce) raf = requestAnimationFrame(tick);
   })();
 </script>
 </body>
