@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freelancer Presumptive Tax & Advance Tax Estimator (India)</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Freelancer Presumptive Tax Estimator</h1>
+<p class="sub">Freelancing and lost on taxes? Work out presumptive income (the old "44ADA", now Section 58 of the Income-tax Act 2025) and when advance tax is due.</p>
+
+<div class="card">
+  <strong>Before you start</strong>
+  <p class="note" style="margin-top:6px">
+  This is an estimator, not filing advice. The Income-tax Act 2025 applies from tax year 2026-27; the presumptive scheme for professionals (50% of receipts) lives in <strong>Section 58(2)</strong> of the new Act - it was Section 44ADA of the 1961 Act. Whether you qualify, which regime suits you, and what you finally owe depend on your full-year picture - confirm on <strong>incometax.gov.in</strong> or with a CA before you file. Foreign-client income, GST registration and TDS credits each have their own rules not covered here.
+  </p>
+</div>
+
+<div class="card">
+  <strong>1. Presumptive income - Section 58(2), professionals</strong>
+  <div class="grid3" style="margin-top:8px">
+    <div><label>Gross annual receipts (Rs)</label><input id="receipts" type="number" min="0" step="10000" value="3000000"></div>
+    <div><label>Presumptive rate (%)</label><input id="presRate" type="number" min="50" max="100" value="50"></div>
+    <div><label>TDS already deducted (Rs)</label><input id="tds" type="number" min="0" step="1000" value="0"></div>
+  </div>
+  <p class="note" style="margin-top:6px">The scheme declares 50% of gross receipts as income (or your actual profit if higher). Eligibility: resident individuals and non-LLP firms in specified professions, with receipts up to Rs 50 lakh - or Rs 75 lakh when cash receipts stay within 5%. Declaring <em>less</em> than 50% removes the benefit and triggers books and audit if your income is above the basic exemption.</p>
+  <label>2. Your estimated total tax for the year (Rs)</label>
+  <input id="totalTax" type="number" min="0" step="1000" value="0" placeholder="Estimate it with the department's calculator on incometax.gov.in">
+</div>
+
+<div class="card">
+  <button class="primary" id="calc">Estimate</button>
+  <div id="out" style="display:none;margin-top:10px"></div>
+</div>
+
+<div class="card">
+  <strong>The rules this estimator applies</strong>
+  <table style="margin-top:8px">
+    <tr><th>Rule</th><th>What the law says</th></tr>
+    <tr><td>Presumptive income</td><td>Section 58(2) of the Income-tax Act 2025: for specified professionals (Table Sl. No. 3, the old 44ADA), deemed income is 50% of gross receipts - or actual profit if higher. Receipts ceiling Rs 50 lakh / Rs 75 lakh (cash within 5%).</td></tr>
+    <tr><td>Advance tax - presumptive</td><td>If you declare under the presumptive scheme, Section 408(2) lets you pay the <strong>whole</strong> year's advance tax in one instalment by <strong>15 March</strong> - no quarterly instalments needed.</td></tr>
+    <tr><td>Advance tax - regular</td><td>Not declaring presumptively? Section 408(1): four instalments - 15% by 15 Jun, 45% (cumulative) by 15 Sep, 75% by 15 Dec, 100% by 15 Mar.</td></tr>
+    <tr><td>When advance tax applies</td><td>Section 404: advance tax is payable when your tax for the year (after TDS credits) is Rs 10,000 or more. Missed instalments add interest under the Act.</td></tr>
+    <tr><td>TDS credit</td><td>Tax clients already deducted shows in your Form 26AS/AIS on the income tax portal and offsets your liability at filing.</td></tr>
+    <tr><td>Presumptive vs actuals</td><td>If your real expenses are high, regular taxation with books can beat the 50% scheme. Run both before deciding - a CA can help for the first year.</td></tr>
+  </table>
+</div>
+<p class="note">Runs entirely in your browser. Nothing is stored or sent anywhere.</p>
+</div>
+<script>
+function fmt(n){return 'Rs ' + Math.round(n).toLocaleString('en-IN');}
+function presumptive(receipts, rate){ return receipts * rate / 100; }
+document.getElementById('calc').addEventListener('click', () => {
+  const receipts = parseFloat(document.getElementById('receipts').value) || 0;
+  const rate = parseFloat(document.getElementById('presRate').value) || 50;
+  const tds = parseFloat(document.getElementById('tds').value) || 0;
+  const totalTax = parseFloat(document.getElementById('totalTax').value) || 0;
+  const out = document.getElementById('out');
+  if(receipts <= 0){ out.style.display='block'; out.innerHTML = '<p class="note warn">Enter your gross annual receipts.</p>'; return; }
+  const income = presumptive(receipts, rate);
+  let limitNote = '';
+  if(receipts > 7500000){ limitNote = '<p class="note warn" style="margin-top:8px">Receipts above Rs 75 lakh: the presumptive scheme is not available at this level - books and audit apply.</p>'; }
+  else if(receipts > 5000000){ limitNote = '<p class="note" style="margin-top:8px">Receipts between Rs 50 and 75 lakh: the scheme applies only if your cash receipts stay within 5% of gross receipts.</p>'; }
+  let html = '<div class="win"><div class="note">Presumptive taxable income (' + rate + '% of receipts)</div><div class="big">' + fmt(income) + '</div></div>' + limitNote;
+  if(totalTax > 0){
+    const due = Math.max(0, totalTax - tds);
+    if(due < 10000){
+      html += '<p class="note" style="margin-top:8px">Tax due after TDS is ' + fmt(due) + ' - below the Rs 10,000 advance-tax threshold (Section 404), so instalments are not required; you pay it at filing.</p>';
+    } else {
+      html += '<table style="margin-top:10px"><tr><th>Instalment (declaring presumptively)</th><th>Amount</th></tr>' +
+        '<tr><td>On or before 15 March - the whole year\'s advance tax in one instalment (Section 408(2))</td><td>' + fmt(due) + '</td></tr></table>' +
+        '<p class="note" style="margin-top:6px">Based on estimated total tax of ' + fmt(totalTax) + ' minus TDS of ' + fmt(tds) + '. If you do NOT declare presumptively, the quarterly schedule applies instead: 15% by 15 Jun, 45% cumulative by 15 Sep, 75% by 15 Dec, 100% by 15 Mar. Paying earlier in the year reduces interest risk if your estimate grows.</p>';
+    }
+  } else {
+    html += '<p class="note" style="margin-top:8px">Enter your estimated total tax above to see what advance tax is due and when. You can compute the estimate with the department\'s calculator on incometax.gov.in.</p>';
+  }
+  out.style.display = 'block';
+  out.innerHTML = html;
+});
+</script>
+</body>
+</html>
