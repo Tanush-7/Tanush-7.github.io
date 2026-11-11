@@ -173,6 +173,48 @@
   .card-links a { color: var(--bronze); font-weight: 600; text-decoration: none; margin-left: 14px; font-size: 0.85rem; font-family: "Inter", -apple-system, sans-serif; letter-spacing: 0; text-transform: none; }
   .card-links a:hover { text-decoration: underline; }
 
+  /* ---- halo carousel: featured builds on an arc ---- */
+  .halo { margin-bottom: 44px; }
+  .halo-stage {
+    position: relative; height: 480px; overflow: hidden;
+    cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none;
+  }
+  .halo-stage.dragging { cursor: grabbing; }
+  .halo-hub {
+    position: absolute; left: 50%; top: 60%; transform: translate(-50%, -50%);
+    text-align: center; z-index: 1; pointer-events: none; width: 92%;
+  }
+  .halo-kicker {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--bronze); margin-bottom: 10px;
+  }
+  .halo-title {
+    font-family: "Inter Tight", "Inter", -apple-system, sans-serif;
+    font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text);
+  }
+  .halo-sub { color: var(--muted); font-size: 0.92rem; margin-top: 6px; }
+  .halo-card {
+    position: absolute; left: 50%; top: 0; width: 210px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    overflow: hidden; text-decoration: none; color: var(--text);
+    will-change: transform, opacity;
+  }
+  .halo-card:hover { border-color: #2E2E2E; }
+  .halo-led { display: block; height: 110px; background: #050505; border-bottom: 1px solid var(--line); }
+  .halo-led canvas { display: block; width: 100%; height: 100%; }
+  .halo-name { display: block; font-family: "Inter Tight", "Inter", -apple-system, sans-serif; font-weight: 700; font-size: 1.02rem; padding: 12px 14px 2px; }
+  .halo-line { display: block; color: var(--muted); font-size: 0.82rem; line-height: 1.45; padding: 0 14px 14px; }
+  .halo-dots { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+  .halo-dots button { width: 6px; height: 6px; border-radius: 50%; border: none; background: var(--line2); cursor: pointer; padding: 0; }
+  .halo-dots button.active { background: var(--bronze); }
+  @media (max-width: 640px) {
+    .halo-stage { height: 420px; }
+    .halo-card { width: 172px; }
+    .halo-led { height: 92px; }
+    .halo-title { font-size: 1.5rem; }
+  }
+
   /* ---- about / now ---- */
   .about p { color: var(--muted); margin-bottom: 16px; max-width: 62ch; }
   .about p strong { color: var(--text); font-weight: 600; }
@@ -340,6 +382,61 @@
   <section id="projects">
     <h2>Projects</h2>
     <p class="sec-sub">Best work first. Everything here is live or in the open, with code linked.</p>
+    <div class="halo" id="halo">
+      <div class="halo-stage" id="haloStage">
+        <div class="halo-hub">
+          <div class="halo-kicker">Featured builds</div>
+          <h3 class="halo-title">The ones people actually use</h3>
+          <p class="halo-sub">Drag to spin, or let it drift.</p>
+        </div>
+      <a class="halo-card" href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener" data-i="0">
+        <span class="halo-led"><canvas data-fx="0"></canvas></span>
+        <span class="halo-name">CarScope India</span>
+        <span class="halo-line">Live car prices, 77 models</span>
+      </a>
+      <a class="halo-card" href="https://tanush.tech/vice-cost-calculator/" target="_blank" rel="noopener" data-i="1">
+        <span class="halo-led"><canvas data-fx="1"></canvas></span>
+        <span class="halo-name">Vice Cost Calculator</span>
+        <span class="halo-line">Caffeine, beer, cigarettes in years</span>
+      </a>
+      <a class="halo-card" href="https://tanush.tech/bengaluru-deposit-checker/" target="_blank" rel="noopener" data-i="2">
+        <span class="halo-led"><canvas data-fx="2"></canvas></span>
+        <span class="halo-name">Deposit &amp; Broker Checker</span>
+        <span class="halo-line">Flags the 10-month deposit trap</span>
+      </a>
+      <a class="halo-card" href="https://tanush.tech/salary-trap-analyser/" target="_blank" rel="noopener" data-i="3">
+        <span class="halo-led"><canvas data-fx="0"></canvas></span>
+        <span class="halo-name">Salary Trap Analyser</span>
+        <span class="halo-line">Why a hike still leaves little free</span>
+      </a>
+      <a class="halo-card" href="https://tanush.tech/buy-vs-rent-bengaluru/" target="_blank" rel="noopener" data-i="4">
+        <span class="halo-led"><canvas data-fx="1"></canvas></span>
+        <span class="halo-name">Buy vs Rent — Bengaluru 2BHK</span>
+        <span class="halo-line">Year by year to breakeven</span>
+      </a>
+      <a class="halo-card" href="https://tanush.tech/bescom-bill-checker/" target="_blank" rel="noopener" data-i="5">
+        <span class="halo-led"><canvas data-fx="2"></canvas></span>
+        <span class="halo-name">BESCOM Bill Checker</span>
+        <span class="halo-line">Rebuilds your bill from the KERC tariff</span>
+      </a>
+      <a class="halo-card" href="https://tanush.tech/home-loan-prepayment-calculator/" target="_blank" rel="noopener" data-i="6">
+        <span class="halo-led"><canvas data-fx="0"></canvas></span>
+        <span class="halo-name">Home Loan Prepayment Calculator</span>
+        <span class="halo-line">Interest saved, tenure saved</span>
+      </a>
+      <a class="halo-card" href="https://tanush.tech/bangalore-traffic-pulse/" target="_blank" rel="noopener" data-i="7">
+        <span class="halo-led"><canvas data-fx="1"></canvas></span>
+        <span class="halo-name">Bangalore Traffic Pulse</span>
+        <span class="halo-line">Live traffic for your commute</span>
+      </a>
+      <a class="halo-card" href="https://tanush.tech/wedding-budget-planner/" target="_blank" rel="noopener" data-i="8">
+        <span class="halo-led"><canvas data-fx="2"></canvas></span>
+        <span class="halo-name">Wedding Budget Planner</span>
+        <span class="halo-line">Bengaluru wedding, mapped to salary</span>
+      </a>
+      </div>
+      <div class="halo-dots" id="haloDots"></div>
+    </div>
     <div class="cards">
       <div class="card featured">
       <div class="led"><canvas data-fx="0"></canvas></div>
@@ -1227,7 +1324,7 @@
 <script>
   (function () {
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var panels = Array.prototype.slice.call(document.querySelectorAll(".led canvas"));
+    var panels = Array.prototype.slice.call(document.querySelectorAll(".led canvas, .halo-led canvas"));
     if (!panels.length) return;
     var COLORS = ["#E8B84B", "#34D399", "#A78BFA"];
     function setup(cv) {
@@ -1311,6 +1408,118 @@
       wake();
     }
     window.addEventListener("resize", function () { items.forEach(function (it) { it.p.size(); }); });
+  })();
+</script>
+<script>
+  (function () {
+    var stage = document.getElementById("haloStage");
+    var dotsWrap = document.getElementById("haloDots");
+    if (!stage) return;
+    var cards = Array.prototype.slice.call(stage.querySelectorAll(".halo-card"));
+    var n = cards.length;
+    if (!n) return;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var step = 11, offset = 0, velocity = 0, dragging = false, lastX = 0, lastMove = 0, idleSince = Date.now();
+    var maxOff = ((n - 1) / 2) * step + 15;
+    function geom() {
+      var w = stage.clientWidth;
+      var R = Math.max(w * 0.58, 380);
+      return { R: R, cy: R + 20, cx: w / 2 };
+    }
+    function layout() {
+      var g = geom();
+      var maxA = ((n - 1) / 2) * step;
+      cards.forEach(function (el, i) {
+        var a = (i - (n - 1) / 2) * step + offset;
+        var rad = a * Math.PI / 180;
+        var dx = g.R * Math.sin(rad);
+        var y = g.cy - g.R * Math.cos(rad);
+        var k = Math.min(1, Math.abs(a) / (maxA + 15));
+        var s = 1 - 0.16 * k;
+        el.style.transform = "translate(-50%, 0) translate(" + dx.toFixed(1) + "px, " + y.toFixed(1) + "px) rotate(" + a.toFixed(2) + "deg) scale(" + s.toFixed(3) + ")";
+        el.style.opacity = (1 - 0.4 * k).toFixed(2);
+        el.style.zIndex = String(100 - Math.round(Math.abs(a)));
+        el.classList.toggle("is-center", Math.abs(a) < step / 2);
+      });
+      var center = 0, best = 1e9;
+      cards.forEach(function (el, i) {
+        var a = Math.abs((i - (n - 1) / 2) * step + offset);
+        if (a < best) { best = a; center = i; }
+      });
+      Array.prototype.forEach.call(dotsWrap.children, function (d, i) {
+        d.classList.toggle("active", i === center);
+      });
+    }
+    var dots = cards.map(function (_, i) {
+      var b = document.createElement("button");
+      b.setAttribute("aria-label", "Show card " + (i + 1));
+      b.addEventListener("click", function () { goTo(i); });
+      dotsWrap.appendChild(b);
+      return b;
+    });
+    var tween = null;
+    function goTo(i) {
+      var target = -((i - (n - 1) / 2) * step);
+      var start = offset, t0 = null;
+      if (tween) cancelAnimationFrame(tween);
+      function frame(ts) {
+        if (!t0) t0 = ts;
+        var p = Math.min(1, (ts - t0) / 450);
+        var e = 1 - Math.pow(1 - p, 3);
+        offset = start + (target - start) * e;
+        layout();
+        if (p < 1) tween = requestAnimationFrame(frame); else tween = null;
+      }
+      tween = requestAnimationFrame(frame);
+    }
+    function clamp() { offset = Math.max(-maxOff, Math.min(maxOff, offset)); }
+    stage.addEventListener("pointerdown", function (e) {
+      dragging = true; lastX = e.clientX; lastMove = Date.now(); velocity = 0;
+      stage.classList.add("dragging");
+      stage.setPointerCapture(e.pointerId);
+      if (tween) { cancelAnimationFrame(tween); tween = null; }
+    });
+    stage.addEventListener("pointermove", function (e) {
+      if (!dragging) return;
+      var now = Date.now();
+      var dx = e.clientX - lastX;
+      velocity = dx / Math.max(1, now - lastMove);
+      lastX = e.clientX; lastMove = now;
+      offset += dx / 3.5;
+      clamp();
+      layout();
+    });
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      stage.classList.remove("dragging");
+      idleSince = Date.now();
+    }
+    stage.addEventListener("pointerup", endDrag);
+    stage.addEventListener("pointercancel", endDrag);
+    stage.addEventListener("click", function (e) {
+      if (Math.abs(velocity) > 0.4) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+    var raf = null;
+    function tick() {
+      if (!dragging && !reduce) {
+        if (Math.abs(velocity) > 0.02) {
+          offset += velocity * 16;
+          velocity *= 0.94;
+          clamp();
+          layout();
+        } else if (Date.now() - idleSince > 3000) {
+          offset += 0.28;
+          if (offset > maxOff) offset = -maxOff;
+          clamp();
+          layout();
+        }
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    layout();
+    window.addEventListener("resize", layout);
+    if (!reduce) raf = requestAnimationFrame(tick);
   })();
 </script>
 </body>
