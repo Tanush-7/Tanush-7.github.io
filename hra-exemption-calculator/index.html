@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRA Exemption Calculator (India)</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+.best td{color:var(--good);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>HRA Exemption Calculator</h1>
+<p class="sub">Paying rent and getting HRA? Work out how much of it can be exempt if you opt for the old tax regime.</p>
+
+<div class="card">
+  <strong>Before you start</strong>
+  <p class="note" style="margin-top:6px">
+  HRA exemption is only available if you <strong>opt for the old tax regime</strong> - the default new regime does not allow it. This tool does the standard least-of-three arithmetic; your employer applies it while deducting TDS, and the Income Tax portal is the final word. Enter <strong>annual</strong> figures. For anything case-specific (paying rent to family, shared flats, mid-year moves), confirm with your employer or a CA.
+  </p>
+</div>
+
+<div class="card">
+  <div class="grid3">
+    <div><label>Annual Basic + DA (Rs)</label><input id="basic" type="number" min="0" step="10000" value="600000"></div>
+    <div><label>Annual HRA received (Rs)</label><input id="hra" type="number" min="0" step="10000" value="240000"></div>
+    <div><label>Annual rent paid (Rs)</label><input id="rent" type="number" min="0" step="10000" value="180000"></div>
+  </div>
+  <label>City</label>
+  <select id="metro">
+    <option value="no" selected>Any other city (40% of Basic+DA)</option>
+    <option value="yes">Mumbai, Delhi, Kolkata, Chennai, Bengaluru, Hyderabad, Pune or Ahmedabad (50%)</option>
+  </select>
+  <p class="note" style="margin-top:6px">The 50% city list was expanded from 4 to 8 cities (adding Bengaluru, Hyderabad, Pune and Ahmedabad) by the Income-tax Rules, 2026 (Notification 22/2026, effective for tax year 2026-27 onward).</p>
+  <button class="primary" id="calc" style="margin-top:10px">Calculate</button>
+</div>
+
+<div class="card" id="out" style="display:none"></div>
+
+<div class="card">
+  <strong>How the exemption is computed</strong>
+  <table style="margin-top:8px">
+    <tr><th>Rule</th><th>Meaning</th></tr>
+    <tr><td>The least of three</td><td>(a) actual HRA received, (b) rent paid minus 10% of Basic+DA, (c) 50% of Basic+DA for the 8 listed cities, else 40%. The smallest of the three is exempt.</td></tr>
+    <tr><td>Old regime only</td><td>If you file under the default (new) regime, HRA exemption does not apply - compare both regimes before choosing.</td></tr>
+    <tr><td>Proof</td><td>Employers ask for rent receipts or the rental agreement. For annual rent above Rs 1 lakh, employers generally require the landlord's PAN (or a declaration if the landlord has none). The current evidence form (Form 124 under the 2026 Rules) also asks whether you are related to the landlord.</td></tr>
+    <tr><td>Rent to family</td><td>Paying rent to parents can be legitimate when there is a genuine agreement, actual bank transfers, and the parent reports it as income. Artificial arrangements can be rejected - get advice for your situation.</td></tr>
+  </table>
+</div>
+<p class="note">Runs entirely in your browser. Nothing is stored or sent anywhere.</p>
+</div>
+<script>
+function fmt(n){return 'Rs ' + Math.round(n).toLocaleString('en-IN');}
+function hraExemption(basic, hra, rent, metro){
+  const a = hra;
+  const b = Math.max(0, rent - 0.10 * basic);
+  const c = (metro ? 0.50 : 0.40) * basic;
+  return {a: a, b: b, c: c, exempt: Math.min(a, b, c)};
+}
+document.getElementById('calc').addEventListener('click', () => {
+  const basic = parseFloat(document.getElementById('basic').value) || 0;
+  const hra = parseFloat(document.getElementById('hra').value) || 0;
+  const rent = parseFloat(document.getElementById('rent').value) || 0;
+  const metro = document.getElementById('metro').value === 'yes';
+  const out = document.getElementById('out');
+  if(basic <= 0 || hra <= 0){ out.style.display='block'; out.innerHTML = '<p class="note warn">Enter at least your annual Basic+DA and HRA received.</p>'; return; }
+  const r = hraExemption(basic, hra, rent, metro);
+  const taxable = Math.max(0, hra - r.exempt);
+  const rows = [
+    ['(a) Actual HRA received', r.a, r.exempt === r.a],
+    ['(b) Rent paid - 10% of Basic+DA', r.b, r.exempt === r.b && r.b !== r.a],
+    ['(c) ' + (metro ? '50%' : '40%') + ' of Basic+DA', r.c, r.exempt === r.c && r.c !== r.a && r.c !== r.b]
+  ].map(x => '<tr' + (x[2] ? ' class="best"' : '') + '><td>' + x[0] + '</td><td>' + fmt(x[1]) + (x[2] ? '  <- the one that applies' : '') + '</td></tr>').join('');
+  out.style.display = 'block';
+  out.innerHTML =
+    '<div class="win"><div class="note">Exempt HRA (least of the three)</div><div class="big">' + fmt(r.exempt) + '</div>' +
+    '<div class="note" style="margin-top:4px">Taxable portion of HRA: <strong>' + fmt(taxable) + '</strong> per year</div></div>' +
+    '<table style="margin-top:10px"><tr><th>Test</th><th>Amount</th></tr>' + rows + '</table>' +
+    '<p class="note" style="margin-top:8px">Applies only under the old regime. If your rent changed mid-year or you moved cities, the calculation is done per period, not on annual totals - check with your employer or a CA.</p>';
+});
+</script>
+</body>
+</html>

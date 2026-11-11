@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vehicle Document Expiry Tracker (India)</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24;--bad:#f87171}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+button.ghost{font-size:.82rem;padding:6px 10px}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:600}
+.pill.ok{background:rgba(52,211,153,.15);color:var(--good)}
+.pill.soon{background:rgba(251,191,36,.15);color:var(--warn)}
+.pill.over{background:rgba(248,113,113,.15);color:var(--bad)}
+.warn{color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Vehicle Document Expiry Tracker</h1>
+<p class="sub">PUC, insurance, driving licence - add each document's expiry date and see what needs attention first.</p>
+
+<div class="card">
+  <strong>Before you start</strong>
+  <p class="note" style="margin-top:6px">
+  This tracker only organises the dates you enter - it cannot check any government database. Verify the official status of your RC, licence, PUC and challans on <strong>parivahan.gov.in</strong> or the mParivahan app. Validity rules (for example PUC periods for new vs older vehicles) differ by case; check the certificate itself or the portal for yours.
+  </p>
+</div>
+
+<div class="card">
+  <div class="grid3">
+    <div><label>Vehicle (e.g. "My scooter")</label><input id="veh" type="text" placeholder="My scooter"></div>
+    <div><label>Document</label>
+      <select id="doc">
+        <option>PUC certificate</option>
+        <option>Insurance</option>
+        <option>Driving licence</option>
+        <option>RC / registration</option>
+        <option>Fitness certificate</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div><label>Expiry date</label><input id="exp" type="date"></div>
+  </div>
+  <button class="primary" id="add" style="margin-top:10px">Add document</button>
+</div>
+
+<div class="card">
+  <strong>Your documents</strong>
+  <div id="list" style="margin-top:8px"><p class="note">Nothing added yet.</p></div>
+  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="ghost" id="csv">Export CSV</button>
+    <button class="ghost" id="clear">Clear all</button>
+  </div>
+</div>
+<p class="note">Data stays in this browser (localStorage). Nothing is sent anywhere.</p>
+</div>
+<script>
+const KEY = 'docExpiryTracker';
+function load(){ try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch(e){ return []; } }
+function save(items){ localStorage.setItem(KEY, JSON.stringify(items)); }
+function daysLeft(dateStr){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(dateStr + 'T00:00:00');
+  return Math.round((d - today) / 86400000);
+}
+function statusPill(days){
+  if(days < 0) return '<span class="pill over">expired ' + Math.abs(days) + 'd ago</span>';
+  if(days <= 30) return '<span class="pill soon">' + days + 'd left</span>';
+  return '<span class="pill ok">' + days + 'd left</span>';
+}
+function render(){
+  const items = load();
+  const el = document.getElementById('list');
+  if(!items.length){ el.innerHTML = '<p class="note">Nothing added yet.</p>'; return; }
+  const sorted = items.map((it, i) => ({it: it, i: i, days: daysLeft(it.exp)})).sort((a, b) => a.days - b.days);
+  el.innerHTML = '<table><tr><th>Vehicle</th><th>Document</th><th>Expiry</th><th>Status</th><th></th></tr>' +
+    sorted.map(x => '<tr><td>' + escapeHtml(x.it.veh) + '</td><td>' + escapeHtml(x.it.doc) + '</td><td>' + x.it.exp + '</td><td>' + statusPill(x.days) + '</td>' +
+    '<td><button class="ghost del" data-i="' + x.i + '">x</button></td></tr>').join('') + '</table>';
+  el.querySelectorAll('.del').forEach(b => b.addEventListener('click', () => {
+    const items = load(); items.splice(parseInt(b.dataset.i), 1); save(items); render();
+  }));
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+document.getElementById('add').addEventListener('click', () => {
+  const veh = document.getElementById('veh').value.trim();
+  const doc = document.getElementById('doc').value;
+  const exp = document.getElementById('exp').value;
+  if(!veh || !exp){ alert('Enter the vehicle name and expiry date.'); return; }
+  const items = load(); items.push({veh: veh, doc: doc, exp: exp}); save(items);
+  document.getElementById('veh').value = ''; document.getElementById('exp').value = '';
+  render();
+});
+document.getElementById('csv').addEventListener('click', () => {
+  const items = load();
+  if(!items.length){ alert('Nothing to export yet.'); return; }
+  const rows = [['vehicle','document','expiry','days_left']].concat(items.map(it => [it.veh, it.doc, it.exp, daysLeft(it.exp)]));
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'}));
+  a.download = 'vehicle-documents.csv'; a.click();
+});
+document.getElementById('clear').addEventListener('click', () => {
+  if(confirm('Remove all documents from this tracker?')){ localStorage.removeItem(KEY); render(); }
+});
+render();
+</script>
+</body>
+</html>
