@@ -120,65 +120,54 @@
   .goal-line strong { color: var(--bronze); }
 
   /* ---- project cards ---- */
-  /* ---- folders: interactive project holder ---- */
-  .folders {
-    position: relative; display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 150px 20px; padding: 150px 24px 32px;
-    background: #0A0A0A; border: 1px solid var(--line); border-radius: 18px;
-  }
-  .folder { position: relative; height: 190px; outline: none; }
-  .folder:focus-visible { outline: 1px solid var(--bronze); outline-offset: 4px; border-radius: 12px; }
-  .folder-back { position: absolute; left: 0; right: 0; top: 14px; bottom: 0; background: #111111; border: 1px solid var(--line); border-radius: 12px; }
-  .folder-back::before { content: ""; position: absolute; top: -11px; left: 14px; width: 88px; height: 12px; background: #111111; border: 1px solid var(--line); border-bottom: none; border-radius: 8px 8px 0 0; }
-  .folder-files { position: absolute; left: 50%; top: 0; z-index: 2; }
-  .file {
-    position: absolute; left: 0; top: 0; width: 150px;
-    background: #0D0D0D; border: 1px solid rgba(255, 255, 255, 0.28); border-radius: 10px;
-    overflow: hidden; text-decoration: none; color: var(--text);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
-    transform: translate(-50%, 30px) rotate(var(--ri, 0deg));
-    transform-origin: 50% 100%; z-index: var(--zi, 1);
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .file:hover, .file:focus-visible { z-index: 60; }
-  .folder.open .file { transform: translate(calc(-50% + var(--dx, 0px)), -118px) rotate(var(--rot, 0deg)); }
-  .folder:not(.open):hover .file:last-child { transform: translate(-50%, 12px) rotate(-4deg); }
-  .file-name { display: block; padding: 8px 10px 9px; font-size: 0.78rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .folder-front {
-    position: absolute; left: 0; right: 0; top: 48px; bottom: 0; z-index: 3;
-    border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    cursor: pointer; display: flex; flex-direction: column; justify-content: flex-end; padding: 14px 16px;
-  }
-  .folder[data-tint="bronze"] .folder-front { background: rgba(201, 169, 106, 0.14); border-color: rgba(201, 169, 106, 0.35); }
-  .folder[data-tint="black"] .folder-front { background: rgba(0, 0, 0, 0.5); border-color: rgba(255, 255, 255, 0.10); }
-  .folder-toggle {
-    position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    color: var(--text); font-size: 1.05rem; line-height: 1; cursor: pointer;
-    display: grid; place-items: center; padding: 0;
-  }
-  .folder-toggle:hover { background: rgba(255, 255, 255, 0.18); }
-  .folder-name { display: block; font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; }
-  .folder-count { display: block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.68rem; letter-spacing: 0.1em; color: var(--muted); margin-top: 2px; }
-  .folder-picked { position: absolute; left: 0; right: 0; bottom: -24px; min-height: 1em; text-align: center; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.7rem; letter-spacing: 0.12em; color: var(--bronze); }
-  .folders-foot { display: flex; justify-content: flex-end; margin-top: 14px; }
-  .replay-btn {
-    padding: 9px 18px; border-radius: 999px; cursor: pointer;
+  /* ---- swipe: horizontal project cards ---- */
+  .swipe-wrap { position: relative; }
+  .swipe-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .swipe-count { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.72rem; letter-spacing: 0.16em; color: var(--faint); }
+  .swipe-arrows { display: flex; gap: 8px; }
+  .swipe-arrow {
+    width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
     border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    color: var(--text); font: 600 0.9rem "Inter", -apple-system, sans-serif;
+    color: var(--text); font-size: 1.05rem; line-height: 1;
+    display: grid; place-items: center; padding: 0;
   }
-  .replay-btn:hover { background: rgba(255, 255, 255, 0.16); }
+  .swipe-arrow:hover { background: rgba(255, 255, 255, 0.16); }
+  .swipe-row {
+    display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 18px 4px 22px; scrollbar-width: none; cursor: grab;
+    -webkit-overflow-scrolling: touch; user-select: none; -webkit-user-select: none;
+  }
+  .swipe-row::-webkit-scrollbar { display: none; }
+  .swipe-row.dragging { cursor: grabbing; scroll-snap-type: none; }
+  .swipe-card {
+    position: relative; flex: 0 0 262px; height: 380px; border-radius: 20px; overflow: hidden;
+    scroll-snap-align: center; text-decoration: none; color: var(--text);
+    border: 1px solid var(--line); background: #0A0A0A;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    transform: translateY(10px) scale(0.97);
+  }
+  .swipe-card.is-center { transform: translateY(0) scale(1); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55); }
+  .swipe-card .led { position: absolute; inset: 0; height: auto; border-bottom: none; }
+  .swipe-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.15) 45%, rgba(0, 0, 0, 0.82) 78%, rgba(0, 0, 0, 0.92) 100%); }
+  .swipe-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .swipe-cat { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.66rem; letter-spacing: 0.18em; color: var(--bronze); }
+  .swipe-title { font-family: "Inter Tight", "Inter", -apple-system, sans-serif; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; }
+  .swipe-value { color: rgba(255, 255, 255, 0.78); font-size: 0.88rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .swipe-open {
+    margin-top: 8px; display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    font-weight: 600; font-size: 0.9rem;
+  }
   .led { display: block; height: 62px; background: #050505; border-bottom: 1px solid var(--line); }
   .led canvas { display: block; width: 100%; height: 100%; }
   @media (max-width: 640px) {
-    .folders { grid-template-columns: 1fr; padding: 140px 16px 28px; gap: 150px 0; }
+    .swipe-card { flex-basis: 78vw; height: 360px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .file { transition: none; }
+    .swipe-card { transition: none; }
   }
 
   /* ---- about / now ---- */
@@ -347,351 +336,477 @@
 
   <section id="projects">
     <h2>Projects</h2>
-    <p class="sec-sub">Hover to peek \u00b7 click to open and spread the files. Everything here is live.</p>
-    <div class="folders" id="folders">
-      <div class="folder" data-folder data-name="Cars" data-tint="clear" tabindex="0" role="button" aria-label="Cars folder, 3 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener" data-name="CarScope India" style="--dx:-88px;--rot:-12.0deg;--ri:-2.0deg;--zi:1">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">CarScope India</span>
-          </a>
-          <a class="file" href="https://tanush.tech/fuel-mileage-tracker/" target="_blank" rel="noopener" data-name="Fuel Mileage &amp; Cost-per-KM Tracker" style="--dx:0px;--rot:0.0deg;--ri:0.0deg;--zi:2">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Fuel Mileage &amp; Cost-per-KM Tracker</span>
-          </a>
-          <a class="file" href="https://tanush.tech/car-document-expiry-tracker/" target="_blank" rel="noopener" data-name="Vehicle Document Expiry Tracker" style="--dx:88px;--rot:12.0deg;--ri:2.0deg;--zi:3">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Vehicle Document Expiry Tracker</span>
-          </a>
+    <p class="sec-sub">Swipe right to browse all 46. Every tool is live.</p>
+    <div class="swipe-wrap">
+      <div class="swipe-head">
+        <span class="swipe-count" id="swipeCount">01 / 46</span>
+        <div class="swipe-arrows">
+          <button class="swipe-arrow" id="swipePrev" type="button" aria-label="Previous project">←</button>
+          <button class="swipe-arrow" id="swipeNext" type="button" aria-label="Next project">→</button>
         </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Cars folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Cars</span>
-            <span class="folder-count">3 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
       </div>
-      <div class="folder" data-folder data-name="Bengaluru Commute" data-tint="bronze" tabindex="0" role="button" aria-label="Bengaluru Commute folder, 4 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/bengaluru-rent-commute-calculator/" target="_blank" rel="noopener" data-name="Bengaluru Rent Commute Calculator" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Bengaluru Rent Commute Calculator</span>
-          </a>
-          <a class="file" href="https://tanush.tech/bengaluru-commute-optimiser/" target="_blank" rel="noopener" data-name="Bengaluru Commute Optimiser" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Bengaluru Commute Optimiser</span>
-          </a>
-          <a class="file" href="https://tanush.tech/bangalore-traffic-pulse/" target="_blank" rel="noopener" data-name="Bangalore Traffic Pulse" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Bangalore Traffic Pulse</span>
-          </a>
-          <a class="file" href="https://tanush.tech/airport-commute-comparer/" target="_blank" rel="noopener" data-name="Airport Commute Comparer" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Airport Commute Comparer</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Bengaluru Commute folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Bengaluru Commute</span>
-            <span class="folder-count">4 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
+      <div class="swipe-row" id="swipeRow">
+        <a class="swipe-card" href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener" data-i="0">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">CARS</span>
+            <span class="swipe-title">CarScope India</span>
+            <span class="swipe-value">Live car-price comparison for the Indian market. Compare prices across the market instead of visiting listing after listing.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/wedding-budget-planner/" target="_blank" rel="noopener" data-i="1">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">LIFE</span>
+            <span class="swipe-title">Wedding Budget Planner</span>
+            <span class="swipe-value">Bengaluru wedding budget planner for a 2027-2028 wedding. Venue and vendor costs mapped against salary, savings, and EMIs.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/bengaluru-rent-commute-calculator/" target="_blank" rel="noopener" data-i="2">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">Bengaluru Rent Commute Calculator</span>
+            <span class="swipe-value">What a Bengaluru flat really costs: rent plus commute by area, office, and travel mode, with a Namma Metro picker and household bills.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/bengaluru-deposit-checker/" target="_blank" rel="noopener" data-i="3">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">Deposit &amp; Broker Checker</span>
+            <span class="swipe-value">Flags a 10-month deposit, hidden one-time charges and tanker water dependence before you pay a token on a Bengaluru flat.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/bengaluru-commute-optimiser/" target="_blank" rel="noopener" data-i="4">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">Bengaluru Commute Optimiser</span>
+            <span class="swipe-value">Auto vs cab vs Namma Metro plus last-mile, on monthly cost and hours, for your exact route at peak and off-peak.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/bangalore-traffic-pulse/" target="_blank" rel="noopener" data-i="5">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">Bangalore Traffic Pulse</span>
+            <span class="swipe-value">Live traffic for a Bengaluru commute: congestion, speed and delay on your route, with a map and 5-minute refresh. Paste your free Google Maps key for live times.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/vice-cost-calculator/" target="_blank" rel="noopener" data-i="6">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">LIFE</span>
+            <span class="swipe-title">Vice Cost Calculator</span>
+            <span class="swipe-value">Caffeine from coffee, matcha and tea against your bedtime, plus what beer and cigarettes cost in years, with sourced numbers.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/salary-trap-analyser/" target="_blank" rel="noopener" data-i="7">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Salary Trap Analyser</span>
+            <span class="swipe-value">Paste pay, rent, EMIs and SIPs. See the real in-hand and why a hike still leaves only a few thousand free.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/buy-vs-rent-bengaluru/" target="_blank" rel="noopener" data-i="8">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Buy vs Rent — Bengaluru 2BHK</span>
+            <span class="swipe-value">Price, EMI, maintenance and tanker water against rent growth and an invested down payment, year by year to breakeven.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/water-bill-and-tanker-tracker/" target="_blank" rel="noopener" data-i="9">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">Water Bill and Tanker Tracker</span>
+            <span class="swipe-value">Checks any Bengaluru monthly water charge against a fair range, logs bills and tanker deliveries, and writes the message to your landlord.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/burnout-and-switch-runway-planner/" target="_blank" rel="noopener" data-i="10">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">CAREER</span>
+            <span class="swipe-title">Burnout and Switch Runway Planner</span>
+            <span class="swipe-value">Burnout score from work hours, commute, and recovery, months of runway if you quit today, and a 90-day switch plan.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/weekend-crew-finder/" target="_blank" rel="noopener" data-i="11">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">LIFE</span>
+            <span class="swipe-title">Weekend Crew Finder</span>
+            <span class="swipe-value">Find a weekend crew in Bengaluru for badminton, runs, treks, football, cycling, and board games. Match by area, day, level, and budget.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/flatmate-and-pg-matcher/" target="_blank" rel="noopener" data-i="12">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">Flatmate and PG Matcher</span>
+            <span class="swipe-value">Match flats, PGs, and co-living in Bengaluru to your routine: budget, office hub, shift, food, sleep, noise, and guests.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush-7.github.io/workout-tracker/" target="_blank" rel="noopener" data-i="13">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">HEALTH</span>
+            <span class="swipe-title">Workout Tracker</span>
+            <span class="swipe-value">A workout tracker that runs in the browser. Log sessions, keep the habit visible.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/cooker-whistle-counter/" target="_blank" rel="noopener" data-i="14">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">HOME</span>
+            <span class="swipe-title">Cooker Whistle Counter</span>
+            <span class="swipe-value">Counts pressure-cooker whistles with your mic and alerts at your target, with a manual tap mode and honest limits. A supervised cooking aid, not a safety device.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/plant-watering-tracker/" target="_blank" rel="noopener" data-i="15">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">HOME</span>
+            <span class="swipe-title">Plant Watering Tracker</span>
+            <span class="swipe-value">Custom watering schedules, care notes, tags and progress photos for every plant. Everything is stored on your device only.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/rent-utility-tracker/" target="_blank" rel="noopener" data-i="16">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Rent &amp; Utility Tracker</span>
+            <span class="swipe-value">For landlords and PG owners: track rent, electricity, water and other charges per room, month by month. Data stays on this device; export CSV anytime.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/india-doc-fix-guide/" target="_blank" rel="noopener" data-i="17">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">INDIA</span>
+            <span class="swipe-title">Fix My Documents (India)</span>
+            <span class="swipe-value">Which portal, what you'll typically need, and in what order, for correcting Aadhaar, PAN, passport and voter ID. Links only to official portals.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/bereavement-checklist-india/" target="_blank" rel="noopener" data-i="18">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">INDIA</span>
+            <span class="swipe-title">After a Death in the Family</span>
+            <span class="swipe-value">An ordered checklist of the formalities families in India face after a death, from the death certificate to banks, insurance and taxes. Progress saved on this device.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/bescom-bill-checker/" target="_blank" rel="noopener" data-i="19">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">BESCOM Bill Checker</span>
+            <span class="swipe-value">Rebuilds your BESCOM bill line by line from the real KERC tariff, models Gruha Jyothi, and tells you if what BESCOM charged matches.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/packers-and-movers-estimator/" target="_blank" rel="noopener" data-i="20">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">Packers and Movers Estimator</span>
+            <span class="swipe-value">Local and intercity shifting costs for Bengaluru by home size and distance, with GST, add-ons, and a quote-fairness checker.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/airport-commute-comparer/" target="_blank" rel="noopener" data-i="21">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">Airport Commute Comparer</span>
+            <span class="swipe-value">Vayu Vajra vs cab vs train vs Metro plus bus to Kempegowda airport, ranked by cost, time, reliability and exact leave-by time.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/broadband-comparer/" target="_blank" rel="noopener" data-i="22">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">Broadband Comparer</span>
+            <span class="swipe-value">JioFiber, Airtel, ACT, BSNL and Hathway across Bengaluru localities, with a GST and installation true-cost calculator.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/home-loan-prepayment-calculator/" target="_blank" rel="noopener" data-i="23">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Home Loan Prepayment Calculator</span>
+            <span class="swipe-value">Monthly extra, lump sum and annual bonus prepayments, with interest saved, tenure saved and a year-by-year table.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/bbmp-property-tax-estimator/" target="_blank" rel="noopener" data-i="24">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">BBMP Property Tax Estimator</span>
+            <span class="swipe-value">The real Unit Area Value formula across zones A to F, for residential, commercial and vacant land, with rebate and late penalty.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/home-help-cost-planner/" target="_blank" rel="noopener" data-i="25">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">BENGALURU</span>
+            <span class="swipe-title">Home Help Cost Planner</span>
+            <span class="swipe-value">What a maid, cook, cleaner or driver actually costs in Bengaluru, by area, home size and visits per week.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/gym-cost-comparer/" target="_blank" rel="noopener" data-i="26">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">LIFE</span>
+            <span class="swipe-title">Gym Cost Comparer</span>
+            <span class="swipe-value">Cultpass, Anytime, Gold's, Snap, F45 and local gyms ranked by true cost per visit, with joining fees and lock-in.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/furniture-rent-vs-buy/" target="_blank" rel="noopener" data-i="27">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">HOME</span>
+            <span class="swipe-title">Furniture Rent vs Buy</span>
+            <span class="swipe-value">Renting vs buying furniture for a Bengaluru flat, with breakeven month, upfront cash and a verdict per item.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/weekend-trip-planner/" target="_blank" rel="noopener" data-i="28">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">LIFE</span>
+            <span class="swipe-title">Weekend Trip Planner</span>
+            <span class="swipe-value">Twelve getaways from Bengaluru with per-person cost splits, leave-by times and hour-by-hour plans for 1 to 3 days.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/noise-event-logger/" target="_blank" rel="noopener" data-i="29">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">HOME</span>
+            <span class="swipe-title">Noise Event Logger</span>
+            <span class="swipe-value">Timestamped log of loud-noise events, kept on your device and exportable as CSV or a printable report. Manual entries always work; mic auto-detection is experimental. Relative, uncalibrated levels; a personal record, not a legal measurement.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/lost-pet-poster-generator/" target="_blank" rel="noopener" data-i="30">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">LIFE</span>
+            <span class="swipe-title">Lost Pet Poster Generator</span>
+            <span class="swipe-value">Fill a short form, get a print-ready A4 lost-pet poster. Photo and details stay in your browser and print cleanly.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/loan-prepayment-calculator/" target="_blank" rel="noopener" data-i="31">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Loan Part-Prepayment Calculator</span>
+            <span class="swipe-value">Compare the two ways a lender can apply a prepayment: same EMI with a shorter tenure, or a lower EMI on the same tenure, with interest saved and a year-wise schedule.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/retirement-corpus-calculator-india/" target="_blank" rel="noopener" data-i="32">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Retirement Corpus Calculator (India)</span>
+            <span class="swipe-value">Inflation-adjusted expense at retirement, the corpus it implies, and the step-up SIP to get there, in INR. A projection from your assumptions, not advice.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/hsn-gst-assistant/" target="_blank" rel="noopener" data-i="33">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">HSN &amp; GST Rate Verification Assistant</span>
+            <span class="swipe-value">Decode an HSN code, reach the official GST portal and CBIC notifications, and keep a worksheet of the rates you verified yourself. Asserts no rates of its own.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/credit-card-statement-tracker/" target="_blank" rel="noopener" data-i="34">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Credit Card Statement Cycle Tracker</span>
+            <span class="swipe-value">Group spends by your card&rsquo;s real statement cycle (say the 20th to the 19th), watch the current bill build up and see the estimated due date. Entries stay in your browser.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/hybrid-work-day-tracker/" target="_blank" rel="noopener" data-i="35">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">CAREER</span>
+            <span class="swipe-title">Hybrid Work Day Tracker</span>
+            <span class="swipe-value">Tap days to mark Office, WFH or Leave and get monthly and year-to-date counts, so hybrid attendance targets stop being guesswork. Entries stay in your browser.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/notice-period-calculator/" target="_blank" rel="noopener" data-i="36">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">CAREER</span>
+            <span class="swipe-title">Notice Period &amp; Last Working Day Calculator</span>
+            <span class="swipe-value">Resignation date plus notice length gives the standard last working day, with days served and remaining tracked, and employer-approved leave adjustment. Date math only; your appointment letter and HR confirmation govern.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/fuel-mileage-tracker/" target="_blank" rel="noopener" data-i="37">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">CARS</span>
+            <span class="swipe-title">Fuel Mileage &amp; Cost-per-KM Tracker</span>
+            <span class="swipe-value">Log full-tank refills with the odometer and get real-world km/l, cost per km and tracked fuel spend. Entries stay in your browser.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/net-worth-calculator-india/" target="_blank" rel="noopener" data-i="38">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Net Worth Snapshot Calculator</span>
+            <span class="swipe-value">Assets minus liabilities at current values, with Indian categories like EPF, PPF, FD and gold, and a CSV export. Entries stay in your browser.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/gratuity-calculator-india/" target="_blank" rel="noopener" data-i="39">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Gratuity Calculator (India)</span>
+            <span class="swipe-value">Last drawn wages and service years through the statutory formula under the Code on Social Security, 2020: 15 days' wages per year, 6-month rounding, fixed-term and eligibility rules, Rs 20 lakh cap. Gross estimate only; tax and disputes are separate.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/hra-exemption-calculator/" target="_blank" rel="noopener" data-i="40">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">HRA Exemption Calculator</span>
+            <span class="swipe-value">Old-regime HRA exemption as the least of three tests, with the expanded 8-city 50% list from the Income-tax Rules 2026, plus receipt, landlord-PAN and family-rent notes.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/freelance-tax-44ada-estimator/" target="_blank" rel="noopener" data-i="41">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Freelancer Presumptive Tax Estimator</span>
+            <span class="swipe-value">Section 58 presumptive income (the old 44ADA) at 50% of receipts with eligibility limits, plus the advance-tax due date - one instalment by 15 March for presumptive declarants under Section 408(2).</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/car-document-expiry-tracker/" target="_blank" rel="noopener" data-i="42">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">CARS</span>
+            <span class="swipe-title">Vehicle Document Expiry Tracker</span>
+            <span class="swipe-value">PUC, insurance, driving licence and RC expiry dates with days-left status pills, sorted so the most urgent is on top. Entries stay in your browser; CSV export included. Verify official status on Parivahan.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush.tech/job-offer-comparator/" target="_blank" rel="noopener" data-i="43">
+          <span class="led"><canvas data-fx="1"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">MONEY</span>
+            <span class="swipe-title">Job Offer Comparator</span>
+            <span class="swipe-value">Score two offers on pay, growth, work-life balance and more with your own weights, see weighted totals and the annual in-hand difference. A thinking aid, not a verdict.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://tanush-7.github.io/tanush-tech/" target="_blank" rel="noopener" data-i="44">
+          <span class="led"><canvas data-fx="2"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">SITE</span>
+            <span class="swipe-title">tanush.tech — earlier version</span>
+            <span class="swipe-value">An earlier build of this personal site, kept in the open.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
+        <a class="swipe-card" href="https://github.com/Tanush-7/Tanush-7.github.io" target="_blank" rel="noopener" data-i="45">
+          <span class="led"><canvas data-fx="0"></canvas></span>
+          <span class="swipe-shade"></span>
+          <span class="swipe-body">
+            <span class="swipe-cat">SITE</span>
+            <span class="swipe-title">This site</span>
+            <span class="swipe-value">The site you're reading — design, branches map, and project index, all in one HTML file.</span>
+            <span class="swipe-open">Open <span>→</span></span>
+          </span>
+        </a>
       </div>
-      <div class="folder" data-folder data-name="Bengaluru Home" data-tint="black" tabindex="0" role="button" aria-label="Bengaluru Home folder, 5 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/bescom-bill-checker/" target="_blank" rel="noopener" data-name="BESCOM Bill Checker" style="--dx:-88px;--rot:-12.0deg;--ri:-4.0deg;--zi:1">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">BESCOM Bill Checker</span>
-          </a>
-          <a class="file" href="https://tanush.tech/bbmp-property-tax-estimator/" target="_blank" rel="noopener" data-name="BBMP Property Tax Estimator" style="--dx:-44px;--rot:-6.0deg;--ri:-2.0deg;--zi:2">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">BBMP Property Tax Estimator</span>
-          </a>
-          <a class="file" href="https://tanush.tech/water-bill-and-tanker-tracker/" target="_blank" rel="noopener" data-name="Water Bill and Tanker Tracker" style="--dx:0px;--rot:0.0deg;--ri:0.0deg;--zi:3">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Water Bill and Tanker Tracker</span>
-          </a>
-          <a class="file" href="https://tanush.tech/broadband-comparer/" target="_blank" rel="noopener" data-name="Broadband Comparer" style="--dx:44px;--rot:6.0deg;--ri:2.0deg;--zi:4">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Broadband Comparer</span>
-          </a>
-          <a class="file" href="https://tanush.tech/home-help-cost-planner/" target="_blank" rel="noopener" data-name="Home Help Cost Planner" style="--dx:88px;--rot:12.0deg;--ri:4.0deg;--zi:5">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Home Help Cost Planner</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Bengaluru Home folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Bengaluru Home</span>
-            <span class="folder-count">5 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
-      </div>
-      <div class="folder" data-folder data-name="Bengaluru Living" data-tint="clear" tabindex="0" role="button" aria-label="Bengaluru Living folder, 4 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/bengaluru-deposit-checker/" target="_blank" rel="noopener" data-name="Deposit &amp; Broker Checker" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Deposit &amp; Broker Checker</span>
-          </a>
-          <a class="file" href="https://tanush.tech/flatmate-and-pg-matcher/" target="_blank" rel="noopener" data-name="Flatmate and PG Matcher" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Flatmate and PG Matcher</span>
-          </a>
-          <a class="file" href="https://tanush.tech/packers-and-movers-estimator/" target="_blank" rel="noopener" data-name="Packers and Movers Estimator" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Packers and Movers Estimator</span>
-          </a>
-          <a class="file" href="https://tanush.tech/furniture-rent-vs-buy/" target="_blank" rel="noopener" data-name="Furniture Rent vs Buy" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Furniture Rent vs Buy</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Bengaluru Living folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Bengaluru Living</span>
-            <span class="folder-count">4 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
-      </div>
-      <div class="folder" data-folder data-name="Money Moves" data-tint="bronze" tabindex="0" role="button" aria-label="Money Moves folder, 4 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/salary-trap-analyser/" target="_blank" rel="noopener" data-name="Salary Trap Analyser" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Salary Trap Analyser</span>
-          </a>
-          <a class="file" href="https://tanush.tech/buy-vs-rent-bengaluru/" target="_blank" rel="noopener" data-name="Buy vs Rent — Bengaluru 2BHK" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Buy vs Rent — Bengaluru 2BHK</span>
-          </a>
-          <a class="file" href="https://tanush.tech/home-loan-prepayment-calculator/" target="_blank" rel="noopener" data-name="Home Loan Prepayment Calculator" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Home Loan Prepayment Calculator</span>
-          </a>
-          <a class="file" href="https://tanush.tech/loan-prepayment-calculator/" target="_blank" rel="noopener" data-name="Loan Part-Prepayment Calculator" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Loan Part-Prepayment Calculator</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Money Moves folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Money Moves</span>
-            <span class="folder-count">4 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
-      </div>
-      <div class="folder" data-folder data-name="Money Tools" data-tint="black" tabindex="0" role="button" aria-label="Money Tools folder, 4 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/net-worth-calculator-india/" target="_blank" rel="noopener" data-name="Net Worth Snapshot Calculator" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Net Worth Snapshot Calculator</span>
-          </a>
-          <a class="file" href="https://tanush.tech/retirement-corpus-calculator-india/" target="_blank" rel="noopener" data-name="Retirement Corpus Calculator (India)" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Retirement Corpus Calculator (India)</span>
-          </a>
-          <a class="file" href="https://tanush.tech/credit-card-statement-tracker/" target="_blank" rel="noopener" data-name="Credit Card Statement Cycle Tracker" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Credit Card Statement Cycle Tracker</span>
-          </a>
-          <a class="file" href="https://tanush.tech/hsn-gst-assistant/" target="_blank" rel="noopener" data-name="HSN &amp; GST Rate Verification Assistant" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">HSN &amp; GST Rate Verification Assistant</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Money Tools folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Money Tools</span>
-            <span class="folder-count">4 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
-      </div>
-      <div class="folder" data-folder data-name="Tax &amp; Pay" data-tint="clear" tabindex="0" role="button" aria-label="Tax &amp; Pay folder, 4 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/gratuity-calculator-india/" target="_blank" rel="noopener" data-name="Gratuity Calculator (India)" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Gratuity Calculator (India)</span>
-          </a>
-          <a class="file" href="https://tanush.tech/hra-exemption-calculator/" target="_blank" rel="noopener" data-name="HRA Exemption Calculator" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">HRA Exemption Calculator</span>
-          </a>
-          <a class="file" href="https://tanush.tech/freelance-tax-44ada-estimator/" target="_blank" rel="noopener" data-name="Freelancer Presumptive Tax Estimator" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Freelancer Presumptive Tax Estimator</span>
-          </a>
-          <a class="file" href="https://tanush.tech/job-offer-comparator/" target="_blank" rel="noopener" data-name="Job Offer Comparator" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Job Offer Comparator</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Tax &amp; Pay folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Tax &amp; Pay</span>
-            <span class="folder-count">4 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
-      </div>
-      <div class="folder" data-folder data-name="Career" data-tint="bronze" tabindex="0" role="button" aria-label="Career folder, 3 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/burnout-and-switch-runway-planner/" target="_blank" rel="noopener" data-name="Burnout and Switch Runway Planner" style="--dx:-88px;--rot:-12.0deg;--ri:-2.0deg;--zi:1">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Burnout and Switch Runway Planner</span>
-          </a>
-          <a class="file" href="https://tanush.tech/hybrid-work-day-tracker/" target="_blank" rel="noopener" data-name="Hybrid Work Day Tracker" style="--dx:0px;--rot:0.0deg;--ri:0.0deg;--zi:2">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Hybrid Work Day Tracker</span>
-          </a>
-          <a class="file" href="https://tanush.tech/notice-period-calculator/" target="_blank" rel="noopener" data-name="Notice Period &amp; Last Working Day Calculator" style="--dx:88px;--rot:12.0deg;--ri:2.0deg;--zi:3">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Notice Period &amp; Last Working Day Calculator</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Career folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Career</span>
-            <span class="folder-count">3 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
-      </div>
-      <div class="folder" data-folder data-name="Life" data-tint="black" tabindex="0" role="button" aria-label="Life folder, 4 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/wedding-budget-planner/" target="_blank" rel="noopener" data-name="Wedding Budget Planner" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Wedding Budget Planner</span>
-          </a>
-          <a class="file" href="https://tanush.tech/weekend-crew-finder/" target="_blank" rel="noopener" data-name="Weekend Crew Finder" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Weekend Crew Finder</span>
-          </a>
-          <a class="file" href="https://tanush.tech/weekend-trip-planner/" target="_blank" rel="noopener" data-name="Weekend Trip Planner" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Weekend Trip Planner</span>
-          </a>
-          <a class="file" href="https://tanush.tech/lost-pet-poster-generator/" target="_blank" rel="noopener" data-name="Lost Pet Poster Generator" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Lost Pet Poster Generator</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Life folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Life</span>
-            <span class="folder-count">4 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
-      </div>
-      <div class="folder" data-folder data-name="Home &amp; Daily" data-tint="clear" tabindex="0" role="button" aria-label="Home &amp; Daily folder, 5 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/cooker-whistle-counter/" target="_blank" rel="noopener" data-name="Cooker Whistle Counter" style="--dx:-88px;--rot:-12.0deg;--ri:-4.0deg;--zi:1">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Cooker Whistle Counter</span>
-          </a>
-          <a class="file" href="https://tanush.tech/plant-watering-tracker/" target="_blank" rel="noopener" data-name="Plant Watering Tracker" style="--dx:-44px;--rot:-6.0deg;--ri:-2.0deg;--zi:2">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Plant Watering Tracker</span>
-          </a>
-          <a class="file" href="https://tanush.tech/noise-event-logger/" target="_blank" rel="noopener" data-name="Noise Event Logger" style="--dx:0px;--rot:0.0deg;--ri:0.0deg;--zi:3">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Noise Event Logger</span>
-          </a>
-          <a class="file" href="https://tanush.tech/rent-utility-tracker/" target="_blank" rel="noopener" data-name="Rent &amp; Utility Tracker" style="--dx:44px;--rot:6.0deg;--ri:2.0deg;--zi:4">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Rent &amp; Utility Tracker</span>
-          </a>
-          <a class="file" href="https://tanush.tech/gym-cost-comparer/" target="_blank" rel="noopener" data-name="Gym Cost Comparer" style="--dx:88px;--rot:12.0deg;--ri:4.0deg;--zi:5">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Gym Cost Comparer</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Home &amp; Daily folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Home &amp; Daily</span>
-            <span class="folder-count">5 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
-      </div>
-      <div class="folder" data-folder data-name="Wellness" data-tint="bronze" tabindex="0" role="button" aria-label="Wellness folder, 2 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/vice-cost-calculator/" target="_blank" rel="noopener" data-name="Vice Cost Calculator" style="--dx:-88px;--rot:-12.0deg;--ri:-1.0deg;--zi:1">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">Vice Cost Calculator</span>
-          </a>
-          <a class="file" href="https://tanush-7.github.io/workout-tracker/" target="_blank" rel="noopener" data-name="Workout Tracker" style="--dx:88px;--rot:12.0deg;--ri:1.0deg;--zi:2">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">Workout Tracker</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open Wellness folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">Wellness</span>
-            <span class="folder-count">2 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
-      </div>
-      <div class="folder" data-folder data-name="India &amp; Site" data-tint="black" tabindex="0" role="button" aria-label="India &amp; Site folder, 4 items">
-        <div class="folder-back"></div>
-        <div class="folder-files">
-          <a class="file" href="https://tanush.tech/india-doc-fix-guide/" target="_blank" rel="noopener" data-name="Fix My Documents (India)" style="--dx:-88px;--rot:-12.0deg;--ri:-3.0deg;--zi:1">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">Fix My Documents (India)</span>
-          </a>
-          <a class="file" href="https://tanush.tech/bereavement-checklist-india/" target="_blank" rel="noopener" data-name="After a Death in the Family" style="--dx:-29px;--rot:-4.0deg;--ri:-1.0deg;--zi:2">
-            <span class="led"><canvas data-fx="1"></canvas></span>
-            <span class="file-name">After a Death in the Family</span>
-          </a>
-          <a class="file" href="https://tanush-7.github.io/tanush-tech/" target="_blank" rel="noopener" data-name="tanush.tech — earlier version" style="--dx:29px;--rot:4.0deg;--ri:1.0deg;--zi:3">
-            <span class="led"><canvas data-fx="2"></canvas></span>
-            <span class="file-name">tanush.tech — earlier version</span>
-          </a>
-          <a class="file" href="https://github.com/Tanush-7/Tanush-7.github.io" target="_blank" rel="noopener" data-name="This site" style="--dx:88px;--rot:12.0deg;--ri:3.0deg;--zi:4">
-            <span class="led"><canvas data-fx="0"></canvas></span>
-            <span class="file-name">This site</span>
-          </a>
-        </div>
-        <div class="folder-front">
-          <button class="folder-toggle" type="button" aria-label="Open India &amp; Site folder" aria-expanded="false">+</button>
-          <div class="folder-label">
-            <span class="folder-name">India &amp; Site</span>
-            <span class="folder-count">4 items</span>
-          </div>
-        </div>
-        <div class="folder-picked" aria-live="polite"></div>
-      </div>
-    </div>
-    <div class="folders-foot">
-      <button class="replay-btn" id="replayFolders" type="button">↺ Replay</button>
     </div>
     <p class="goal-line"><strong>Target:</strong> 20 more builds before the year ends.</p>
   </section>
@@ -1239,43 +1354,61 @@
 </script>
 <script>
   (function () {
-    var folders = Array.prototype.slice.call(document.querySelectorAll("[data-folder]"));
-    if (!folders.length) return;
-    folders.forEach(function (f) {
-      var front = f.querySelector(".folder-front");
-      var toggle = f.querySelector(".folder-toggle");
-      var picked = f.querySelector(".folder-picked");
-      function setOpen(open) {
-        f.classList.toggle("open", open);
-        toggle.textContent = open ? "\u00d7" : "+";
-        toggle.setAttribute("aria-label", (open ? "Close " : "Open ") + f.getAttribute("data-name") + " folder");
-        toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        if (!open) picked.textContent = "";
-      }
-      function toggleOpen() { setOpen(!f.classList.contains("open")); }
-      front.addEventListener("click", function () { toggleOpen(); });
-      toggle.addEventListener("click", function (e) { e.stopPropagation(); toggleOpen(); });
-      f.addEventListener("keydown", function (e) {
-        if (e.target === f && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggleOpen(); }
+    var row = document.getElementById("swipeRow");
+    if (!row) return;
+    var cards = Array.prototype.slice.call(row.querySelectorAll(".swipe-card"));
+    var count = document.getElementById("swipeCount");
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function centerIndex() {
+      var mid = row.getBoundingClientRect().left + row.clientWidth / 2;
+      var best = 0, bd = 1e9;
+      cards.forEach(function (c, i) {
+        var r = c.getBoundingClientRect();
+        var d = Math.abs((r.left + r.right) / 2 - mid);
+        if (d < bd) { bd = d; best = i; }
       });
-      f.querySelectorAll(".file").forEach(function (file) {
-        file.addEventListener("click", function (e) { e.stopPropagation(); });
-        file.addEventListener("mouseenter", function () { picked.textContent = file.getAttribute("data-name"); });
-        file.addEventListener("focus", function () { picked.textContent = file.getAttribute("data-name"); });
-        file.addEventListener("mouseleave", function () { picked.textContent = ""; });
-      });
+      return best;
+    }
+    function update() {
+      var i = centerIndex();
+      cards.forEach(function (c, j) { c.classList.toggle("is-center", j === i); });
+      if (count) count.textContent = String(i + 1).padStart(2, "0") + " / " + String(cards.length).padStart(2, "0");
+    }
+    var raf = null;
+    row.addEventListener("scroll", function () {
+      if (raf) return;
+      raf = requestAnimationFrame(function () { raf = null; update(); });
+    }, { passive: true });
+    var down = false, startX = 0, startLeft = 0, moved = 0;
+    row.addEventListener("pointerdown", function (e) {
+      if (e.pointerType !== "mouse") return;
+      down = true; moved = 0; startX = e.clientX; startLeft = row.scrollLeft;
+      row.classList.add("dragging");
     });
-    var replay = document.getElementById("replayFolders");
-    if (replay) replay.addEventListener("click", function () {
-      folders.forEach(function (f) {
-        f.classList.remove("open");
-        var t = f.querySelector(".folder-toggle");
-        t.textContent = "+";
-        t.setAttribute("aria-label", "Open " + f.getAttribute("data-name") + " folder");
-        t.setAttribute("aria-expanded", "false");
-        f.querySelector(".folder-picked").textContent = "";
-      });
+    row.addEventListener("pointermove", function (e) {
+      if (!down) return;
+      var dx = e.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      row.scrollLeft = startLeft - dx;
     });
+    function endDrag() {
+      if (!down) return;
+      down = false; row.classList.remove("dragging");
+    }
+    row.addEventListener("pointerup", endDrag);
+    row.addEventListener("pointercancel", endDrag);
+    row.addEventListener("click", function (e) {
+      if (moved > 6) { e.preventDefault(); e.stopPropagation(); moved = 0; }
+    }, true);
+    var prev = document.getElementById("swipePrev"), next = document.getElementById("swipeNext");
+    function step(dir) {
+      var w = cards[0] ? cards[0].getBoundingClientRect().width + 16 : 280;
+      row.scrollBy({ left: dir * w, behavior: reduce ? "auto" : "smooth" });
+    }
+    if (prev) prev.addEventListener("click", function () { step(-1); });
+    if (next) next.addEventListener("click", function () { step(1); });
+    window.addEventListener("resize", update);
+    update();
   })();
 </script>
 </body>
