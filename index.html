@@ -120,12 +120,13 @@
   .goal-line strong { color: var(--bronze); }
 
   /* ---- project cards ---- */
-  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .card {
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: 10px; padding: 16px 18px;
+    border-radius: 14px; overflow: hidden;
     transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
   }
+  .card:hover { border-color: #2E2E2E; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6); }
   .card.extra { display: none; }
   .cards.show-all .card.extra { display: block; }
   .show-all-btn {
@@ -136,10 +137,9 @@
     transition: background 0.18s ease, color 0.18s ease;
   }
   .show-all-btn:hover { background: var(--text); color: #000; }
-  .card:hover { border-color: #2E2E2E; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6); }
-  .card.featured { grid-column: 1 / -1; position: relative; background: #0D0D0D; }
+  .card.featured { position: relative; background: #0D0D0D; }
   .card.featured::before {
-    content: ""; position: absolute; inset: -1px; border-radius: 11px; padding: 1px;
+    content: ""; position: absolute; inset: -1px; border-radius: 15px; padding: 1px;
     background: conic-gradient(from var(--glow-angle, 0deg), transparent 0%, rgba(201, 169, 106, 0.55) 12%, transparent 28%, transparent 100%);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
@@ -150,17 +150,28 @@
   }
   @property --glow-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
   @keyframes glow-spin { to { --glow-angle: 360deg; } }
-  .card h3 { font-family: "Inter Tight", "Inter", -apple-system, sans-serif; font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
-  .card p { color: var(--muted); font-size: 0.88rem; margin-bottom: 10px; }
-  .card .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-  .card .tag {
+  .led { height: 120px; background: #050505; border-bottom: 1px solid var(--line); }
+  .led canvas { display: block; width: 100%; height: 100%; }
+  .card-body { padding: 16px 18px 14px; }
+  .card-meta {
+    display: flex; justify-content: space-between; gap: 10px;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.72rem; color: var(--bronze);
-    border: 1px solid var(--line2); border-radius: 999px; padding: 2px 10px;
+    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--faint); margin-bottom: 10px;
   }
-  .card .tag.live { color: var(--green); border-color: rgba(74, 222, 128, 0.35); }
-  .card a { color: var(--bronze); font-weight: 600; text-decoration: none; margin-right: 18px; font-size: 0.9rem; }
-  .card a:hover { text-decoration: underline; }
+  .card-meta span:first-child { color: var(--bronze); }
+  .card h3 { font-family: "Inter Tight", "Inter", -apple-system, sans-serif; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .card p { color: var(--muted); font-size: 0.88rem; margin-bottom: 12px; }
+  .card-foot {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    border-top: 1px solid var(--line); padding-top: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint);
+  }
+  .card-foot .dot { color: var(--green); font-style: normal; }
+  .card-links { white-space: nowrap; }
+  .card-links a { color: var(--bronze); font-weight: 600; text-decoration: none; margin-left: 14px; font-size: 0.85rem; font-family: "Inter", -apple-system, sans-serif; letter-spacing: 0; text-transform: none; }
+  .card-links a:hover { text-decoration: underline; }
 
   /* ---- about / now ---- */
   .about p { color: var(--muted); margin-bottom: 16px; max-width: 62ch; }
@@ -331,326 +342,419 @@
     <p class="sec-sub">Best work first. Everything here is live or in the open, with code linked.</p>
     <div class="cards">
       <div class="card featured">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.01 — CARS</span><span>01 / 46</span></div>
         <h3>CarScope India</h3>
         <p>Live car-price comparison for the Indian market. Compare prices across the market instead of visiting listing after listing.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">TypeScript</span></div>
-        <a href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/india-car-market" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · TYPESCRIPT</span><span class="card-links"><a href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/india-car-market" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.02 — LIFE</span><span>02 / 46</span></div>
         <h3>Wedding Budget Planner</h3>
         <p>Bengaluru wedding budget planner for a 2027-2028 wedding. Venue and vendor costs mapped against salary, savings, and EMIs.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/wedding-budget-planner/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/wedding-budget-planner" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/wedding-budget-planner/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/wedding-budget-planner" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.03 — BENGALURU</span><span>03 / 46</span></div>
         <h3>Bengaluru Rent Commute Calculator</h3>
         <p>What a Bengaluru flat really costs: rent plus commute by area, office, and travel mode, with a Namma Metro picker and household bills.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/bengaluru-rent-commute-calculator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/bengaluru-rent-commute-calculator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bengaluru-rent-commute-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/bengaluru-rent-commute-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.04 — BENGALURU</span><span>04 / 46</span></div>
         <h3>Deposit &amp; Broker Checker</h3>
         <p>Flags a 10-month deposit, hidden one-time charges and tanker water dependence before you pay a token on a Bengaluru flat.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/bengaluru-deposit-checker/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/bengaluru-deposit-checker" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bengaluru-deposit-checker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/bengaluru-deposit-checker" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.05 — BENGALURU</span><span>05 / 46</span></div>
         <h3>Bengaluru Commute Optimiser</h3>
         <p>Auto vs cab vs Namma Metro plus last-mile, on monthly cost and hours, for your exact route at peak and off-peak.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/bengaluru-commute-optimiser/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/bengaluru-commute-optimiser" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bengaluru-commute-optimiser/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/bengaluru-commute-optimiser" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.06 — BENGALURU</span><span>06 / 46</span></div>
         <h3>Bangalore Traffic Pulse</h3>
         <p>Live traffic for a Bengaluru commute: congestion, speed and delay on your route, with a map and 5-minute refresh. Paste your free Google Maps key for live times.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/bangalore-traffic-pulse/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/bangalore-traffic-pulse" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bangalore-traffic-pulse/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/bangalore-traffic-pulse" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.07 — LIFE</span><span>07 / 46</span></div>
         <h3>Vice Cost Calculator</h3>
         <p>Caffeine from coffee, matcha and tea against your bedtime, plus what beer and cigarettes cost in years, with sourced numbers.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/vice-cost-calculator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/vice-cost-calculator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/vice-cost-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/vice-cost-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.08 — MONEY</span><span>08 / 46</span></div>
         <h3>Salary Trap Analyser</h3>
         <p>Paste pay, rent, EMIs and SIPs. See the real in-hand and why a hike still leaves only a few thousand free.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/salary-trap-analyser/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/salary-trap-analyser" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/salary-trap-analyser/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/salary-trap-analyser" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.09 — MONEY</span><span>09 / 46</span></div>
         <h3>Buy vs Rent — Bengaluru 2BHK</h3>
         <p>Price, EMI, maintenance and tanker water against rent growth and an invested down payment, year by year to breakeven.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/buy-vs-rent-bengaluru/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/buy-vs-rent-bengaluru" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/buy-vs-rent-bengaluru/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/buy-vs-rent-bengaluru" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.10 — BENGALURU</span><span>10 / 46</span></div>
         <h3>Water Bill and Tanker Tracker</h3>
         <p>Checks any Bengaluru monthly water charge against a fair range, logs bills and tanker deliveries, and writes the message to your landlord.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/water-bill-and-tanker-tracker/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/water-bill-and-tanker-tracker" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/water-bill-and-tanker-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/water-bill-and-tanker-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.11 — CAREER</span><span>11 / 46</span></div>
         <h3>Burnout and Switch Runway Planner</h3>
         <p>Burnout score from work hours, commute, and recovery, months of runway if you quit today, and a 90-day switch plan.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/burnout-and-switch-runway-planner/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/burnout-and-switch-runway-planner" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/burnout-and-switch-runway-planner/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/burnout-and-switch-runway-planner" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.12 — LIFE</span><span>12 / 46</span></div>
         <h3>Weekend Crew Finder</h3>
         <p>Find a weekend crew in Bengaluru for badminton, runs, treks, football, cycling, and board games. Match by area, day, level, and budget.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/weekend-crew-finder/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/weekend-crew-finder" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/weekend-crew-finder/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/weekend-crew-finder" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.13 — BENGALURU</span><span>13 / 46</span></div>
         <h3>Flatmate and PG Matcher</h3>
         <p>Match flats, PGs, and co-living in Bengaluru to your routine: budget, office hub, shift, food, sleep, noise, and guests.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/flatmate-and-pg-matcher/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/flatmate-and-pg-matcher" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/flatmate-and-pg-matcher/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/flatmate-and-pg-matcher" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.14 — HEALTH</span><span>14 / 46</span></div>
         <h3>Workout Tracker</h3>
         <p>A workout tracker that runs in the browser. Log sessions, keep the habit visible.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush-7.github.io/workout-tracker/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/workout-tracker" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush-7.github.io/workout-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/workout-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.15 — HOME</span><span>15 / 46</span></div>
         <h3>Cooker Whistle Counter</h3>
         <p>Counts pressure-cooker whistles with your mic and alerts at your target, with a manual tap mode and honest limits. A supervised cooking aid, not a safety device.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/cooker-whistle-counter/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/cooker-whistle-counter" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/cooker-whistle-counter/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/cooker-whistle-counter" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.16 — HOME</span><span>16 / 46</span></div>
         <h3>Plant Watering Tracker</h3>
         <p>Custom watering schedules, care notes, tags and progress photos for every plant. Everything is stored on your device only.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/plant-watering-tracker/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/plant-watering-tracker" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/plant-watering-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/plant-watering-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.17 — MONEY</span><span>17 / 46</span></div>
         <h3>Rent &amp; Utility Tracker</h3>
         <p>For landlords and PG owners: track rent, electricity, water and other charges per room, month by month. Data stays on this device; export CSV anytime.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/rent-utility-tracker/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/rent-utility-tracker" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/rent-utility-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/rent-utility-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.18 — INDIA</span><span>18 / 46</span></div>
         <h3>Fix My Documents (India)</h3>
         <p>Which portal, what you'll typically need, and in what order, for correcting Aadhaar, PAN, passport and voter ID. Links only to official portals.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/india-doc-fix-guide/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/india-doc-fix-guide" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/india-doc-fix-guide/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/india-doc-fix-guide" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.19 — INDIA</span><span>19 / 46</span></div>
         <h3>After a Death in the Family</h3>
         <p>An ordered checklist of the formalities families in India face after a death, from the death certificate to banks, insurance and taxes. Progress saved on this device.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/bereavement-checklist-india/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/bereavement-checklist-india" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bereavement-checklist-india/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/bereavement-checklist-india" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.20 — BENGALURU</span><span>20 / 46</span></div>
         <h3>BESCOM Bill Checker</h3>
         <p>Rebuilds your BESCOM bill line by line from the real KERC tariff, models Gruha Jyothi, and tells you if what BESCOM charged matches.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/bescom-bill-checker/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/bescom-bill-checker" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bescom-bill-checker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/bescom-bill-checker" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.21 — BENGALURU</span><span>21 / 46</span></div>
         <h3>Packers and Movers Estimator</h3>
         <p>Local and intercity shifting costs for Bengaluru by home size and distance, with GST, add-ons, and a quote-fairness checker.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/packers-and-movers-estimator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/packers-and-movers-estimator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/packers-and-movers-estimator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/packers-and-movers-estimator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.22 — BENGALURU</span><span>22 / 46</span></div>
         <h3>Airport Commute Comparer</h3>
         <p>Vayu Vajra vs cab vs train vs Metro plus bus to Kempegowda airport, ranked by cost, time, reliability and exact leave-by time.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/airport-commute-comparer/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/airport-commute-comparer" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/airport-commute-comparer/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/airport-commute-comparer" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.23 — BENGALURU</span><span>23 / 46</span></div>
         <h3>Broadband Comparer</h3>
         <p>JioFiber, Airtel, ACT, BSNL and Hathway across Bengaluru localities, with a GST and installation true-cost calculator.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/broadband-comparer/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/broadband-comparer" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/broadband-comparer/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/broadband-comparer" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.24 — MONEY</span><span>24 / 46</span></div>
         <h3>Home Loan Prepayment Calculator</h3>
         <p>Monthly extra, lump sum and annual bonus prepayments, with interest saved, tenure saved and a year-by-year table.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/home-loan-prepayment-calculator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/home-loan-prepayment-calculator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/home-loan-prepayment-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/home-loan-prepayment-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.25 — BENGALURU</span><span>25 / 46</span></div>
         <h3>BBMP Property Tax Estimator</h3>
         <p>The real Unit Area Value formula across zones A to F, for residential, commercial and vacant land, with rebate and late penalty.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/bbmp-property-tax-estimator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/bbmp-property-tax-estimator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/bbmp-property-tax-estimator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/bbmp-property-tax-estimator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.26 — BENGALURU</span><span>26 / 46</span></div>
         <h3>Home Help Cost Planner</h3>
         <p>What a maid, cook, cleaner or driver actually costs in Bengaluru, by area, home size and visits per week.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/home-help-cost-planner/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/home-help-cost-planner" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/home-help-cost-planner/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/home-help-cost-planner" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.27 — LIFE</span><span>27 / 46</span></div>
         <h3>Gym Cost Comparer</h3>
         <p>Cultpass, Anytime, Gold's, Snap, F45 and local gyms ranked by true cost per visit, with joining fees and lock-in.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/gym-cost-comparer/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/gym-cost-comparer" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/gym-cost-comparer/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/gym-cost-comparer" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.28 — HOME</span><span>28 / 46</span></div>
         <h3>Furniture Rent vs Buy</h3>
         <p>Renting vs buying furniture for a Bengaluru flat, with breakeven month, upfront cash and a verdict per item.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/furniture-rent-vs-buy/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/furniture-rent-vs-buy" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/furniture-rent-vs-buy/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/furniture-rent-vs-buy" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.29 — LIFE</span><span>29 / 46</span></div>
         <h3>Weekend Trip Planner</h3>
         <p>Twelve getaways from Bengaluru with per-person cost splits, leave-by times and hour-by-hour plans for 1 to 3 days.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/weekend-trip-planner/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/weekend-trip-planner" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/weekend-trip-planner/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/weekend-trip-planner" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.30 — HOME</span><span>30 / 46</span></div>
         <h3>Noise Event Logger</h3>
         <p>Timestamped log of loud-noise events, kept on your device and exportable as CSV or a printable report. Manual entries always work; mic auto-detection is experimental. Relative, uncalibrated levels; a personal record, not a legal measurement.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/noise-event-logger/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/noise-event-logger" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/noise-event-logger/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/noise-event-logger" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.31 — LIFE</span><span>31 / 46</span></div>
         <h3>Lost Pet Poster Generator</h3>
         <p>Fill a short form, get a print-ready A4 lost-pet poster. Photo and details stay in your browser and print cleanly.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/lost-pet-poster-generator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/lost-pet-poster-generator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/lost-pet-poster-generator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/lost-pet-poster-generator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.32 — MONEY</span><span>32 / 46</span></div>
         <h3>Loan Part-Prepayment Calculator</h3>
         <p>Compare the two ways a lender can apply a prepayment: same EMI with a shorter tenure, or a lower EMI on the same tenure, with interest saved and a year-wise schedule.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/loan-prepayment-calculator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/loan-prepayment-calculator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/loan-prepayment-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/loan-prepayment-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.33 — MONEY</span><span>33 / 46</span></div>
         <h3>Retirement Corpus Calculator (India)</h3>
         <p>Inflation-adjusted expense at retirement, the corpus it implies, and the step-up SIP to get there, in INR. A projection from your assumptions, not advice.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/retirement-corpus-calculator-india/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/retirement-corpus-calculator-india" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/retirement-corpus-calculator-india/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/retirement-corpus-calculator-india" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.34 — MONEY</span><span>34 / 46</span></div>
         <h3>HSN &amp; GST Rate Verification Assistant</h3>
         <p>Decode an HSN code, reach the official GST portal and CBIC notifications, and keep a worksheet of the rates you verified yourself. Asserts no rates of its own.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/hsn-gst-assistant/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hsn-gst-assistant" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/hsn-gst-assistant/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hsn-gst-assistant" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.35 — MONEY</span><span>35 / 46</span></div>
         <h3>Credit Card Statement Cycle Tracker</h3>
         <p>Group spends by your card&rsquo;s real statement cycle (say the 20th to the 19th), watch the current bill build up and see the estimated due date. Entries stay in your browser.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/credit-card-statement-tracker/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/credit-card-statement-tracker" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/credit-card-statement-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/credit-card-statement-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.36 — CAREER</span><span>36 / 46</span></div>
         <h3>Hybrid Work Day Tracker</h3>
         <p>Tap days to mark Office, WFH or Leave and get monthly and year-to-date counts, so hybrid attendance targets stop being guesswork. Entries stay in your browser.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/hybrid-work-day-tracker/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hybrid-work-day-tracker" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/hybrid-work-day-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hybrid-work-day-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.37 — CAREER</span><span>37 / 46</span></div>
         <h3>Notice Period &amp; Last Working Day Calculator</h3>
         <p>Resignation date plus notice length gives the standard last working day, with days served and remaining tracked, and employer-approved leave adjustment. Date math only; your appointment letter and HR confirmation govern.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/notice-period-calculator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/notice-period-calculator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/notice-period-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/notice-period-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.38 — CARS</span><span>38 / 46</span></div>
         <h3>Fuel Mileage &amp; Cost-per-KM Tracker</h3>
         <p>Log full-tank refills with the odometer and get real-world km/l, cost per km and tracked fuel spend. Entries stay in your browser.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/fuel-mileage-tracker/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/fuel-mileage-tracker" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/fuel-mileage-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/fuel-mileage-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.39 — MONEY</span><span>39 / 46</span></div>
         <h3>Net Worth Snapshot Calculator</h3>
         <p>Assets minus liabilities at current values, with Indian categories like EPF, PPF, FD and gold, and a CSV export. Entries stay in your browser.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/net-worth-calculator-india/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/net-worth-calculator-india" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/net-worth-calculator-india/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/net-worth-calculator-india" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.40 — LIFE</span><span>40 / 46</span></div>
         <h3>Gratuity Calculator (India)</h3>
         <p>Last drawn wages and service years through the statutory formula under the Code on Social Security, 2020: 15 days' wages per year, 6-month rounding, fixed-term and eligibility rules, Rs 20 lakh cap. Gross estimate only; tax and disputes are separate.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/gratuity-calculator-india/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/gratuity-calculator-india" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/gratuity-calculator-india/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/gratuity-calculator-india" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.41 — LIFE</span><span>41 / 46</span></div>
         <h3>HRA Exemption Calculator</h3>
         <p>Old-regime HRA exemption as the least of three tests, with the expanded 8-city 50% list from the Income-tax Rules 2026, plus receipt, landlord-PAN and family-rent notes.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/hra-exemption-calculator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hra-exemption-calculator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/hra-exemption-calculator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/hra-exemption-calculator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.42 — LIFE</span><span>42 / 46</span></div>
         <h3>Freelancer Presumptive Tax Estimator</h3>
         <p>Section 58 presumptive income (the old 44ADA) at 50% of receipts with eligibility limits, plus the advance-tax due date - one instalment by 15 March for presumptive declarants under Section 408(2).</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/freelance-tax-44ada-estimator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/freelance-tax-44ada-estimator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/freelance-tax-44ada-estimator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/freelance-tax-44ada-estimator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.43 — LIFE</span><span>43 / 46</span></div>
         <h3>Vehicle Document Expiry Tracker</h3>
         <p>PUC, insurance, driving licence and RC expiry dates with days-left status pills, sorted so the most urgent is on top. Entries stay in your browser; CSV export included. Verify official status on Parivahan.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/car-document-expiry-tracker/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/car-document-expiry-tracker" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/car-document-expiry-tracker/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/car-document-expiry-tracker" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="1"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.44 — LIFE</span><span>44 / 46</span></div>
         <h3>Job Offer Comparator</h3>
         <p>Score two offers on pay, growth, work-life balance and more with your own weights, see weighted totals and the annual in-hand difference. A thinking aid, not a verdict.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML · JavaScript</span></div>
-        <a href="https://tanush.tech/job-offer-comparator/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/job-offer-comparator" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML · JAVASCRIPT</span><span class="card-links"><a href="https://tanush.tech/job-offer-comparator/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/Tanush-7.github.io/tree/main/job-offer-comparator" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="2"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.45 — SITE</span><span>45 / 46</span></div>
         <h3>tanush.tech — earlier version</h3>
         <p>An earlier build of this personal site, kept in the open.</p>
-        <div class="tags"><span class="tag live">● Live</span><span class="tag">HTML</span></div>
-        <a href="https://tanush-7.github.io/tanush-tech/" target="_blank" rel="noopener">Visit ↗</a>
-        <a href="https://github.com/Tanush-7/tanush-tech" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span><i class="dot">●</i> LIVE · HTML</span><span class="card-links"><a href="https://tanush-7.github.io/tanush-tech/" target="_blank" rel="noopener">Visit ↗</a><a href="https://github.com/Tanush-7/tanush-tech" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
       <div class="card extra">
+      <div class="led"><canvas data-fx="0"></canvas></div>
+      <div class="card-body">
+        <div class="card-meta"><span>CH.46 — SITE</span><span>46 / 46</span></div>
         <h3>This site</h3>
         <p>The site you're reading — design, branches map, and project index, all in one HTML file.</p>
-        <div class="tags"><span class="tag">HTML</span></div>
-        <a href="https://github.com/Tanush-7/Tanush-7.github.io" target="_blank" rel="noopener">Code ↗</a>
+        <div class="card-foot"><span>HTML</span><span class="card-links"><a href="https://github.com/Tanush-7/Tanush-7.github.io" target="_blank" rel="noopener">Code ↗</a></span></div>
       </div>
+    </div>
     </div>
     <button class="show-all-btn" id="showAllProjects" aria-expanded="false">Show all projects</button>
     <p class="goal-line"><strong>Target:</strong> 20 more builds before the year ends.</p>
@@ -1118,6 +1222,95 @@
       btn.textContent = open ? 'Show less' : 'Show all projects';
       btn.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
+  })();
+</script>
+<script>
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var panels = Array.prototype.slice.call(document.querySelectorAll(".led canvas"));
+    if (!panels.length) return;
+    var COLORS = ["#E8B84B", "#34D399", "#A78BFA"];
+    function setup(cv) {
+      var ctx = cv.getContext("2d");
+      var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      var w = 0, h = 0, cols = 0, rows = 0, t = Math.random() * 100;
+      var drops = [], bars = [];
+      function size() {
+        var r = cv.parentElement.getBoundingClientRect();
+        w = Math.max(1, Math.floor(r.width)); h = Math.max(1, Math.floor(r.height));
+        cv.width = w * dpr; cv.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        cols = Math.max(1, Math.floor(w / 11)); rows = Math.max(1, Math.floor(h / 11));
+        drops = []; bars = [];
+        for (var i = 0; i < cols; i++) { drops.push({ y: Math.random() * rows, s: 0.2 + Math.random() * 0.5 }); bars.push(Math.random()); }
+      }
+      size();
+      var fx = parseInt(cv.getAttribute("data-fx") || "0", 10) % 3;
+      var color = COLORS[fx];
+      function dot(x, y, a, s) {
+        ctx.globalAlpha = a; ctx.fillStyle = color;
+        ctx.fillRect(x * 11 + 3, y * 11 + 3, s || 4, s || 4);
+      }
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.globalAlpha = 1; ctx.fillStyle = "rgba(255,255,255,0.05)";
+        for (var gy = 0; gy < rows; gy++) for (var gx = 0; gx < cols; gx++) ctx.fillRect(gx * 11 + 4, gy * 11 + 4, 2, 2);
+        t += 0.03;
+        if (fx === 0) {
+          var cx = cols / 2, cy = rows / 2, rx = cols * 0.36, ry = rows * 0.32;
+          for (var k = 0; k < 14; k++) {
+            var a = t * 0.9 - k * 0.16;
+            var px = Math.round(cx + Math.cos(a) * rx), py = Math.round(cy + Math.sin(a) * ry);
+            if (px >= 0 && px < cols && py >= 0 && py < rows) dot(px, py, 1 - k / 14, k === 0 ? 5 : 4);
+          }
+        } else if (fx === 1) {
+          for (var d = 0; d < cols; d++) {
+            var dr = drops[d];
+            dr.y += dr.s * 0.35;
+            if (dr.y > rows + 2) { dr.y = -2; dr.s = 0.2 + Math.random() * 0.5; }
+            var yy = Math.floor(dr.y);
+            for (var trail = 0; trail < 4; trail++) {
+              var ty = yy - trail;
+              if (ty >= 0 && ty < rows) dot(d, ty, 0.9 - trail * 0.22, 3);
+            }
+          }
+        } else {
+          for (var b = 0; b < cols; b++) {
+            var target = 0.25 + 0.75 * Math.abs(Math.sin(t * 1.4 + b * 0.55) * Math.sin(t * 0.7 + b * 0.21));
+            bars[b] += (target - bars[b]) * 0.12;
+            var bh = Math.max(1, Math.floor(bars[b] * rows));
+            for (var by = rows - 1; by >= rows - bh; by--) dot(b, by, 0.25 + 0.75 * ((rows - by) / rows), 4);
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
+      return { draw: draw, size: size };
+    }
+    var items = panels.map(function (cv) { return { cv: cv, p: setup(cv), on: false }; });
+    if (reduce) { items.forEach(function (it) { it.p.draw(); }); return; }
+    var raf = null;
+    function tick() {
+      var any = false;
+      items.forEach(function (it) { if (it.on) { it.p.draw(); any = true; } });
+      if (any) raf = requestAnimationFrame(tick); else raf = null;
+    }
+    function wake() { if (!raf) raf = requestAnimationFrame(tick); }
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          var it = null;
+          items.forEach(function (x) { if (x.cv === e.target) it = x; });
+          if (!it) return;
+          if (e.isIntersecting) { it.p.size(); it.on = true; it.p.draw(); wake(); }
+          else it.on = false;
+        });
+      }, { rootMargin: "80px" });
+      items.forEach(function (it) { io.observe(it.cv); });
+    } else {
+      items.forEach(function (it) { it.on = true; });
+      wake();
+    }
+    window.addEventListener("resize", function () { items.forEach(function (it) { it.p.size(); }); });
   })();
 </script>
 </body>
