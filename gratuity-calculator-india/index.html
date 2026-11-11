@@ -100,7 +100,7 @@ document.getElementById('calc').addEventListener('click', () => {
     '</div>' +
     '<table style="margin-top:10px">' +
     '<tr><th>Step</th><th>Value</th></tr>' +
-    '<tr><td>Service counted (6+ months rounds up)</td><td>' + r.years + ' years</td></tr>' +
+    '<tr><td>Service counted (6+ months rounds up)</td><td>' + r.years + ' year' + (r.years === 1 ? '' : 's') + '</td></tr>' +
     '<tr><td>Per-year gratuity (wages x 15/26)</td><td>' + fmt(wages * 15 / 26) + '</td></tr>' +
     '<tr><td>Total (before cap)</td><td>' + fmt(r.amount) + '</td></tr></table>' +
     tenureNote +
