@@ -275,6 +275,39 @@
     color: var(--green); border: 1px solid rgba(74, 222, 128, 0.35);
     border-radius: 999px; padding: 2px 10px;
   }
+  .cert-card.is-hidden { display: none; }
+  @keyframes certIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .cert-card.cert-in { animation: certIn 0.45s ease backwards; animation-delay: calc(var(--i, 0) * 45ms); }
+  .cert-toggle-wrap { display: flex; justify-content: center; margin-top: 22px; }
+  .cert-toggle {
+    position: relative; overflow: hidden;
+    padding: 12px 22px; border-radius: 999px; cursor: pointer;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 92, 26, 0.45);
+    color: var(--text); font: 600 0.95rem "Inter", -apple-system, sans-serif;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .cert-toggle::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px;
+    background: conic-gradient(from var(--angle, 0deg), transparent 0deg, var(--accent) 40deg, transparent 90deg, transparent 180deg, var(--accent) 220deg, transparent 270deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: spinBorder 3.5s linear infinite; pointer-events: none;
+  }
+  @property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+  @keyframes spinBorder { to { --angle: 360deg; } }
+  .cert-toggle-chev { display: inline-block; transition: transform 0.3s ease; color: var(--accent); font-size: 1.05rem; line-height: 1; }
+  .cert-toggle[aria-expanded="true"] .cert-toggle-chev { transform: rotate(180deg); }
+  @media (prefers-reduced-motion: reduce) {
+    .cert-card.cert-in { animation: none; }
+    .cert-toggle::before { animation: none; }
+    .cert-toggle-chev { transition: none; }
+  }
   @media (max-width: 1100px) { .cert-grid { grid-template-columns: repeat(4, 1fr); } }
   @media (max-width: 900px) { .cert-grid { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 640px) { .cert-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -393,7 +426,7 @@
   <section id="certifications">
     <h2>Certifications</h2>
     <p class="sec-sub">18 earned, 1 in progress. Tap any badge to verify it on Credly.</p>
-    <div class="cert-grid">
+    <div class="cert-grid" id="certGrid">
         <a class="cert-card" href="https://www.credly.com/badges/8560358a-4c3a-46d4-810a-e36a53d6c6e9" target="_blank" rel="noopener">
           <div class="logo-tile"><span class="mono" style="color:#5B4A8A">PMP</span><img src="https://images.credly.com/images/731e7ef4-9b0c-4d7b-ab65-23cc699c0aa3/blob" alt="PMP badge" onerror="this.style.display='none'"></div>
           <strong>PMP</strong>
@@ -490,6 +523,12 @@
           <strong>AWS Educate: Introduction to Generative AI</strong>
           <span>AWS Educate</span>
         </a>
+    </div>
+    <div class="cert-toggle-wrap">
+      <button class="cert-toggle" id="certToggle" type="button" aria-expanded="false" aria-controls="certGrid">
+        <span class="cert-toggle-label">Show all 19 certifications</span>
+        <span class="cert-toggle-chev">⌄</span>
+      </button>
     </div>
     <p class="credly-note">Verified live on <a href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly ↗</a> — new badges appear there automatically.</p>
   </section>
@@ -1273,6 +1312,33 @@
       run(input.value);
       input.focus();
     });
+  })();
+</script>
+<script>
+  (function () {
+    var grid = document.getElementById("certGrid");
+    var btn = document.getElementById("certToggle");
+    if (!grid || !btn) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll(".cert-card"));
+    var VISIBLE = 6;
+    var expanded = false;
+    function apply() {
+      cards.forEach(function (c, i) {
+        var hide = !expanded && i >= VISIBLE;
+        c.classList.toggle("is-hidden", hide);
+        c.classList.remove("cert-in");
+        if (!hide && expanded && i >= VISIBLE) {
+          c.style.setProperty("--i", i - VISIBLE);
+          void c.offsetWidth;
+          c.classList.add("cert-in");
+        }
+      });
+      btn.setAttribute("aria-expanded", expanded ? "true" : "false");
+      btn.querySelector(".cert-toggle-label").textContent =
+        expanded ? "Show less" : "Show all 19 certifications";
+    }
+    btn.addEventListener("click", function () { expanded = !expanded; apply(); });
+    apply();
   })();
 </script>
 </body>
