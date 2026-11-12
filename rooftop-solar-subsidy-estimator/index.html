@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rooftop Solar Subsidy Estimator (PM Surya Ghar)</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Rooftop Solar Subsidy Estimator</h1>
+<p class="sub">Getting vendor quotes for rooftop solar and not sure what the government chip-in should be? Estimate the PM Surya Ghar subsidy and a rough payback here.</p>
+
+<div class="card">
+  <strong>The subsidy structure (official)</strong>
+  <p class="note" style="margin-top:6px">
+  Under PM - Surya Ghar: Muft Bijli Yojana, residential households get Central Financial Assistance of <strong>Rs 30,000 per kW up to 2 kW</strong>, plus <strong>Rs 18,000 per kW for additional capacity up to 3 kW</strong> - so Rs 30,000 for 1 kW, Rs 60,000 for 2 kW, Rs 78,000 for 3 kW, and <strong>capped at Rs 78,000</strong> for anything above 3 kW. Group housing societies / RWAs get Rs 18,000 per kW for common facilities up to 500 kW. Applications go through the national portal <strong>pmsuryaghar.gov.in</strong> only, with a DISCOM-empanelled vendor; the subsidy is paid after installation and inspection. Verify the current structure on the portal before signing - scheme terms are revised from time to time.
+  </p>
+</div>
+
+<div class="card">
+  <strong>Estimate</strong>
+  <div class="grid3" style="margin-top:8px">
+    <div><label>System size (kW)</label><input id="kw" type="number" min="0.5" step="0.5" value="3"></div>
+    <div><label>Vendor quote (Rs, your actual quote)</label><input id="quote" type="number" min="0" step="1000" value="180000"></div>
+    <div><label>Your tariff (Rs per unit)</label><input id="tariff" type="number" min="0" step="0.5" value="7"></div>
+  </div>
+  <div class="grid2" style="margin-top:4px">
+    <div><label>Your monthly usage (units) - optional</label><input id="units" type="number" min="0" step="10" value="300"></div>
+    <div><label>Expected units per kW per day (rough)</label><input id="gen" type="number" min="2" max="7" step="0.5" value="4"></div>
+  </div>
+  <button class="primary" id="calc" style="margin-top:10px">Estimate</button>
+  <div id="out" style="margin-top:10px"></div>
+</div>
+
+<div class="card">
+  <strong>Sizing guide from the scheme</strong>
+  <table style="margin-top:8px">
+    <tr><th>Average monthly usage</th><th>Suggested plant size</th></tr>
+    <tr><td>0-150 units</td><td>1 - 2 kW</td></tr>
+    <tr><td>150-300 units</td><td>2 - 3 kW</td></tr>
+    <tr><td>Above 300 units</td><td>Above 3 kW</td></tr>
+  </table>
+  <p class="note" style="margin-top:6px">Source: the scheme's CFA structure document. Vendor prices, generation and savings vary widely by city, roof and season - treat the payback below as a rough planning figure, not a promise. The estimator asserts no price of its own: it uses your quote and your tariff.</p>
+</div>
+
+<p class="note">Runs entirely in your browser. Sources: PM - Surya Ghar CFA structure (pmsuryaghar.gov.in) and the Cabinet approval note (pmindia.gov.in). Confirm eligibility and current rates on the national portal.</p>
+</div>
+<script>
+function fmt(n){return 'Rs ' + Math.round(n).toLocaleString('en-IN');}
+function subsidy(kw){
+  let s = Math.min(kw, 2) * 30000;
+  if(kw > 2) s += Math.min(kw - 2, 1) * 18000;
+  return Math.min(s, 78000);
+}
+document.getElementById('calc').addEventListener('click', () => {
+  const kw = parseFloat(document.getElementById('kw').value) || 0;
+  const quote = parseFloat(document.getElementById('quote').value) || 0;
+  const tariff = parseFloat(document.getElementById('tariff').value) || 0;
+  const units = parseFloat(document.getElementById('units').value) || 0;
+  const gen = parseFloat(document.getElementById('gen').value) || 4;
+  const out = document.getElementById('out');
+  if(kw <= 0){ out.innerHTML = '<p class="note warn">Enter a system size in kW.</p>'; return; }
+  const sub = subsidy(kw);
+  const net = Math.max(0, quote - sub);
+  const monthlyGen = kw * gen * 30;
+  const offset = units > 0 ? Math.min(monthlyGen, units) : monthlyGen;
+  const monthlySave = offset * tariff;
+  let payback = '';
+  if(quote > 0 && monthlySave > 0){
+    const months = net / monthlySave;
+    const yrs = months / 12;
+    payback = '<tr><td>Rough payback on your net cost</td><td>about ' + (yrs >= 1 ? yrs.toFixed(1) + ' years' : Math.round(months) + ' months') + ' (if you offset ' + Math.round(offset) + ' units/month at ' + fmt(tariff) + '/unit)</td></tr>';
+  }
+  out.innerHTML = '<div class="win"><div class="note">Estimated central subsidy for ' + kw + ' kW</div><div class="big">' + fmt(sub) + '</div>' +
+    (quote > 0 ? '<div class="note" style="margin-top:4px">Net cost after subsidy on your quote of ' + fmt(quote) + ': <strong>' + fmt(net) + '</strong></div>' : '') +
+    '</div>' +
+    '<table style="margin-top:10px"><tr><th>Step</th><th>Value</th></tr>' +
+    '<tr><td>Subsidy breakup</td><td>' + fmt(Math.min(kw,2)*30000) + ' (first ' + Math.min(kw,2) + ' kW)' + (kw > 2 ? ' + ' + fmt(Math.min(kw-2,1)*18000) + ' (next ' + Math.min(kw-2,1) + ' kW)' : '') + (kw > 3 ? ' - capped at Rs 78,000' : '') + '</td></tr>' +
+    '<tr><td>Estimated generation</td><td>about ' + Math.round(monthlyGen) + ' units/month at ' + gen + ' units per kW per day</td></tr>' +
+    payback + '</table>' +
+    '<p class="note" style="margin-top:8px">State subsidies or DISCOM top-ups, where they exist, are extra - check your state portal. The subsidy is credited after installation, net-metering and inspection, so plan cash flow for the full quote first.</p>';
+});
+</script>
+</body>
+</html>
