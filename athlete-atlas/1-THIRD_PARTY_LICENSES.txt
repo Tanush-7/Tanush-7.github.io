@@ -66,3 +66,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+================================================================
+BodyParts3D anatomical meshes (muscles.bin)
+================================================================
+BodyParts3D, (c) The Database Center for Life Science, licensed
+under CC Attribution 4.0 International
+(https://creativecommons.org/licenses/by/4.0/).
+Source: https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html
+Citation: Mitsuhashi N, Fujieda K, Tamura T, Kawamoto S, Takagi T,
+Okubo K. BodyParts3D: 3D structure database for anatomical concepts.
+Nucleic Acids Res. 2009;37(Database issue):D782-6. PMID 18835852.
+Selected muscle and bone OBJ meshes (isa_BP3D_4.0_obj_99.zip and
+partof_BP3D_4.0_obj_99.zip) were merged, coordinate-mapped and
+quantized into muscles.bin. No other changes were made.
