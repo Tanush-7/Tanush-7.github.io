@@ -121,7 +121,8 @@ document.getElementById('calc').addEventListener('click', () => {
   out.innerHTML = '<div class="win">' +
     '<div class="note">CSE ' + examYear + ': age on 1 Aug ' + examYear + '</div><div class="big">' + age + ' years (limit: under ' + limit + ')</div>' +
     '<div class="note" style="margin-top:4px">Attempts left: <strong>' + (attemptsLeft === Infinity ? 'no cap (age limit still applies)' : attemptsLeft + ' of ' + cap) + '</strong> &nbsp;' + pill + '</div></div>' +
-    '<table style="margin-top:10px"><tr><th>Exam</th><th>Your age</th><th>Age window</th></tr>' + rows + '</table>' +
+    '<p class="note" style="margin-top:8px">Year-by-year projection - applies the CSE 2026 rules to future years. A future year\'s own notification can change age limits or attempt caps, so treat years after 2026 as indicative, never as a guarantee of eligibility.</p>' +
+    '<table style="margin-top:6px"><tr><th>Exam</th><th>Your age</th><th>Age window</th></tr>' + rows + '</table>' +
     '<p class="note" style="margin-top:8px">Your final exam year is the last one where you are under ' + limit + ' on 1 August AND have attempts left, whichever closes first. Plan backwards from that year. Confirm everything against the live notification for the year you apply in - rules reference the 1 August of that exam year.</p>';
 });
 </script>
