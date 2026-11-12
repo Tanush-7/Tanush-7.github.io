@@ -40,3 +40,14 @@ React and React DOM are MIT-licensed. esbuild is MIT-licensed. Their license fil
 ## Sources
 
 See `src/data.ts` for the complete curated source ledger and per-source caveats. Research checked 12 November 2026.
+
+## Single-file build
+
+`node build-single.mjs [mesh-name]` writes `dist/index-single.html` (CSS and JS inlined). The live GitHub Pages copy is built with `node build-single.mjs 8-muscles.bin` because the mesh file there is named `8-muscles.bin`.
+
+## Change log (parity with the live site, 2026-11-12)
+
+- Questionnaire gate now compares the pain answer to the real option values ("No pain" / "Yes - mark where"), so the anatomy view opens once all three questions are answered.
+- 3D meshes are copied into aligned per-part GPU buffers (the file offsets in `muscles.bin` are not 2-byte aligned).
+- Joint markers are positioned from the mesh bounds so they sit on the limbs.
+- Exercises are a full-width section below the anatomy and region detail, not a hidden tab.
