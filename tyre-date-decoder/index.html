@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tyre Date Code Decoder</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:600}
+.pill.ok{background:#12382b;color:var(--good)}
+.pill.soon{background:#3a2f10;color:var(--warn)}
+.pill.over{background:#3d1616;color:#f87171}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Tyre Date Code Decoder</h1>
+<p class="sub">Buying tyres and want to check they are not old stock? Every tyre sidewall hides its birth date in the DOT code. Decode it here.</p>
+
+<div class="card">
+  <strong>Where to find it</strong>
+  <p class="note" style="margin-top:6px">
+  Look for the letters <strong>DOT</strong> on the sidewall, followed by a string of letters and numbers. The <strong>last four digits</strong> are the date code: the first two are the week (01-53), the last two are the year. Example: <strong>2625</strong> = week 26 of 2025. Some tyres have the full DOT code on only one side - check both sidewalls (on a car, that may mean turning the wheel or looking from under the vehicle).
+  </p>
+</div>
+
+<div class="card">
+  <strong>Decode</strong>
+  <div class="grid2" style="margin-top:8px">
+    <div><label>4-digit date code (WWYY)</label><input id="code" type="text" inputmode="numeric" maxlength="4" placeholder="e.g. 2625"></div>
+    <div><label>&nbsp;</label><button class="primary" id="decode">Decode</button></div>
+  </div>
+  <div id="out" style="margin-top:10px"></div>
+</div>
+
+<div class="card">
+  <strong>What age is acceptable?</strong>
+  <p class="note" style="margin-top:6px">
+  Rubber ages even on the shelf. For <strong>new</strong> tyres, many buyers in India prefer stock under a year old, and under about 18 months is widely treated as acceptable when the tyre was stored well (cool, dark, upright). There is no law fixing a retail "expiry" - condition and storage matter more than the number alone.
+  For tyres <strong>in use</strong>, several vehicle and tyre makers suggest close inspection from about 5 years and replacement around 6 years from the date on the sidewall, whatever the tread looks like - but follow your vehicle and tyre manufacturer's own guidance, and replace earlier for cracks, bulges, puncture damage or worn tread.
+  Check the date on <strong>all four tyres and the spare</strong> before paying, and match it against the bill date.
+  </p>
+</div>
+
+<p class="note">Runs entirely in your browser. The WWYY format is the international DOT date convention used by all major tyre brands sold in India; it is not a legal standard, and the acceptance windows above are common practice, not regulations - your tyre maker's guidance wins.</p>
+</div>
+<script>
+function ageText(months){
+  const y = Math.floor(months / 12), m = months % 12;
+  const parts = [];
+  if(y > 0) parts.push(y + ' year' + (y === 1 ? '' : 's'));
+  if(m > 0) parts.push(m + ' month' + (m === 1 ? '' : 's'));
+  return parts.length ? parts.join(' ') : 'under a month';
+}
+document.getElementById('decode').addEventListener('click', () => {
+  const out = document.getElementById('out');
+  const raw = document.getElementById('code').value.trim();
+  if(!/^\d{4}$/.test(raw)){
+    out.innerHTML = '<p class="note warn">Enter the last 4 digits of the DOT code - week (2 digits) then year (2 digits), e.g. 2625.</p>'; return;
+  }
+  const week = parseInt(raw.slice(0,2), 10);
+  const yy = parseInt(raw.slice(2,4), 10);
+  if(week < 1 || week > 53){
+    out.innerHTML = '<p class="note warn">Week must be between 01 and 53 - check the digits again.</p>'; return;
+  }
+  const now = new Date();
+  const curYY = now.getFullYear() % 100;
+  // 2-digit years wrap each century; pick the most plausible past year (within ~25 years)
+  let year = 2000 + yy;
+  if(yy > curYY && yy <= curYY + 75){ year = 1900 + yy; } // e.g. 95 => 1995
+  if(year > now.getFullYear()){ year -= 100; }
+  const made = new Date(year, 0, 1 + (week - 1) * 7);
+  const months = Math.max(0, Math.floor((now - made) / (1000 * 60 * 60 * 24 * 30.44)));
+  let pill;
+  if(months <= 18){ pill = '<span class="pill ok">fresh stock</span>'; }
+  else if(months <= 60){ pill = '<span class="pill soon">aging - inspect carefully if buying new</span>'; }
+  else { pill = '<span class="pill over">over 5 years old - most makers say replace / do not buy new</span>'; }
+  out.innerHTML = '<div class="win">' +
+    '<div class="note">Manufactured</div><div class="big">Week ' + week + ', ' + year + '</div>' +
+    '<div class="note" style="margin-top:4px">That makes the tyre about <strong>' + ageText(months) + '</strong> old. ' + pill + '</div></div>';
+});
+</script>
+</body>
+</html>
