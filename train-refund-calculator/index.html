@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Train Cancellation Refund Calculator</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:600}
+.pill.ok{background:#12382b;color:var(--good)}
+.pill.soon{background:#3a2f10;color:var(--warn)}
+.pill.over{background:#3d1616;color:#f87171}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Train Cancellation Refund Calculator</h1>
+<p class="sub">"If I cancel now, how much do I get back?" Indian Railways moved to the 72 / 24 / 8-hour windows from April 2026 - see what the current rules give you before you hit cancel.</p>
+
+<div class="card">
+  <strong>Current rules at a glance (confirmed tickets, regular trains)</strong>
+  <table style="margin-top:8px">
+    <tr><th>When you cancel (before departure)</th><th>Deduction</th></tr>
+    <tr><td>More than 72 hours</td><td>Flat charge per passenger by class: AC First/Executive Rs 240, First/AC 2-tier Rs 200, AC 3-tier/Chair Car/3 Economy Rs 180, Sleeper Rs 120, Second class Rs 60 (GST extra on AC classes)</td></tr>
+    <tr><td>24 to 72 hours</td><td>25% of fare (never less than the flat charge above)</td></tr>
+    <tr><td>8 to 24 hours</td><td>50% of fare (never less than the flat charge)</td></tr>
+    <tr><td>Under 8 hours</td><td>No refund</td></tr>
+  </table>
+  <p class="note" style="margin-top:6px">These windows were revised from the old 48/12/4-hour ones, aligned with reservation charts now being prepared 9-18 hours before departure. The exact deduction appears on the IRCTC/app cancellation screen before you confirm - treat that screen as final, and check IRCTC's current refund compilation for your exact case (Tatkal, premium trains and concessions have their own treatments not modelled here).</p>
+</div>
+
+<div class="card">
+  <strong>Your ticket</strong>
+  <div class="grid3" style="margin-top:8px">
+    <div><label>Status</label><select id="status">
+      <option value="cnf" selected>Confirmed</option>
+      <option value="racwl">RAC / Waitlisted</option>
+    </select></div>
+    <div><label>Class</label><select id="klass">
+      <option value="240">AC First / Executive</option>
+      <option value="200">First / AC 2-Tier</option>
+      <option value="180" selected>AC 3-Tier / Chair Car / 3E</option>
+      <option value="120">Sleeper</option>
+      <option value="60">Second class (2S)</option>
+    </select></div>
+    <div><label>Fare per passenger (Rs)</label><input id="fare" type="number" min="0" step="10" value="1500"></div>
+  </div>
+  <div class="grid3" style="margin-top:4px">
+    <div><label>Passengers</label><input id="pax" type="number" min="1" max="6" value="1"></div>
+    <div><label>Hours before departure now</label><input id="hours" type="number" min="0" step="1" value="30"></div>
+    <div><label>Train type</label><select id="train">
+      <option value="reg" selected>Regular train</option>
+      <option value="vb">Vande Bharat Sleeper / Amrit Bharat II (reserved)</option>
+    </select></div>
+  </div>
+  <button class="primary" id="calc" style="margin-top:10px">Calculate refund</button>
+  <div id="out" style="margin-top:10px"></div>
+</div>
+
+<div class="card">
+  <strong>Good to know</strong>
+  <table style="margin-top:8px">
+    <tr><td>RAC / waitlisted</td><td>Cancel up to 30 minutes before departure: refund minus clerkage of Rs 60 per passenger (GST extra on AC classes). After that, no refund. Fully waitlisted e-tickets that stay unconfirmed at charting are cancelled automatically and refunded minus clerkage - you cannot travel on one.</td></tr>
+    <tr><td>E-ticket refunds</td><td>Since the April 2026 changes, refunds are processed automatically on cancellation - the old requirement to file an online TDR for ordinary cancellations is removed.</td></tr>
+    <tr><td>Train cancelled by Railways</td><td>Full refund automatically for e-tickets; counter tickets can be cancelled at any station (not just the origin) within the allowed window.</td></tr>
+    <tr><td>Train over 3 hours late</td><td>If you do not travel, full fare back - but for e-tickets file the TDR before the train's actual departure.</td></tr>
+  </table>
+</div>
+
+<p class="note">Runs entirely in your browser. Sources: PIB release of 24 Mar 2026 (ID 2244597) and New India Samachar Apr 2026 on the revised 72/24/8-hour windows and automatic refunds; Gazette G.S.R. 41(E) of 16 Jan 2026 for Vande Bharat Sleeper / Amrit Bharat II; IRCTC refund compilation for flat charges, clerkage and GST notes. Assumption stated: the class-wise flat charges and Rs 60 clerkage from the standing IRCTC compilation continue unchanged - the revised-rule announcements did not revise them. IRCTC's cancellation screen shows the exact deduction before you confirm; check it.</p>
+</div>
+<script>
+function fmt(n){return 'Rs ' + Math.round(n).toLocaleString('en-IN');}
+document.getElementById('calc').addEventListener('click', () => {
+  const status = document.getElementById('status').value;
+  const flat = parseFloat(document.getElementById('klass').value);
+  const fare = parseFloat(document.getElementById('fare').value) || 0;
+  const pax = Math.max(1, parseInt(document.getElementById('pax').value) || 1);
+  const hours = parseFloat(document.getElementById('hours').value);
+  const train = document.getElementById('train').value;
+  const out = document.getElementById('out');
+  if(isNaN(hours) || hours < 0){ out.innerHTML = '<p class="note warn">Enter how many hours are left before the train departs.</p>'; return; }
+  if(fare <= 0){ out.innerHTML = '<p class="note warn">Enter the fare per passenger.</p>'; return; }
+  let charge, rule, pill;
+  if(status === 'racwl'){
+    if(hours >= 0.5){
+      charge = 60; rule = 'RAC/waitlisted: clerkage of Rs 60 per passenger (GST extra on AC classes) when cancelled up to 30 minutes before departure.';
+      pill = '<span class="pill ok">refund due</span>';
+    } else {
+      charge = fare; rule = 'RAC/waitlisted cancelled within 30 minutes of departure: no refund under the rules.';
+      pill = '<span class="pill over">no refund</span>';
+    }
+  } else if(train === 'vb'){
+    if(hours > 72){ charge = fare * 0.25; rule = 'Vande Bharat Sleeper / Amrit Bharat II: 25% of fare when cancelled more than 72 hours ahead (G.S.R. 41(E)).'; pill = '<span class="pill ok">refund due</span>'; }
+    else if(hours >= 8){ charge = fare * 0.50; rule = 'Vande Bharat Sleeper / Amrit Bharat II: 50% of fare when cancelled between 72 and 8 hours ahead.'; pill = '<span class="pill soon">half refund</span>'; }
+    else { charge = fare; rule = 'Vande Bharat Sleeper / Amrit Bharat II: no refund within 8 hours of departure.'; pill = '<span class="pill over">no refund</span>'; }
+  } else {
+    if(hours > 72){ charge = flat; rule = 'More than 72 hours ahead: flat cancellation charge per passenger by class (GST extra on AC classes).'; pill = '<span class="pill ok">refund due</span>'; }
+    else if(hours >= 24){ charge = Math.max(fare * 0.25, flat); rule = 'Between 24 and 72 hours ahead: 25% of fare, subject to the minimum flat charge.'; pill = '<span class="pill ok">refund due</span>'; }
+    else if(hours >= 8){ charge = Math.max(fare * 0.50, flat); rule = 'Between 8 and 24 hours ahead: 50% of fare, subject to the minimum flat charge.'; pill = '<span class="pill soon">half refund</span>'; }
+    else { charge = fare; rule = 'Within 8 hours of departure: no refund on confirmed tickets.'; pill = '<span class="pill over">no refund</span>'; }
+  }
+  charge = Math.min(charge, fare);
+  const refund = Math.max(0, fare - charge);
+  out.innerHTML = '<div class="win">' +
+    '<div class="note">Estimated refund per passenger</div><div class="big">' + fmt(refund) + ' (deduction ' + fmt(charge) + ')</div>' +
+    '<div class="note" style="margin-top:4px">For ' + pax + ' passenger' + (pax === 1 ? '' : 's') + ': refund ' + fmt(refund * pax) + ', deduction ' + fmt(charge * pax) + '. ' + pill + '</div></div>' +
+    '<p class="note" style="margin-top:8px">' + rule + ' The IRCTC/app cancellation screen shows the exact deduction before you confirm - check it, especially for AC classes where GST applies on the charge.</p>';
+});
+</script>
+</body>
+</html>
