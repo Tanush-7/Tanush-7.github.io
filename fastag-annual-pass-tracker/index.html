@@ -34,12 +34,12 @@ th{color:var(--muted);font-weight:600}
 <body>
 <div class="wrap">
 <h1>FASTag Annual Pass Tracker</h1>
-<p class="sub">Bought the Rs 3,000 NHAI annual pass and losing count of crossings? Track trips left and days left, and check whether the pass makes sense for your routes.</p>
+<p class="sub">Bought the NHAI annual pass (Rs 3,075 for FY 2026-27) and losing count of crossings? Track trips left and days left, and check whether the pass makes sense for your routes.</p>
 
 <div class="card">
-  <strong>How the pass works (per NHAI's launch announcement)</strong>
+  <strong>How the pass works (current NHAI terms)</strong>
   <p class="note" style="margin-top:6px">
-  One-time Rs 3,000 for <strong>one year OR 200 toll plaza crossings, whichever comes first</strong>. It works at about 1,150 NHAI fee plazas on National Highways and Expressways - tolls run by states, municipalities or private concessionaires outside the NHAI network still deduct from your FASTag balance. It is for non-commercial vehicles with a valid FASTag, activates within about two hours of payment through the Rajmargyatra app or the NHAI website, and is tied to that vehicle. Terms can change - check the Rajmargyatra app or NHAI's site for the current pass rules and plaza coverage before you buy or rely on it.
+  One-time Rs 3,075 (revised from Rs 3,000 on 1 April 2026) for <strong>one year OR 200 toll plaza crossings, whichever comes first</strong>. It works at about 1,150 NHAI fee plazas on National Highways and Expressways - tolls run by states, municipalities or private concessionaires outside the NHAI network still deduct from your FASTag balance. It is for non-commercial vehicles with a valid FASTag, activates within about two hours of payment through the Rajmargyatra app or the NHAI website, and is tied to that vehicle. Terms can change - check the Rajmargyatra app or NHAI's site for the current pass rules and plaza coverage before you buy or rely on it.
   </p>
 </div>
 
@@ -73,10 +73,10 @@ th{color:var(--muted);font-weight:600}
   <div id="worthOut" style="margin-top:10px"></div>
 </div>
 
-<p class="note">Runs entirely in your browser (localStorage). Nothing is sent anywhere. Rules source: PIB release of 15 Aug 2025 (Release ID 2156992) on the FASTag Annual Pass; confirm current terms with NHAI / Rajmargyatra.</p>
+<p class="note">Runs entirely in your browser (localStorage). Nothing is sent anywhere. Sources: NHAI's Rajmargyatra annual-pass page (fee Rs 3,075 as checked 12 Nov 2026) and PIB release of 15 Mar 2026 (ID 2240305) revising the fee from Rs 3,000 to Rs 3,075 effective 1 Apr 2026 under the NH Fee Rules, 2008; launch terms: PIB release of 15 Aug 2025 (ID 2156992). Confirm current terms with NHAI / Rajmargyatra before you buy or rely on it.</p>
 </div>
 <script>
-const PASS_FEE = 3000, MAX_TRIPS = 200, YEAR_DAYS = 365;
+const PASS_FEE = 3075, MAX_TRIPS = 200, YEAR_DAYS = 365;
 function fmt(n){return 'Rs ' + Math.round(n).toLocaleString('en-IN');}
 function load(){ try{ return JSON.parse(localStorage.getItem('fastagPass')) || {act:'', used:0, trips:[]}; }catch(e){ return {act:'', used:0, trips:[]}; } }
 function save(d){ localStorage.setItem('fastagPass', JSON.stringify(d)); }
