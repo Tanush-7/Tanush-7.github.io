@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSC Attempt & Age Calculator</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:600}
+.pill.ok{background:#12382b;color:var(--good)}
+.pill.soon{background:#3a2f10;color:var(--warn)}
+.pill.over{background:#3d1616;color:#f87171}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>UPSC Attempt & Age Calculator</h1>
+<p class="sub">"Do I have 2 attempts left or 3?" Work out your Civil Services age window and remaining attempts from the official CSE rules instead of guessing.</p>
+
+<div class="card">
+  <strong>The rules this applies (CSE 2026 notification)</strong>
+  <p class="note" style="margin-top:6px">
+  Age is counted as on <strong>1 August of the exam year</strong>: you must be at least 21 and under 32 on that date. Relaxations: SC/ST +5 years, OBC +3, PwBD +10 (category relaxations can combine, e.g. OBC + PwBD = 32 + 3 + 10). Attempt caps: General/EWS <strong>6</strong>, OBC <strong>9</strong>, SC/ST <strong>no cap</strong> (age limit still applies); PwBD: 9 for GL/EWS/OBC, no cap for SC/ST. An attempt counts only if you actually appear in at least one paper of the Prelims. Every year's notification re-states these against its own 1 August - always confirm against the current year's notification on upsc.gov.in.
+  </p>
+</div>
+
+<div class="card">
+  <strong>Your details</strong>
+  <div class="grid3" style="margin-top:8px">
+    <div><label>Date of birth</label><input id="dob" type="date" value="1999-01-15"></div>
+    <div><label>Category</label><select id="cat">
+      <option value="GL">General (GL)</option>
+      <option value="EWS">EWS</option>
+      <option value="OBC">OBC</option>
+      <option value="SC">SC</option>
+      <option value="ST">ST</option>
+    </select></div>
+    <div><label>Attempts already used</label><input id="used" type="number" min="0" max="20" value="0"></div>
+  </div>
+  <div class="grid2" style="margin-top:4px">
+    <div><label>PwBD (benchmark disability)?</label><select id="pwbd"><option value="no" selected>No</option><option value="yes">Yes</option></select></div>
+    <div><label>Exam year to check</label><input id="examYear" type="number" min="2026" max="2040" value="2026"></div>
+  </div>
+  <button class="primary" id="calc" style="margin-top:10px">Check eligibility</button>
+  <div id="out" style="margin-top:10px"></div>
+</div>
+
+<p class="note">Runs entirely in your browser. Source: UPSC Civil Services (Preliminary) Examination 2026 notification (upsc.gov.in), age limits and attempt rules. Special relaxations for ex-servicemen and defence personnel disabled in operations exist but are not modelled here - read the notification if that is you.</p>
+</div>
+<script>
+function ageOn(dob, y, m, d){ // age in full years on date y-m-d
+  let a = y - dob.getFullYear();
+  const md = new Date(y, m, d);
+  const bd = new Date(y, dob.getMonth(), dob.getDate());
+  if(md < bd) a -= 1;
+  return a;
+}
+function relaxFor(cat, pwbd){
+  let r = 0;
+  if(cat === 'SC' || cat === 'ST') r = 5;
+  else if(cat === 'OBC') r = 3;
+  if(pwbd) r += 10;
+  return r;
+}
+function attemptCap(cat, pwbd){
+  if(pwbd) return (cat === 'SC' || cat === 'ST') ? Infinity : 9;
+  if(cat === 'SC' || cat === 'ST') return Infinity;
+  if(cat === 'OBC') return 9;
+  return 6;
+}
+document.getElementById('calc').addEventListener('click', () => {
+  const out = document.getElementById('out');
+  const dobStr = document.getElementById('dob').value;
+  if(!dobStr){ out.innerHTML = '<p class="note warn">Pick your date of birth.</p>'; return; }
+  const dob = new Date(dobStr + 'T00:00:00');
+  const cat = document.getElementById('cat').value;
+  const pwbd = document.getElementById('pwbd').value === 'yes';
+  const used = Math.max(0, parseInt(document.getElementById('used').value) || 0);
+  const examYear = Math.min(2040, Math.max(2026, parseInt(document.getElementById('examYear').value) || 2026));
+  const limit = 32 + relaxFor(cat, pwbd);
+  const cap = attemptCap(cat, pwbd);
+  const age = ageOn(dob, examYear, 7, 1); // 1 August
+  const tooYoung = age < 21;
+  const tooOld = age >= limit;
+  const attemptsLeft = cap === Infinity ? Infinity : Math.max(0, cap - used);
+  const ageBlocked = tooYoung || tooOld;
+  const eligible = !ageBlocked && attemptsLeft > 0;
+  let pill;
+  if(eligible){ pill = '<span class="pill ok">eligible as per these rules</span>'; }
+  else if(tooYoung){ pill = '<span class="pill soon">too young for this year</span>'; }
+  else if(tooOld){ pill = '<span class="pill over">over the age limit for this year</span>'; }
+  else { pill = '<span class="pill over">no attempts left</span>'; }
+  // year-by-year window
+  let rows = '';
+  for(let y = 2026; y <= 2034; y++){
+    const a = ageOn(dob, y, 7, 1);
+    if(a < 18) continue;
+    const ok = a >= 21 && a < limit;
+    rows += '<tr><td>CSE ' + y + '</td><td>' + a + ' years on 1 Aug ' + y + '</td><td>' + (ok ? 'within age window' : (a < 21 ? 'too young' : 'over limit')) + '</td></tr>';
+  }
+  out.innerHTML = '<div class="win">' +
+    '<div class="note">CSE ' + examYear + ': age on 1 Aug ' + examYear + '</div><div class="big">' + age + ' years (limit: under ' + limit + ')</div>' +
+    '<div class="note" style="margin-top:4px">Attempts left: <strong>' + (attemptsLeft === Infinity ? 'no cap (age limit still applies)' : attemptsLeft + ' of ' + cap) + '</strong> &nbsp;' + pill + '</div></div>' +
+    '<table style="margin-top:10px"><tr><th>Exam</th><th>Your age</th><th>Age window</th></tr>' + rows + '</table>' +
+    '<p class="note" style="margin-top:8px">Your final exam year is the last one where you are under ' + limit + ' on 1 August AND have attempts left, whichever closes first. Plan backwards from that year. Confirm everything against the live notification for the year you apply in - rules reference the 1 August of that exam year.</p>';
+});
+</script>
+</body>
+</html>
