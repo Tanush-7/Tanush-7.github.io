@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FASTag Annual Pass Tracker</title>
+<style>
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:1.5rem;margin-bottom:4px}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select{padding:9px;border-radius:8px;border:1px solid var(--line);background:#100e22;color:var(--ink);font-size:.95rem;width:100%}
+label{display:block;color:var(--muted);font-size:.82rem;margin:8px 0 3px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid2{grid-template-columns:1fr}}
+button{cursor:pointer;border-radius:9px;border:1px solid var(--line);background:#17142e;color:var(--ink);padding:10px 14px;font-size:.95rem}
+button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548;font-weight:600}
+.note{color:var(--muted);font-size:.82rem;line-height:1.5}
+.win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
+.big{font-size:1.35rem;font-weight:700;color:var(--good)}
+.warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:600}
+.pill.ok{background:#12382b;color:var(--good)}
+.pill.soon{background:#3a2f10;color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>FASTag Annual Pass Tracker</h1>
+<p class="sub">Bought the Rs 3,000 NHAI annual pass and losing count of crossings? Track trips left and days left, and check whether the pass makes sense for your routes.</p>
+
+<div class="card">
+  <strong>How the pass works (per NHAI's launch announcement)</strong>
+  <p class="note" style="margin-top:6px">
+  One-time Rs 3,000 for <strong>one year OR 200 toll plaza crossings, whichever comes first</strong>. It works at about 1,150 NHAI fee plazas on National Highways and Expressways - tolls run by states, municipalities or private concessionaires outside the NHAI network still deduct from your FASTag balance. It is for non-commercial vehicles with a valid FASTag, activates within about two hours of payment through the Rajmargyatra app or the NHAI website, and is tied to that vehicle. Terms can change - check the Rajmargyatra app or NHAI's site for the current pass rules and plaza coverage before you buy or rely on it.
+  </p>
+</div>
+
+<div class="card">
+  <strong>Your pass</strong>
+  <div class="grid2" style="margin-top:8px">
+    <div><label>Activation date</label><input id="actDate" type="date"></div>
+    <div><label>Crossings already used (estimate ok)</label><input id="usedTrips" type="number" min="0" max="200" value="0"></div>
+  </div>
+  <button class="primary" id="save" style="margin-top:10px">Save / update</button>
+  <div id="status" style="margin-top:10px"></div>
+</div>
+
+<div class="card">
+  <strong>Log a crossing</strong>
+  <div class="grid2" style="margin-top:8px">
+    <div><label>Date</label><input id="tripDate" type="date"></div>
+    <div><label>Plaza / note (optional)</label><input id="tripNote" type="text" placeholder="e.g. Hosur Rd plaza"></div>
+  </div>
+  <button class="primary" id="log" style="margin-top:10px">Add crossing</button>
+  <div id="tripList" style="margin-top:10px"></div>
+</div>
+
+<div class="card">
+  <strong>Is the pass worth it for you?</strong>
+  <div class="grid3" style="margin-top:8px">
+    <div><label>Average toll per crossing on your route (Rs)</label><input id="avgToll" type="number" min="0" value="120"></div>
+    <div><label>Crossings you expect in a year</label><input id="expTrips" type="number" min="0" value="40"></div>
+    <div><label>&nbsp;</label><button class="primary" id="worth">Check</button></div>
+  </div>
+  <div id="worthOut" style="margin-top:10px"></div>
+</div>
+
+<p class="note">Runs entirely in your browser (localStorage). Nothing is sent anywhere. Rules source: PIB release of 15 Aug 2025 (Release ID 2156992) on the FASTag Annual Pass; confirm current terms with NHAI / Rajmargyatra.</p>
+</div>
+<script>
+const PASS_FEE = 3000, MAX_TRIPS = 200, YEAR_DAYS = 365;
+function fmt(n){return 'Rs ' + Math.round(n).toLocaleString('en-IN');}
+function load(){ try{ return JSON.parse(localStorage.getItem('fastagPass')) || {act:'', used:0, trips:[]}; }catch(e){ return {act:'', used:0, trips:[]}; } }
+function save(d){ localStorage.setItem('fastagPass', JSON.stringify(d)); }
+let data = load();
+if(data.act) document.getElementById('actDate').value = data.act;
+document.getElementById('usedTrips').value = data.used || 0;
+
+function render(){
+  const st = document.getElementById('status');
+  if(!data.act){ st.innerHTML = '<p class="note">Save your activation date to see status.</p>'; }
+  else{
+    const start = new Date(data.act + 'T00:00:00');
+    const expiry = new Date(start); expiry.setDate(expiry.getDate() + YEAR_DAYS);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const daysLeft = Math.ceil((expiry - today) / 86400000);
+    const tripsLeft = Math.max(0, MAX_TRIPS - data.used);
+    const expired = daysLeft <= 0 || tripsLeft <= 0;
+    st.innerHTML = '<div class="win">' +
+      '<div class="note">Trips left</div><div class="big">' + tripsLeft + ' / ' + MAX_TRIPS + '</div>' +
+      '<div class="note" style="margin-top:4px">Valid till ' + expiry.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) +
+      ' (' + (daysLeft > 0 ? daysLeft + ' days left' : 'expired') + ') ' +
+      (expired ? '<span class="pill soon">pass exhausted - renew or pay per trip</span>' : '<span class="pill ok">active</span>') + '</div></div>';
+  }
+  const tl = document.getElementById('tripList');
+  if(data.trips.length === 0){ tl.innerHTML = ''; return; }
+  tl.innerHTML = '<table><tr><th>Date</th><th>Note</th><th></th></tr>' +
+    data.trips.map((t,i) => '<tr><td>' + t.d + '</td><td>' + (t.n || '-') + '</td><td><button data-i="' + i + '" class="del">x</button></td></tr>').join('') + '</table>' +
+    '<button id="clearTrips" style="margin-top:8px">Clear log</button>';
+  tl.querySelectorAll('.del').forEach(b => b.addEventListener('click', () => {
+    data.trips.splice(parseInt(b.dataset.i), 1); data.used = Math.max(0, data.used - 1);
+    document.getElementById('usedTrips').value = data.used; save(data); render();
+  }));
+  document.getElementById('clearTrips').addEventListener('click', () => {
+    data.used = Math.max(0, data.used - data.trips.length); data.trips = [];
+    document.getElementById('usedTrips').value = data.used; save(data); render();
+  });
+}
+
+document.getElementById('save').addEventListener('click', () => {
+  data.act = document.getElementById('actDate').value;
+  data.used = Math.min(MAX_TRIPS, Math.max(0, parseInt(document.getElementById('usedTrips').value) || 0));
+  save(data); render();
+});
+document.getElementById('log').addEventListener('click', () => {
+  if(!data.act){ alert('Save your activation date first.'); return; }
+  const d = document.getElementById('tripDate').value || new Date().toISOString().slice(0,10);
+  const n = document.getElementById('tripNote').value.trim();
+  if(data.used >= MAX_TRIPS){ alert('All 200 crossings are already used.'); return; }
+  data.trips.push({d, n}); data.used += 1;
+  document.getElementById('usedTrips').value = data.used;
+  document.getElementById('tripNote').value = '';
+  save(data); render();
+});
+document.getElementById('worth').addEventListener('click', () => {
+  const toll = parseFloat(document.getElementById('avgToll').value) || 0;
+  const trips = parseFloat(document.getElementById('expTrips').value) || 0;
+  const out = document.getElementById('worthOut');
+  const payg = toll * trips;
+  const capped = Math.min(trips, MAX_TRIPS);
+  const passCost = trips > 0 ? PASS_FEE : 0;
+  const perTrip = capped > 0 ? PASS_FEE / capped : 0;
+  let verdict;
+  if(payg > PASS_FEE){ verdict = '<span class="pill ok">pass likely saves ' + fmt(payg - PASS_FEE) + '</span>'; }
+  else { verdict = '<span class="pill soon">paying per trip looks cheaper by ' + fmt(PASS_FEE - payg) + '</span>'; }
+  out.innerHTML = '<table style="margin-top:8px"><tr><th>Option</th><th>Your year</th></tr>' +
+    '<tr><td>Pay per crossing (' + trips + ' x ' + fmt(toll) + ')</td><td>' + fmt(payg) + '</td></tr>' +
+    '<tr><td>Annual pass</td><td>' + fmt(passCost) + ' (' + fmt(perTrip) + ' per crossing over ' + capped + ' crossings)</td></tr></table>' +
+    '<p class="note" style="margin-top:6px">' + verdict + ' Rough guide only - the pass covers 200 crossings or one year, whichever ends first, and only at NHAI plazas on National Highways/Expressways. Count only the crossings that fall inside the pass network on your route.</p>';
+});
+render();
+</script>
+</body>
+</html>
