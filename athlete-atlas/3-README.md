@@ -9,6 +9,7 @@ Requires Node.js 20 or newer.
 ```sh
 npm ci
 npm run build
+# dist/muscles.bin is generated from BodyParts3D sources (CC BY 4.0); the built copy is included
 python -m http.server 8080 -d dist
 ```
 
@@ -18,8 +19,9 @@ Open http://localhost:8080. Deploy the contents of `dist/` to GitHub Pages or an
 
 - HYROX, cricket, badminton, running, football, basketball, tennis, volleyball, swimming and cycling. This is prototype coverage, not a popularity ranking.
 - Sport-specific role/event filters and a separate fictional gender-group demo.
+- Animated geometric hero mark, scrolling sport selector and a three-question routine/pain intake. Answers stay in temporary page state on the device; nothing is transmitted. Reported pain is a distinct, clearly labeled map mode, separate from published and fictional data.
 - Source-backed HYROX regional episode counts, unavailable states for unsupported subsets and a distinctly labeled synthetic dataset.
-- Clickable front/back anatomy plus an original rotatable WebGL illustration, zoom, pause/motion and simplified bone geometry. These are NOT medically accurate anatomy assets.
+- Clickable front/back anatomy plus a rotatable 3D muscular/skeletal view built from BodyParts3D meshes (CC BY 4.0, see THIRD_PARTY_LICENSES.txt), zoom, pause/motion and a bone layer. It is an orientation aid, not a diagnosis tool.
 - Region details, previous-injury evidence notes, supervised conditioning examples and rehab boundaries.
 - Keyboard-accessible regional buttons, arrow-key orbit and reduced-motion support.
 
