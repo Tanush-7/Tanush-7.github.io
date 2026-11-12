@@ -55,13 +55,13 @@ th{color:var(--muted);font-weight:600}
 <div class="card">
   <strong>What age is acceptable?</strong>
   <p class="note" style="margin-top:6px">
-  Rubber ages even on the shelf. For <strong>new</strong> tyres, many buyers in India prefer stock under a year old, and under about 18 months is widely treated as acceptable when the tyre was stored well (cool, dark, upright). There is no law fixing a retail "expiry" - condition and storage matter more than the number alone.
-  For tyres <strong>in use</strong>, Michelin's published guidance is a professional inspection at least once a year from 5 years old, and replacement by 10 years from the sidewall date as a precaution - whatever the tread looks like, spare included. Other tyre and vehicle makers publish their own limits, some stricter - follow your maker's own guidance, and replace earlier for cracks, bulges, puncture damage or worn tread.
+  Rubber ages even on the shelf and on the vehicle. There is no law fixing a retail "expiry" - condition and storage history matter alongside the date.
+  For tyres <strong>in use</strong>, Michelin's published guidance is a professional inspection at least once a year from 5 years old, and replacement by 10 years from the sidewall date as a precaution - whatever the tread looks like, spare included. Other tyre and vehicle makers publish their own limits, some stricter - your maker's own guidance wins, and cracks, bulges, puncture damage or worn tread mean replace now, whatever the age.
   Check the date on <strong>all four tyres and the spare</strong> before paying, and match it against the bill date.
   </p>
 </div>
 
-<p class="note">Runs entirely in your browser. The WWYY format is the international DOT date convention used by all major tyre brands sold in India; it is not a legal standard. New-stock acceptance windows above are market practice, not regulations; in-use age guidance cites Michelin's published advice (michelin.co.uk/auto/advice/change-tyres/how-long-do-tyres-last). Your own tyre or vehicle maker's guidance wins.</p>
+<p class="note">Runs entirely in your browser. The WWYY format is the international DOT date convention used by all major tyre brands sold in India; it is not a legal standard. Age guidance cites Michelin's published advice (michelin.co.uk/auto/advice/change-tyres/how-long-do-tyres-last); your own tyre or vehicle maker's guidance wins.</p>
 </div>
 <script>
 function ageText(months){
@@ -89,11 +89,13 @@ document.getElementById('decode').addEventListener('click', () => {
   if(yy > curYY && yy <= curYY + 75){ year = 1900 + yy; } // e.g. 95 => 1995
   if(year > now.getFullYear()){ year -= 100; }
   const made = new Date(year, 0, 1 + (week - 1) * 7);
-  const months = Math.max(0, Math.floor((now - made) / (1000 * 60 * 60 * 24 * 30.44)));
+  if(made > now){
+    out.innerHTML = '<p class="note warn">Week ' + week + ', ' + year + ' is in the future - re-check the four digits: first two are the week (01-53), last two the year.</p>'; return;
+  }
+  const months = Math.floor((now - made) / (1000 * 60 * 60 * 24 * 30.44));
   let pill;
-  if(months <= 18){ pill = '<span class="pill ok">fresh stock</span>'; }
-  else if(months <= 60){ pill = '<span class="pill soon">aging - inspect carefully if buying new</span>'; }
-  else if(months <= 120){ pill = '<span class="pill over">over 5 years old - yearly professional inspection advised for tyres in use (Michelin); too old to buy as new stock</span>'; }
+  if(months < 60){ pill = '<span class="pill ok">under 5 years old - before Michelin\'s yearly-inspection point</span>'; }
+  else if(months <= 120){ pill = '<span class="pill soon">over 5 years old - Michelin advises a professional inspection at least once a year</span>'; }
   else { pill = '<span class="pill over">over 10 years old - Michelin advises replacement as a precaution, even if tread looks fine</span>'; }
   out.innerHTML = '<div class="win">' +
     '<div class="note">Manufactured</div><div class="big">Week ' + week + ', ' + year + '</div>' +
