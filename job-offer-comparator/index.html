@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Job Offer Comparator - Weighted Decision Matrix</title>
 <style>
-:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#9d99bd;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
+:root{--bg:#141226;--card:#1c1936;--ink:#eceaf7;--muted:#b5b0d4;--accent:#a78bfa;--line:#2e2a52;--good:#34d399;--warn:#fbbf24}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:16px}
 .wrap{max-width:860px;margin:0 auto}
@@ -23,9 +23,10 @@ button.primary{background:var(--accent);border-color:var(--accent);color:#1e1548
 .win{background:#221f42;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-top:8px}
 .big{font-size:1.35rem;font-weight:700;color:var(--good)}
 .warn{color:var(--warn)}
-table{width:100%;border-collapse:collapse;font-size:.9rem}
-th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
-th{color:var(--muted);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.95rem;line-height:1.55}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:#cfc9ec;font-weight:600}
+table td:first-child{font-weight:600;color:var(--ink)}
 td input{padding:6px;font-size:.88rem}
 .lead td{color:var(--good);font-weight:600}
 </style>
