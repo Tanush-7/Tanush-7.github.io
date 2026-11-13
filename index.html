@@ -395,15 +395,26 @@
     background: var(--surface2); border: 1px solid var(--line);
     display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
   .tool-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-  .tool-name { font-weight: 700; font-size: 0.98rem; letter-spacing: -0.01em; line-height: 1.3; padding-right: 58px; display: block; }
+  .tool-name { font-weight: 700; font-size: 0.98rem; letter-spacing: -0.01em; line-height: 1.3; display: block; }
   .tool-arrow { color: var(--accent); font-weight: 700; opacity: 0; transition: opacity 0.18s ease; }
   .tool-card:hover .tool-arrow { opacity: 1; }
   .tool-blurb { color: var(--muted); font-size: 0.85rem; line-height: 1.45; }
-  .tool-cat { position: absolute; top: 14px; right: 14px;
+  .tool-cat { display: block; margin-top: 8px;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.62rem;
     letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
   .tool-card.is-hidden { display: none; }
   .tool-empty { color: var(--muted); text-align: center; padding: 28px 0; }
+
+  /* ---- hero photo frame vs signature fix ---- */
+  .hero-photo::before { bottom: 62px; }
+  .hero-photo .sig { margin-top: 10px; }
+
+  /* ---- mobile nav wrap fix ---- */
+  @media (max-width: 680px) {
+    .nav-inner { flex-wrap: wrap; row-gap: 8px; }
+    nav .links { display: flex; flex-wrap: wrap; gap: 4px 14px; justify-content: flex-end; }
+    nav .links a { margin-left: 0; font-size: 0.84rem; }
+  }
 
   /* ---- scroll reveal ---- */
   .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; }
@@ -498,400 +509,400 @@
         <span class="tool-main">
           <span class="tool-name">Bangalore Traffic Pulse <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Modelled congestion, speeds and best times to travel, by time of day.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/buy-vs-rent-bengaluru/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🔑</span>
         <span class="tool-main">
           <span class="tool-name">Buy vs Rent — Bengaluru 2BHK <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">The real breakeven on buying a 2BHK vs renting it, year by year.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/bengaluru-commute-optimiser/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🚇</span>
         <span class="tool-main">
           <span class="tool-name">Bengaluru Commute Optimiser <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Auto vs cab vs Metro on monthly cost and hours, by area.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/weekend-trip-planner/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🌄</span>
         <span class="tool-main">
           <span class="tool-name">Weekend Trip Planner <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Twelve getaways with when to leave, real cost and how long to stay.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/packers-and-movers-estimator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">📦</span>
         <span class="tool-main">
           <span class="tool-name">Packers &amp; Movers Estimator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">What a local move should cost, so a bad quote stands out.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/home-help-cost-planner/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🧹</span>
         <span class="tool-main">
           <span class="tool-name">Home Help Cost Planner <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Monthly cost of cook, maid and help, tuned to your home.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/broadband-comparer/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">📡</span>
         <span class="tool-main">
           <span class="tool-name">Broadband Comparer <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">16 real plans priced against your usage, not the brochure.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/bbmp-property-tax-estimator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🏢</span>
         <span class="tool-main">
           <span class="tool-name">BBMP Property Tax Estimator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Annual BBMP property tax the way the UAV system computes it.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/gym-cost-comparer/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">💪</span>
         <span class="tool-main">
           <span class="tool-name">Gym Cost Comparer <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">True per-month and per-visit gym costs across chains.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/airport-commute-comparer/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">✈️</span>
         <span class="tool-main">
           <span class="tool-name">Airport Commute Comparer <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Cab vs bus vs drive to KIA by area, flight time and group size.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/bescom-bill-checker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">💡</span>
         <span class="tool-main">
           <span class="tool-name">BESCOM Bill Checker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Check your BESCOM bill units, load and charges.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/bengaluru-deposit-checker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🕵️</span>
         <span class="tool-main">
           <span class="tool-name">Deposit &amp; Broker Checker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Flags outsized deposits and hidden one-time charges before you pay.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/flatmate-and-pg-matcher/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🤝</span>
         <span class="tool-main">
           <span class="tool-name">Flatmate &amp; PG Matcher <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Score flatmates and PGs against what matters to you.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/water-bill-and-tanker-tracker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🚰</span>
         <span class="tool-main">
           <span class="tool-name">Water Bill &amp; Tanker Tracker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">What you paid vs what the water should cost.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/bengaluru-rent-commute-calculator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🗺️</span>
         <span class="tool-main">
           <span class="tool-name">Rent + Commute True Cost <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">The true monthly cost of a flat: rent, bills and commute.</span>
+          <span class="tool-cat">Bengaluru</span>
         </span>
-        <span class="tool-cat">Bengaluru</span>
       </a>
       <a class="tool-card" data-cat="money" href="https://tanush.tech/credit-card-statement-tracker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">💳</span>
         <span class="tool-main">
           <span class="tool-name">Credit Card Statement Tracker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Track spends against the real statement cycle, not the calendar month.</span>
+          <span class="tool-cat">Money & tax</span>
         </span>
-        <span class="tool-cat">Money & tax</span>
       </a>
       <a class="tool-card" data-cat="money" href="https://tanush.tech/freelance-tax-44ada-estimator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🧾</span>
         <span class="tool-main">
           <span class="tool-name">Freelancer Tax Estimator (44ADA) <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Presumptive tax and advance-tax dates for freelancers.</span>
+          <span class="tool-cat">Money & tax</span>
         </span>
-        <span class="tool-cat">Money & tax</span>
       </a>
       <a class="tool-card" data-cat="money" href="https://tanush.tech/hra-exemption-calculator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🏘️</span>
         <span class="tool-main">
           <span class="tool-name">HRA Exemption Calculator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">How much of your HRA is exempt under the old regime.</span>
+          <span class="tool-cat">Money & tax</span>
         </span>
-        <span class="tool-cat">Money & tax</span>
       </a>
       <a class="tool-card" data-cat="money" href="https://tanush.tech/hsn-gst-assistant/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🔎</span>
         <span class="tool-main">
           <span class="tool-name">HSN &amp; GST Rate Assistant <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Decode an HSN code and verify the right GST rate.</span>
+          <span class="tool-cat">Money & tax</span>
         </span>
-        <span class="tool-cat">Money & tax</span>
       </a>
       <a class="tool-card" data-cat="money" href="https://tanush.tech/loan-prepayment-calculator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🏦</span>
         <span class="tool-main">
           <span class="tool-name">Loan Prepayment Calculator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">What a lump-sum prepayment does to EMI and tenure.</span>
+          <span class="tool-cat">Money & tax</span>
         </span>
-        <span class="tool-cat">Money & tax</span>
       </a>
       <a class="tool-card" data-cat="money" href="https://tanush.tech/net-worth-calculator-india/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">📊</span>
         <span class="tool-main">
           <span class="tool-name">Net Worth Snapshot <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Everything you own minus everything you owe, in one number.</span>
+          <span class="tool-cat">Money & tax</span>
         </span>
-        <span class="tool-cat">Money & tax</span>
       </a>
       <a class="tool-card" data-cat="money" href="https://tanush.tech/retirement-corpus-calculator-india/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🌅</span>
         <span class="tool-main">
           <span class="tool-name">Retirement Corpus Calculator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">The corpus you need and the monthly saving that gets there.</span>
+          <span class="tool-cat">Money & tax</span>
         </span>
-        <span class="tool-cat">Money & tax</span>
       </a>
       <a class="tool-card" data-cat="money" href="https://tanush.tech/finance-tracker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">💹</span>
         <span class="tool-main">
           <span class="tool-name">Finance Tracker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Track income and spending, on your device.</span>
+          <span class="tool-cat">Money & tax</span>
         </span>
-        <span class="tool-cat">Money & tax</span>
       </a>
       <a class="tool-card" data-cat="money" href="https://tanush.tech/home-loan-prepayment-calculator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🏡</span>
         <span class="tool-main">
           <span class="tool-name">Home Loan Prepayment Calculator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Prepayment maths, plus the Karnataka charges to keep cash aside for.</span>
+          <span class="tool-cat">Money & tax</span>
         </span>
-        <span class="tool-cat">Money & tax</span>
       </a>
       <a class="tool-card" data-cat="career" href="https://tanush.tech/gratuity-calculator-india/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🧮</span>
         <span class="tool-main">
           <span class="tool-name">Gratuity Calculator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">What your gratuity adds up to under the statutory formula.</span>
+          <span class="tool-cat">Career</span>
         </span>
-        <span class="tool-cat">Career</span>
       </a>
       <a class="tool-card" data-cat="career" href="https://tanush.tech/hybrid-work-day-tracker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">📅</span>
         <span class="tool-main">
           <span class="tool-name">Hybrid Work Day Tracker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Office, WFH or leave - tap days and see the month add up.</span>
+          <span class="tool-cat">Career</span>
         </span>
-        <span class="tool-cat">Career</span>
       </a>
       <a class="tool-card" data-cat="career" href="https://tanush.tech/job-offer-comparator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">⚖️</span>
         <span class="tool-main">
           <span class="tool-name">Job Offer Comparator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Score two offers on your own weights.</span>
+          <span class="tool-cat">Career</span>
         </span>
-        <span class="tool-cat">Career</span>
       </a>
       <a class="tool-card" data-cat="career" href="https://tanush.tech/notice-period-calculator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🗓️</span>
         <span class="tool-main">
           <span class="tool-name">Notice Period Calculator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Your last working day and notice left, without the date maths.</span>
+          <span class="tool-cat">Career</span>
         </span>
-        <span class="tool-cat">Career</span>
       </a>
       <a class="tool-card" data-cat="career" href="https://tanush.tech/salary-trap-analyser/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🪤</span>
         <span class="tool-main">
           <span class="tool-name">Salary Trap Analyser <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Why a hike leaves only a few thousand more in hand.</span>
+          <span class="tool-cat">Career</span>
         </span>
-        <span class="tool-cat">Career</span>
       </a>
       <a class="tool-card" data-cat="career" href="https://tanush.tech/burnout-and-switch-runway-planner/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🔋</span>
         <span class="tool-main">
           <span class="tool-name">Burnout &amp; Switch Runway Planner <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">How tired you are, and how long your runway lasts.</span>
+          <span class="tool-cat">Career</span>
         </span>
-        <span class="tool-cat">Career</span>
       </a>
       <a class="tool-card" data-cat="home" href="https://tanush.tech/noise-event-logger/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🔊</span>
         <span class="tool-main">
           <span class="tool-name">Noise Event Logger <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Timestamped log of loud-noise events, exportable as CSV.</span>
+          <span class="tool-cat">Home</span>
         </span>
-        <span class="tool-cat">Home</span>
       </a>
       <a class="tool-card" data-cat="home" href="https://tanush.tech/rent-utility-tracker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🧰</span>
         <span class="tool-main">
           <span class="tool-name">Rent &amp; Utility Tracker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Rent, power and water per room, month by month.</span>
+          <span class="tool-cat">Home</span>
         </span>
-        <span class="tool-cat">Home</span>
       </a>
       <a class="tool-card" data-cat="home" href="https://tanush.tech/rooftop-solar-subsidy-estimator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">☀️</span>
         <span class="tool-main">
           <span class="tool-name">Rooftop Solar Subsidy Estimator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">PM Surya Ghar subsidy and rough payback for your quote.</span>
+          <span class="tool-cat">Home</span>
         </span>
-        <span class="tool-cat">Home</span>
       </a>
       <a class="tool-card" data-cat="home" href="https://tanush.tech/furniture-rent-vs-buy/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🛋️</span>
         <span class="tool-main">
           <span class="tool-name">Furniture: Rent vs Buy <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">When renting furniture stops being cheap.</span>
+          <span class="tool-cat">Home</span>
         </span>
-        <span class="tool-cat">Home</span>
       </a>
       <a class="tool-card" data-cat="home" href="https://tanush.tech/plant-watering-tracker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🪴</span>
         <span class="tool-main">
           <span class="tool-name">Plant Watering Tracker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Schedules, care notes and progress photos per plant.</span>
+          <span class="tool-cat">Home</span>
         </span>
-        <span class="tool-cat">Home</span>
       </a>
       <a class="tool-card" data-cat="home" href="https://tanush.tech/cooker-whistle-counter/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🍲</span>
         <span class="tool-main">
           <span class="tool-name">Cooker Whistle Counter <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Counts pressure-cooker whistles and alerts you at your target.</span>
+          <span class="tool-cat">Home</span>
         </span>
-        <span class="tool-cat">Home</span>
       </a>
       <a class="tool-card" data-cat="vehicle" href="https://tanush.tech/car-document-expiry-tracker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">📄</span>
         <span class="tool-main">
           <span class="tool-name">Vehicle Document Expiry Tracker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">PUC, insurance, licence - see what expires first.</span>
+          <span class="tool-cat">Travel & vehicles</span>
         </span>
-        <span class="tool-cat">Travel & vehicles</span>
       </a>
       <a class="tool-card" data-cat="vehicle" href="https://tanush.tech/fastag-annual-pass-tracker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🛣️</span>
         <span class="tool-main">
           <span class="tool-name">FASTag Annual Pass Tracker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Trips left, days left, and whether the pass pays off.</span>
+          <span class="tool-cat">Travel & vehicles</span>
         </span>
-        <span class="tool-cat">Travel & vehicles</span>
       </a>
       <a class="tool-card" data-cat="vehicle" href="https://tanush.tech/fuel-mileage-tracker/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">⛽</span>
         <span class="tool-main">
           <span class="tool-name">Fuel Mileage Tracker <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Real km/l and cost per km, tank to tank.</span>
+          <span class="tool-cat">Travel & vehicles</span>
         </span>
-        <span class="tool-cat">Travel & vehicles</span>
       </a>
       <a class="tool-card" data-cat="vehicle" href="https://tanush.tech/train-refund-calculator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🚆</span>
         <span class="tool-main">
           <span class="tool-name">Train Refund Calculator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">What cancelling now gets you back under the 2026 rules.</span>
+          <span class="tool-cat">Travel & vehicles</span>
         </span>
-        <span class="tool-cat">Travel & vehicles</span>
       </a>
       <a class="tool-card" data-cat="vehicle" href="https://tanush.tech/tyre-date-decoder/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🛞</span>
         <span class="tool-main">
           <span class="tool-name">Tyre Date Decoder <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Decode the DOT code and check tyres are not old stock.</span>
+          <span class="tool-cat">Travel & vehicles</span>
         </span>
-        <span class="tool-cat">Travel & vehicles</span>
       </a>
       <a class="tool-card" data-cat="life" href="https://tanush.tech/bereavement-checklist-india/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🕊️</span>
         <span class="tool-main">
           <span class="tool-name">After a Death in the Family <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">The formalities after a death in the family, in order.</span>
+          <span class="tool-cat">Life & health</span>
         </span>
-        <span class="tool-cat">Life & health</span>
       </a>
       <a class="tool-card" data-cat="life" href="https://tanush.tech/india-doc-fix-guide/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🪪</span>
         <span class="tool-main">
           <span class="tool-name">Fix My Documents (India) <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Which portal, what you need, in what order, for document fixes.</span>
+          <span class="tool-cat">Life & health</span>
         </span>
-        <span class="tool-cat">Life & health</span>
       </a>
       <a class="tool-card" data-cat="life" href="https://tanush.tech/lost-pet-poster-generator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🐾</span>
         <span class="tool-main">
           <span class="tool-name">Lost Pet Poster Generator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">A print-ready A4 lost-pet poster in a minute.</span>
+          <span class="tool-cat">Life & health</span>
         </span>
-        <span class="tool-cat">Life & health</span>
       </a>
       <a class="tool-card" data-cat="life" href="https://tanush.tech/vice-cost-calculator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">☕</span>
         <span class="tool-main">
           <span class="tool-name">Vice Cost Calculator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">What caffeine, alcohol or cigarettes cost you over time.</span>
+          <span class="tool-cat">Life & health</span>
         </span>
-        <span class="tool-cat">Life & health</span>
       </a>
       <a class="tool-card" data-cat="life" href="https://tanush.tech/workout-assistant/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🏋️</span>
         <span class="tool-main">
           <span class="tool-name">Workout Assistant <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Plan and log workouts in your browser.</span>
+          <span class="tool-cat">Life & health</span>
         </span>
-        <span class="tool-cat">Life & health</span>
       </a>
       <a class="tool-card" data-cat="life" href="https://tanush.tech/weekend-crew-finder/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🎉</span>
         <span class="tool-main">
           <span class="tool-name">Weekend Crew Finder <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Find people to do weekend things with in Bengaluru.</span>
+          <span class="tool-cat">Life & health</span>
         </span>
-        <span class="tool-cat">Life & health</span>
       </a>
       <a class="tool-card" data-cat="life" href="https://tanush.tech/wedding-budget-planner/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">💍</span>
         <span class="tool-main">
           <span class="tool-name">Wedding Budget Planner <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">A 2027-28 Bengaluru wedding budget against what you can save.</span>
+          <span class="tool-cat">Life & health</span>
         </span>
-        <span class="tool-cat">Life & health</span>
       </a>
       <a class="tool-card" data-cat="study" href="https://tanush.tech/nicl-maths-practice/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">➗</span>
         <span class="tool-main">
           <span class="tool-name">NICL AO Maths Practice <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Timed maths sets for the NICL AO Generalist exam.</span>
+          <span class="tool-cat">Study</span>
         </span>
-        <span class="tool-cat">Study</span>
       </a>
       <a class="tool-card" data-cat="study" href="https://tanush.tech/upsc-attempt-age-calculator/" target="_blank" rel="noopener">
         <span class="tool-emoji" aria-hidden="true">🏛️</span>
         <span class="tool-main">
           <span class="tool-name">UPSC Attempt &amp; Age Calculator <span class="tool-arrow">↗</span></span>
           <span class="tool-blurb">Your Civil Services age window and attempts left.</span>
+          <span class="tool-cat">Study</span>
         </span>
-        <span class="tool-cat">Study</span>
       </a>
   </div>
   <p class="tool-empty" id="toolEmpty" hidden>Nothing matches that — try another word.</p>
