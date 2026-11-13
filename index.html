@@ -291,13 +291,8 @@
   @media (max-width: 640px) { .cert-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (prefers-reduced-motion: reduce) { .cert-card { transition: none; } }
 
-  /* ---- cta: light-cove background ---- */
+  /* ---- cta ---- */
   .cta { position: relative; overflow: hidden; padding: 96px 0; text-align: center; }
-  .cove-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .cta::after {
-    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-    background: radial-gradient(ellipse 62% 62% at 50% 50%, rgba(0, 0, 0, 0.55), transparent 75%);
-  }
   .cta-inner { position: relative; z-index: 2; }
   .cta h2 { font-size: clamp(2rem, 5vw, 3rem); }
   .cta h2 em { font-style: normal; color: var(--accent); }
@@ -434,6 +429,18 @@
   .catalog-note { color:var(--muted); font-size:.83rem; line-height:1.6; margin-bottom:24px; max-width:75ch; }
   @media(max-width:1000px) { .project-picks { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   @media(max-width:640px) { .project-picks { grid-template-columns:1fr; } .project-pick { min-height:0; padding:22px; } .tool-search { max-width:none; flex-basis:100%; } }
+
+  /* Project stories and work offer */
+  .story-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:28px 0; }
+  .story { display:flex; flex-direction:column; border:1px solid var(--line2); border-radius:18px; background:var(--surface); overflow:hidden; }
+  .story img { width:100%; aspect-ratio:1491/771; object-fit:cover; object-position:top; display:block; border-bottom:1px solid var(--line2); background:var(--surface); }
+  .story-body { display:flex; flex-direction:column; flex:1; padding:24px; }
+  .story-body h3 { font-size:1.3rem; letter-spacing:-.025em; line-height:1.25; margin:8px 0 12px; }
+  .story-body p { color:var(--muted); font-size:.9rem; line-height:1.6; margin-bottom:14px; }
+  .story-body p b { color:var(--text); font-weight:600; }
+  .story-link { margin-top:auto; color:var(--accent); font-size:.85rem; font-weight:600; text-decoration:none; }
+  .story-link:hover, .story-link:focus-visible { text-decoration:underline; }
+  @media(max-width:900px) { .story-grid { grid-template-columns:1fr; } }
 
 </style>
 </head>
@@ -898,6 +905,34 @@
 </a></div><p class="tool-empty" id="toolEmpty" hidden>Nothing matches. Try another word or category.</p></div></details>
 </section>
 
+  <section id="stories">
+    <p class="projects-label">Project stories</p>
+    <h2>Two builds, up close.</h2>
+    <p class="sec-sub">The problem, what I built, and a real screen from each.</p>
+    <div class="story-grid">
+      <article class="story">
+        <img src="story-athlete-atlas.png" alt="Athlete Atlas showing a 3D muscle map with injury heat regions and the knee region detail panel" loading="lazy">
+        <div class="story-body">
+          <span class="projects-label">Sports / research prototype</span>
+          <h3>Athlete Atlas</h3>
+          <p><b>The problem.</b> Injury guidance for athletes is scattered across research papers and generic advice, with no single place to explore where injuries cluster in a sport.</p>
+          <p><b>What I built.</b> An explorer for ten sports. Pick a sport, answer three quick questions, and a rotatable 3D muscle map shows where injuries cluster by body region. Tap a region for the evidence behind it, rehab boundaries and conditioning exercises with how often to do them. HYROX uses one published 12-week cohort study (63 injury episodes among 89 athletes); other sports are clearly labelled demo data. The map shows group patterns from a study, not personal risk or a diagnosis, and any pain marked is self-reported context, not a medical assessment.</p>
+          <a class="story-link" href="https://tanush.tech/athlete-atlas/" target="_blank" rel="noopener">Try Athlete Atlas ↗</a>
+        </div>
+      </article>
+      <article class="story">
+        <img src="story-carscope-india.png" alt="CarScope India market dashboard with model counts, price segments and models-by-manufacturer charts" loading="lazy">
+        <div class="story-body">
+          <span class="projects-label">Data dashboard</span>
+          <h3>CarScope India</h3>
+          <p><b>The problem.</b> Comparing car prices in India means bouncing between portals, with no single view of the market.</p>
+          <p><b>What I built.</b> A dashboard of the Indian car market with price bands, body-type and fuel cuts, per-model data-source labels and CSV export. The current dataset covers 77 active models from 12 manufacturers, last updated 12 Oct 2026. It includes two illustrative sample models, and most prices are portal estimates rather than official list prices.</p>
+          <a class="story-link" href="https://tanush.tech/india-car-market/" target="_blank" rel="noopener">Try CarScope India ↗</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <section id="certifications">
     <h2>Certifications</h2>
     <p class="sec-sub">18 earned, 1 in progress. Tap any badge to verify it on Credly.</p>
@@ -1016,24 +1051,26 @@
     <h2>About</h2>
     <div class="about">
       <p>
-        <strong>7+ years</strong> delivering technology programs across IT and BPO —
-        Bengaluru.
-        I manage the teams that ship AI, data and cloud systems.
+        I'm a Technical Delivery Manager in Bengaluru, with
+        <strong>7+ years</strong> of delivery across AI, data and engineering
+        projects.
       </p>
       <p>
-        Coordination alone is getting automated. So I'm becoming someone who can
-        <strong>both run the program and build the system</strong> — a 26-week
-        hands-on sprint: Python, APIs, AWS, then a production-grade RAG system
-        with real evaluation. This site is my working log: problems solved with AI, and breakdowns of how businesses work.
+        I solve problems with AI, on my way to becoming a Forward Deployed
+        Engineer. I break down how companies work, especially health businesses.
+        This site records that thinking and practice through breakdowns and
+        solved problems.
       </p>
     </div>
   </section>
 
+
+
+
   <section class="cta" id="cta">
-    <canvas class="cove-canvas" id="coveCanvas" aria-hidden="true"></canvas>
     <div class="cta-inner">
-      <h2>Let&rsquo;s <em>build</em> something.</h2>
-      <p class="cta-sub">Have an idea, a problem that needs solving, or a role that needs a Forward Deployed Engineer? My inbox is open.</p>
+      <h2>Let&rsquo;s <em>talk</em>.</h2>
+      <p class="cta-sub">A problem worth solving with AI, a business worth breaking down, or a Forward Deployed Engineer role - my inbox is open.</p>
       <div class="cta-buttons">
         <a class="beam-btn primary" href="#projects"><span>Explore projects ↗</span></a>
         <a class="beam-btn ghost" href="mailto:tanutanush07@gmail.com"><span>Email me ↗</span></a>
@@ -1186,109 +1223,6 @@
     }
     btn.addEventListener("click", function () { expanded = !expanded; apply(); });
     apply();
-  })();
-</script>
-<script>
-  (function () {
-    var cv = document.getElementById("coveCanvas");
-    if (!cv) return;
-    var ctx = cv.getContext("2d");
-    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var W = 0, H = 0, streaks = [], raf = null, visible = false, t0 = null;
-    var COLORS = ["#FF5C1A", "#E8B84B", "#FFFFFF", "#FF8A50", "#C97B2E"];
-    function size() {
-      var r = cv.parentElement.getBoundingClientRect();
-      var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      W = Math.max(1, Math.round(r.width));
-      H = Math.max(1, Math.round(r.height));
-      cv.width = Math.round(W * dpr);
-      cv.height = Math.round(H * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      build();
-    }
-    function build() {
-      var cx = W / 2, span = W * 0.31;
-      streaks = [];
-      var n = Math.round(Math.max(70, Math.min(130, W / 8)));
-      for (var i = 0; i < n; i++) {
-        var u = Math.random() * 2 - 1;
-        var x = cx + u * span * (0.35 + 0.65 * Math.abs(u));
-        streaks.push({
-          x: x,
-          color: COLORS[(Math.random() * COLORS.length) | 0],
-          w: 0.6 + Math.random() * 1.1,
-          a: 0.25 + Math.random() * 0.55,
-          phase: Math.random() * Math.PI * 2,
-          speed: 0.4 + Math.random() * 0.9,
-          flow: Math.random()
-        });
-      }
-    }
-    function draw(t) {
-      ctx.clearRect(0, 0, W, H);
-      var cx = W / 2, bend = H * 0.55;
-      ctx.globalCompositeOperation = "lighter";
-      var g = ctx.createRadialGradient(cx, bend, 0, cx, bend, W * 0.28);
-      g.addColorStop(0, "rgba(255, 92, 26, 0.20)");
-      g.addColorStop(1, "rgba(255, 92, 26, 0)");
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-      for (var i = 0; i < streaks.length; i++) {
-        var s = streaks[i];
-        var pulse = 0.55 + 0.45 * Math.sin(t * s.speed + s.phase);
-        var alpha = s.a * pulse;
-        ctx.strokeStyle = s.color;
-        ctx.globalAlpha = alpha;
-        ctx.lineWidth = s.w;
-        ctx.beginPath();
-        ctx.moveTo(s.x, -4);
-        ctx.lineTo(s.x, bend);
-        ctx.stroke();
-        var dy = ((t * 0.12 * s.speed + s.flow) % 1) * bend;
-        ctx.globalAlpha = Math.min(1, alpha + 0.45);
-        ctx.lineWidth = s.w + 0.6;
-        ctx.beginPath();
-        ctx.moveTo(s.x, dy - 26);
-        ctx.lineTo(s.x, dy);
-        ctx.stroke();
-        var fx = cx + (s.x - cx) * 2.7;
-        ctx.globalAlpha = alpha * 0.8;
-        ctx.lineWidth = s.w;
-        ctx.beginPath();
-        ctx.moveTo(s.x, bend);
-        ctx.lineTo(fx, H + 4);
-        ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-      ctx.globalCompositeOperation = "source-over";
-    }
-    function frame(ts) {
-      if (!visible) { raf = null; return; }
-      if (t0 === null) t0 = ts;
-      draw((ts - t0) / 1000);
-      raf = requestAnimationFrame(frame);
-    }
-    function start() {
-      if (raf !== null || !visible) return;
-      if (reduce) { draw(0); return; }
-      raf = requestAnimationFrame(frame);
-    }
-    function stop() {
-      if (raf !== null) { cancelAnimationFrame(raf); raf = null; }
-      t0 = null;
-    }
-    var io = new IntersectionObserver(function (entries) {
-      visible = entries[0].isIntersecting;
-      if (visible) { size(); start(); } else { stop(); }
-    }, { threshold: 0.05 });
-    io.observe(cv.parentElement);
-    var rt = null;
-    window.addEventListener("resize", function () {
-      if (rt) clearTimeout(rt);
-      rt = setTimeout(function () { if (visible) size(); }, 150);
-    });
-    size();
-    if (reduce) draw(0);
   })();
 </script>
 
