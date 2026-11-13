@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@600;700&display=swap" rel="stylesheet">
+<title>Tanush R</title>
+<meta name="description" content="Tanush R — Bengaluru. Tech enthusiast leading project, programme and portfolio delivery across AI, data and engineering, now upskilling in AI to become a Forward Deployed Engineer.">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #000000;
+    --surface: #0A0A0A;
+    --surface2: #111111;
+    --text: #FAFAFA;
+    --muted: #A1A1AA;
+    --faint: #71717A;
+    --line: #1A1A1A;
+    --line2: #262626;
+    --accent: #FF5C1A;
+    --sand: #FF5C1A;
+    --sandlight: #141414;
+    --green: #4ADE80;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(255, 92, 26, 0.35); color: #fff; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .serif { font-family: "Inter Tight", "Inter", -apple-system, sans-serif; }
+
+  /* ---- sticky nav ---- */
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0;
+  }
+  nav .wordmark { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; color: var(--text); text-decoration: none; }
+  nav .wordmark span { color: var(--accent); }
+  nav .links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; margin-left: 22px; }
+  nav .links a:hover { color: var(--text); }
+
+  /* ---- hero ---- */
+  header.hero { padding: 76px 0 44px; position: relative; }
+  header.hero::before {
+    content: ""; position: absolute; left: 50%; top: -140px; z-index: 0;
+    width: 720px; height: 420px; transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(255, 92, 26, 0.16), transparent);
+    pointer-events: none;
+  }
+  header.hero::after {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 90% 75% at 50% 0%, #000 25%, transparent 78%);
+    mask-image: radial-gradient(ellipse 90% 75% at 50% 0%, #000 25%, transparent 78%);
+    pointer-events: none;
+  }
+  header.hero > * { position: relative; z-index: 1; }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center; }
+  .kicker {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78rem; color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .kicker .dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green); margin-right: 8px;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.8);
+  }
+  h1 {
+    font-family: "Inter Tight", "Inter", -apple-system, sans-serif;
+    font-size: clamp(3.2rem, 9vw, 5.4rem);
+    font-weight: 700; letter-spacing: -0.04em; line-height: 1.02;
+    margin-bottom: 16px;
+  }
+  .hero-statement {
+    font-family: "Inter Tight", "Inter", -apple-system, sans-serif;
+    font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+    font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .hero-statement em { font-style: normal; color: var(--accent); }
+  .hero-line { font-size: 1.14rem; color: var(--muted); max-width: 58ch; }
+  .hero-line strong { color: var(--text); font-weight: 600; }
+  .rotator-line { font-size: 1.05rem; color: var(--muted); margin-top: 14px; }
+  .rotator { color: var(--accent); font-weight: 600; transition: opacity 0.4s ease; }
+  .rotator.fade { opacity: 0; }
+  .hero-cta { margin-top: 26px; }
+  .hero-avatar { display: none; }
+  .hero-photo { position: relative; }
+  .hero-photo::before {
+    content: ""; position: absolute; inset: -14px -14px 14px 14px;
+    background: var(--accent); border-radius: 24px; z-index: 0;
+  }
+  .hero-photo img {
+    position: relative; z-index: 1; display: block; width: 100%; max-width: 340px;
+    margin: 0 auto; border-radius: 20px; border: 1px solid var(--line2);
+  }
+  .hero-photo .sig {
+    position: relative; z-index: 1; text-align: center;
+    font-family: "Inter Tight", "Inter", -apple-system, sans-serif;
+    font-style: italic; font-weight: 700; font-size: 1.5rem;
+    color: var(--accent); margin-top: 14px; letter-spacing: -0.01em;
+  }
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--line);
+  }
+  .hero-stat b {
+    display: block; font-family: "Inter Tight", "Inter", -apple-system, sans-serif;
+    font-size: clamp(1.6rem, 3.4vw, 2.2rem); font-weight: 700; letter-spacing: -0.02em;
+    color: var(--accent); line-height: 1.1;
+  }
+  .hero-stat span { color: var(--muted); font-size: 0.86rem; }
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-name { display: flex; align-items: center; gap: 14px; }
+    .hero-avatar {
+      display: block; width: 64px; height: 64px; border-radius: 50%;
+      object-fit: cover; object-position: center 22%;
+      border: 2px solid var(--accent); flex: 0 0 auto;
+    }
+    .hero-photo { display: none; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ---- social row ---- */
+  .social-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  .social-btn {
+    border: 1px solid var(--line2); color: var(--text);
+    padding: 9px 18px; border-radius: 999px;
+    text-decoration: none; font-weight: 600; font-size: 0.95rem;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  }
+  .social-btn:hover { background: var(--text); color: #000; border-color: var(--text); }
+
+  /* ---- sections ---- */
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  section h2 {
+    font-family: "Inter Tight", "Inter", -apple-system, sans-serif;
+    font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .sec-sub { color: var(--muted); margin-bottom: 28px; max-width: 60ch; }
+  .goal-line {
+    margin-top: 24px; padding: 14px 18px; border-radius: 10px;
+    background: var(--surface2); border: 1px solid var(--line);
+    color: var(--text); font-size: 0.98rem;
+  }
+  .goal-line strong { color: var(--accent); }
+
+  /* ---- project cards ---- */
+  /* ---- projects: search + featured + need groups ---- */
+  .projects-label { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .feat-grid {
+    display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 18px 4px 22px; scrollbar-width: none; margin-bottom: 44px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .feat-grid::-webkit-scrollbar { display: none; }
+  .feat-card {
+    position: relative; flex: 0 0 262px; height: 360px; border-radius: 20px; overflow: hidden;
+    scroll-snap-align: center;
+    text-decoration: none; color: var(--text);
+    border: 1px solid var(--line); background: #0A0A0A;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .feat-card:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55); }
+  .feat-card .led { position: absolute; inset: 0; height: auto; border-bottom: none; }
+  .feat-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.15) 45%, rgba(0, 0, 0, 0.82) 78%, rgba(0, 0, 0, 0.92) 100%); }
+  .feat-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .feat-cat { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.66rem; letter-spacing: 0.18em; color: var(--accent); }
+  .feat-title { font-family: "Inter Tight", "Inter", -apple-system, sans-serif; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
+  .feat-open {
+    margin-top: 8px; display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    font-weight: 600; font-size: 0.9rem;
+  }
+  .led { display: block; height: 62px; background: #050505; border-bottom: 1px solid var(--line); }
+  .led canvas { display: block; width: 100%; height: 100%; }
+
+  @media (max-width: 640px) {
+    .feat-card { flex-basis: 78vw; height: 340px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .feat-card { transition: none; }
+  }
+
+  /* ---- about / now ---- */
+  .about p { color: var(--muted); margin-bottom: 16px; max-width: 62ch; }
+  .about p strong { color: var(--text); font-weight: 600; }
+
+  /* ---- certs ---- */
+  .certs { list-style: none; }
+  .certs li {
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; gap: 16px;
+    font-size: 0.97rem;
+  }
+  .certs li:last-child { border-bottom: none; }
+  .certs .org { color: var(--muted); font-size: 0.88rem; text-align: right; }
+  .credly-note { margin-top: 20px; color: var(--muted); font-size: 0.95rem; }
+  .credly-note a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .credly-note a:hover { text-decoration: underline; }
+
+  /* ---- certifications: logo badge grid ---- */
+  .cert-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .cert-card {
+    background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line);
+    border-radius: 16px; padding: 20px 12px 18px; text-align: center;
+    text-decoration: none; color: var(--text);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+  }
+  .cert-card:hover { border-color: var(--accent); transform: translateY(-3px); background: rgba(255, 255, 255, 0.07); }
+  .logo-tile {
+    width: 76px; height: 76px; margin: 0 auto 14px; border-radius: 18px;
+    background: var(--surface2); position: relative; overflow: hidden;
+  }
+  .logo-tile img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: contain; background: #fff; padding: 6px; box-sizing: border-box;
+  }
+  .logo-tile .mono {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.15rem; color: var(--accent);
+  }
+  .logo-tile .mono.small { font-size: 0.95rem; }
+  .cert-card strong { display: block; font-size: 0.95rem; line-height: 1.4; margin-bottom: 4px; }
+  .cert-card span { color: var(--muted); font-size: 0.84rem; line-height: 1.45; display: block; }
+  .cert-card .pill {
+    display: inline-block; margin-top: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.7rem;
+    color: var(--green); border: 1px solid rgba(74, 222, 128, 0.35);
+    border-radius: 999px; padding: 2px 10px;
+  }
+  .cert-card.is-hidden { display: none; }
+  @keyframes certIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .cert-card.cert-in { animation: certIn 0.45s ease backwards; animation-delay: calc(var(--i, 0) * 45ms); }
+  .cert-toggle-wrap { display: flex; justify-content: center; margin-top: 22px; }
+  .cert-toggle {
+    position: relative; overflow: hidden;
+    padding: 12px 22px; border-radius: 999px; cursor: pointer;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 92, 26, 0.45);
+    color: var(--text); font: 600 0.95rem "Inter", -apple-system, sans-serif;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .cert-toggle::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px;
+    background: conic-gradient(from var(--angle, 0deg), transparent 0deg, var(--accent) 40deg, transparent 90deg, transparent 180deg, var(--accent) 220deg, transparent 270deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: spinBorder 3.5s linear infinite; pointer-events: none;
+  }
+  @property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+  @keyframes spinBorder { to { --angle: 360deg; } }
+  .cert-toggle-chev { display: inline-block; transition: transform 0.3s ease; color: var(--accent); font-size: 1.05rem; line-height: 1; }
+  .cert-toggle[aria-expanded="true"] .cert-toggle-chev { transform: rotate(180deg); }
+  @media (prefers-reduced-motion: reduce) {
+    .cert-card.cert-in { animation: none; }
+    .cert-toggle::before { animation: none; }
+    .cert-toggle-chev { transition: none; }
+    .beam-btn::before, .beam-btn::after { animation: none; }
+  }
+  @media (max-width: 1100px) { .cert-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 900px) { .cert-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 640px) { .cert-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (prefers-reduced-motion: reduce) { .cert-card { transition: none; } }
+
+  /* ---- cta: light-cove background ---- */
+  .cta { position: relative; overflow: hidden; padding: 96px 0; text-align: center; }
+  .cove-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .cta::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse 62% 62% at 50% 50%, rgba(0, 0, 0, 0.55), transparent 75%);
+  }
+  .cta-inner { position: relative; z-index: 2; }
+  .cta h2 { font-size: clamp(2rem, 5vw, 3rem); }
+  .cta h2 em { font-style: normal; color: var(--accent); }
+  .cta-sub { color: var(--muted); max-width: 52ch; margin: 12px auto 28px; font-size: 1.05rem; }
+  .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  /* ---- beam button: light travelling around the border ---- */
+  .beam-btn {
+    position: relative; display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 28px; border-radius: 999px; cursor: pointer;
+    text-decoration: none; font-weight: 600; font-size: 0.98rem;
+    transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  }
+  .beam-btn > span { position: relative; z-index: 1; }
+  .beam-btn::before, .beam-btn::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px;
+    background: conic-gradient(from var(--angle, 0deg), transparent 0deg, var(--beam, var(--accent)) 36deg, transparent 90deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: spinBorder 3.5s linear infinite; pointer-events: none;
+  }
+  .beam-btn::after { filter: blur(7px); opacity: 0.7; }
+  .beam-btn:hover { transform: translateY(-2px); }
+  .beam-btn.primary { background: var(--accent); border: 1px solid var(--accent); color: #000; --beam: #FFFFFF; }
+  .beam-btn.primary:hover { background: #ff6d33; }
+  .beam-btn.ghost {
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    color: var(--text); --beam: var(--accent);
+  }
+  .beam-btn.ghost:hover { border-color: var(--accent); }
+
+  /* ---- footer / contact ---- */
+  footer { padding: 48px 0 64px; }
+  footer .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.95rem; }
+  footer a { color: var(--accent); font-weight: 600; text-decoration: none; margin-right: 20px; }
+  footer a:hover { text-decoration: underline; }
+  footer .quiet { color: var(--faint); font-size: 0.88rem; }
+
+  @media (max-width: 680px) {
+    .journey-svg { display: none; }
+    .journey-svg-mobile { display: block; }
+  }
+  @media (max-width: 1100px) {
+    .cards { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; }
+    .card.featured { grid-column: auto; }
+    header.hero { padding: 56px 0 36px; }
+    nav .links a { margin-left: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rotator { transition: none; }
+    .card.featured::before { animation: none; }
+    html { scroll-behavior: auto; }
+  }
+
+
+  /* ---- tools section ---- */
+  .tool-filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 24px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--line2); background: transparent; color: var(--muted);
+    border-radius: 999px; padding: 7px 14px; font: 600 0.84rem "Inter", -apple-system, sans-serif;
+    cursor: pointer; transition: all 0.16s ease; }
+  .chip:hover { color: var(--text); border-color: var(--accent); }
+  .chip.is-on { background: var(--accent); border-color: var(--accent); color: #000; }
+  .tool-search { flex: 1 1 220px; max-width: 340px; background: var(--surface2);
+    border: 1px solid var(--line2); color: var(--text); border-radius: 999px;
+    padding: 9px 18px; font: 500 0.9rem "Inter", -apple-system, sans-serif; outline: none; }
+  .tool-search:focus { border-color: var(--accent); }
+  .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 1000px) { .tool-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .tool-grid { grid-template-columns: 1fr; } }
+  .tool-card { position: relative; display: flex; gap: 12px; align-items: flex-start;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 16px; text-decoration: none; color: var(--text);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
+  .tool-card:hover { transform: translateY(-3px); border-color: var(--accent);
+    box-shadow: 0 14px 34px rgba(0,0,0,0.5); }
+  .tool-emoji { flex: 0 0 auto; width: 42px; height: 42px; border-radius: 12px;
+    background: var(--surface2); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+  .tool-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .tool-name { font-weight: 700; font-size: 0.98rem; letter-spacing: -0.01em; line-height: 1.3; display: block; }
+  .tool-arrow { color: var(--accent); font-weight: 700; opacity: 0; transition: opacity 0.18s ease; }
+  .tool-card:hover .tool-arrow { opacity: 1; }
+  .tool-blurb { color: var(--muted); font-size: 0.85rem; line-height: 1.45; }
+  .tool-cat { display: block; margin-top: 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.62rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); }
+  .tool-card.is-hidden { display: none; }
+  .tool-empty { color: var(--muted); text-align: center; padding: 28px 0; }
+
+  /* ---- hero photo frame vs signature fix ---- */
+  .hero-photo::before { bottom: 62px; }
+  .hero-photo .sig { margin-top: 10px; }
+
+  /* ---- mobile nav wrap fix ---- */
+  @media (max-width: 680px) {
+    .nav-inner { flex-wrap: wrap; row-gap: 8px; }
+    nav .links { display: flex; flex-wrap: wrap; gap: 4px 14px; justify-content: flex-end; }
+    nav .links a { margin-left: 0; font-size: 0.84rem; }
+  }
+
+  /* ---- scroll reveal ---- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  /* keep full-bleed sections from creating horizontal overflow (100vw includes the scrollbar) */
+  html, body { overflow-x: clip; }
+
+  /* One calm project section: five static picks, then a closed catalog. */
+  .legacy-anchor { display:block; scroll-margin-top:100px; }
+  .project-picks { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:28px 0; }
+  .project-pick { display:flex; flex-direction:column; padding:24px; border:1px solid var(--line2); border-radius:18px; background:var(--surface); color:var(--text); text-decoration:none; min-height:245px; }
+  .pick-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  .pick-top .projects-label { font-size:.61rem; line-height:1.6; }
+  .pick-number { color:var(--faint); font: .8rem ui-monospace,monospace; }
+  .project-pick h3 { font-size:1.3rem; letter-spacing:-.025em; line-height:1.25; margin:8px 0 12px; }
+  .project-pick p { color:var(--muted); font-size:.9rem; line-height:1.6; margin-bottom:20px; }
+  .pick-link { margin-top:auto; color:var(--accent); font-size:.85rem; font-weight:600; }
+  .project-pick:hover, .project-pick:focus-visible { border-color:var(--accent); }
+  .project-catalog { border-top:1px solid var(--line2); border-bottom:1px solid var(--line2); }
+  .project-catalog summary { display:flex; align-items:center; gap:14px; padding:24px 0; cursor:pointer; list-style:none; font-size:1rem; font-weight:600; }
+  .project-catalog summary::-webkit-details-marker { display:none; }
+  .catalog-count { color:var(--muted); font-size:.82rem; font-weight:400; }
+  .catalog-plus { margin-left:auto; color:var(--accent); font-size:1.4rem; }
+  .project-catalog[open] .catalog-plus { transform:rotate(45deg); }
+  .catalog-body { padding:8px 0 28px; }
+  .catalog-body .sec-sub { margin-bottom:12px; }
+  .catalog-note { color:var(--muted); font-size:.83rem; line-height:1.6; margin-bottom:24px; max-width:75ch; }
+  @media(max-width:1000px) { .project-picks { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media(max-width:640px) { .project-picks { grid-template-columns:1fr; } .project-pick { min-height:0; padding:22px; } .tool-search { max-width:none; flex-basis:100%; } }
+
+  /* Project stories and work offer */
+  .story-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:28px 0; }
+  .story { display:flex; flex-direction:column; border:1px solid var(--line2); border-radius:18px; background:var(--surface); overflow:hidden; }
+  .story img { width:100%; aspect-ratio:1491/771; object-fit:cover; object-position:top; display:block; border-bottom:1px solid var(--line2); background:var(--surface); }
+  .story-body { display:flex; flex-direction:column; flex:1; padding:24px; }
+  .story-body h3 { font-size:1.3rem; letter-spacing:-.025em; line-height:1.25; margin:8px 0 12px; }
+  .story-body p { color:var(--muted); font-size:.9rem; line-height:1.6; margin-bottom:14px; }
+  .story-body p b { color:var(--text); font-weight:600; }
+  .story-link { margin-top:auto; color:var(--accent); font-size:.85rem; font-weight:600; text-decoration:none; }
+  .story-link:hover, .story-link:focus-visible { text-decoration:underline; }
+  .work-offer { border:1px solid var(--line2); border-radius:18px; background:var(--surface); padding:32px 28px; margin:28px 0; }
+  .work-offer .sec-sub { margin-bottom:22px; }
+  @media(max-width:900px) { .story-grid { grid-template-columns:1fr; } }
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="wordmark" href="#">tanush<span>.tech</span></a>
+    <div class="links">
+      <a href="#projects">Projects</a>
+      <a href="#certifications">Certifications</a>
+      <a href="#about">About</a>
+      <a href="#work">Work with me</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker"><span class="dot"></span>Bengaluru, India · Solving problems with AI</div>
+        <div class="hero-name">
+          <img class="hero-avatar" src="profile.jpg" alt="Tanush R">
+          <h1>Tanush R.</h1>
+        </div>
+        <p class="hero-statement">I solve problems with <em>AI</em>.</p>
+        <p class="hero-line">
+          Tech enthusiast with deep experience in project, programme and portfolio
+          management across AI, data and engineering. I break down how companies
+          work, especially health businesses, and I am building hands-on AI depth
+          to become a Forward Deployed Engineer who deploys AI where it actually
+          gets used.
+        </p>
+        <p class="rotator-line">Currently exploring <span class="rotator" id="rotator">AI systems</span>.</p>
+        <div class="hero-cta">
+          <a class="beam-btn primary" href="#projects"><span>Explore projects ↗</span></a>
+        </div>
+        <div class="social-row">
+          <a class="social-btn" href="https://www.linkedin.com/in/tanush-r/" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a class="social-btn" href="https://x.com/tanushR_" target="_blank" rel="noopener">X ↗</a>
+          <a class="social-btn" href="https://github.com/Tanush-7" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="social-btn" href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly ↗</a>
+        </div>
+      </div>
+      <div class="hero-photo">
+        <img src="profile.jpg" alt="Tanush R, in a navy suit">
+        <div class="sig">Tanush R</div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><b>50+</b><span>free tools live</span></div>
+      <div class="hero-stat"><b>7+</b><span>years in delivery</span></div>
+      <div class="hero-stat"><b>850+</b><span>enhancements delivered</span></div>
+      <div class="hero-stat"><b>15–25</b><span>team members led</span></div>
+    </div>
+  </header>
+
+<span id="tools" class="legacy-anchor" aria-hidden="true"></span>
+<section id="projects">
+ <p class="projects-label">Selected work</p>
+ <h2>Five projects to start with.</h2>
+ <p class="sec-sub">A small selection of what I build. Explore one, or open the full list below.</p>
+ <div class="project-picks"><a class="project-pick" href="https://tanush.tech/athlete-atlas/" target="_blank" rel="noopener"><span class="pick-top"><span class="projects-label">SPORTS / RESEARCH PROTOTYPE</span><span class="pick-number">01</span></span><h3>Athlete Atlas</h3><p>Explore sports injury research and evidence. A research prototype, not a prediction tool.</p><span class="pick-link">Explore project <span aria-hidden="true">↗</span></span></a>
+<a class="project-pick" href="https://tanush-7.github.io/india-car-market/" target="_blank" rel="noopener"><span class="pick-top"><span class="projects-label">CARS</span><span class="pick-number">02</span></span><h3>CarScope India</h3><p>Explore and compare India&#x27;s car market, with data sources and estimates explained in the app.</p><span class="pick-link">Explore project <span aria-hidden="true">↗</span></span></a>
+<a class="project-pick" href="https://tanush.tech/vice-cost-calculator/" target="_blank" rel="noopener"><span class="pick-top"><span class="projects-label">LIFE</span><span class="pick-number">03</span></span><h3>Vice Cost Calculator</h3><p>What caffeine, alcohol or cigarettes cost you over time.</p><span class="pick-link">Explore project <span aria-hidden="true">↗</span></span></a>
+<a class="project-pick" href="https://tanush.tech/bengaluru-deposit-checker/" target="_blank" rel="noopener"><span class="pick-top"><span class="projects-label">BENGALURU</span><span class="pick-number">04</span></span><h3>Deposit &amp; Broker Checker</h3><p>Flags outsized deposits and hidden one-time charges before you pay.</p><span class="pick-link">Explore project <span aria-hidden="true">↗</span></span></a>
+<a class="project-pick" href="https://tanush.tech/salary-trap-analyser/" target="_blank" rel="noopener"><span class="pick-top"><span class="projects-label">MONEY</span><span class="pick-number">05</span></span><h3>Salary Trap Analyser</h3><p>Why a hike leaves only a few thousand more in hand.</p><span class="pick-link">Explore project <span aria-hidden="true">↗</span></span></a></div>
+ <details class="project-catalog" id="allProjects">
+ <summary>List all <span class="catalog-count">52 projects</span><span class="catalog-plus" aria-hidden="true">+</span></summary>
+ <div class="catalog-body">
+ <p class="sec-sub">The other 47 projects. The five above stay in view, so nothing is listed twice.</p>
+ <p class="catalog-note">Free, no sign-up. Tools keep your entries on your device; any outside services are disclosed on the tool's page.</p>
+ <div class="tool-filters">
+<div class="chip-row" id="chipRow">
+<button class="chip is-on" data-f="all" type="button">All</button>
+<button class="chip" data-f="bengaluru" type="button">🏙️ Bengaluru</button>
+<button class="chip" data-f="money" type="button">💰 Money &amp; tax</button>
+<button class="chip" data-f="career" type="button">💼 Career</button>
+<button class="chip" data-f="home" type="button">🏠 Home</button>
+<button class="chip" data-f="vehicle" type="button">🚗 Travel &amp; vehicles</button>
+<button class="chip" data-f="life" type="button">🌿 Life &amp; health</button>
+<button class="chip" data-f="study" type="button">🎓 Study</button>
+</div>
+<input aria-label="Search tools" class="tool-search" id="toolSearch" placeholder='Search tools… (try "rent" or "tax")' type="search"/>
+</div><div class="tool-grid" id="toolGrid"><a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/bangalore-traffic-pulse/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🚦</span>
+<span class="tool-main">
+<span class="tool-name">Bangalore Traffic Pulse <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Modelled congestion, speeds and best times to travel, by time of day.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/buy-vs-rent-bengaluru/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🔑</span>
+<span class="tool-main">
+<span class="tool-name">Buy vs Rent — Bengaluru 2BHK <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">The real breakeven on buying a 2BHK vs renting it, year by year.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/bengaluru-commute-optimiser/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🚇</span>
+<span class="tool-main">
+<span class="tool-name">Bengaluru Commute Optimiser <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Auto vs cab vs Metro on monthly cost and hours, by area.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/weekend-trip-planner/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🌄</span>
+<span class="tool-main">
+<span class="tool-name">Weekend Trip Planner <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Twelve getaways with when to leave, real cost and how long to stay.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/packers-and-movers-estimator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">📦</span>
+<span class="tool-main">
+<span class="tool-name">Packers &amp; Movers Estimator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">What a local move should cost, so a bad quote stands out.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/home-help-cost-planner/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🧹</span>
+<span class="tool-main">
+<span class="tool-name">Home Help Cost Planner <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Monthly cost of cook, maid and help, tuned to your home.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/broadband-comparer/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">📡</span>
+<span class="tool-main">
+<span class="tool-name">Broadband Comparer <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">16 real plans priced against your usage, not the brochure.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/bbmp-property-tax-estimator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🏢</span>
+<span class="tool-main">
+<span class="tool-name">BBMP Property Tax Estimator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Annual BBMP property tax the way the UAV system computes it.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/gym-cost-comparer/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">💪</span>
+<span class="tool-main">
+<span class="tool-name">Gym Cost Comparer <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">True per-month and per-visit gym costs across chains.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/airport-commute-comparer/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">✈️</span>
+<span class="tool-main">
+<span class="tool-name">Airport Commute Comparer <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Cab vs bus vs drive to KIA by area, flight time and group size.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/bescom-bill-checker/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">💡</span>
+<span class="tool-main">
+<span class="tool-name">BESCOM Bill Checker <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Check your BESCOM bill units, load and charges.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/flatmate-and-pg-matcher/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🤝</span>
+<span class="tool-main">
+<span class="tool-name">Flatmate &amp; PG Matcher <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Score flatmates and PGs against what matters to you.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/water-bill-and-tanker-tracker/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🚰</span>
+<span class="tool-main">
+<span class="tool-name">Water Bill &amp; Tanker Tracker <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">What you paid vs what the water should cost.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="bengaluru" href="https://tanush.tech/bengaluru-rent-commute-calculator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🗺️</span>
+<span class="tool-main">
+<span class="tool-name">Rent + Commute True Cost <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">The true monthly cost of a flat: rent, bills and commute.</span>
+<span class="tool-cat">Bengaluru</span>
+</span>
+</a>
+<a class="tool-card" data-cat="money" href="https://tanush.tech/credit-card-statement-tracker/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">💳</span>
+<span class="tool-main">
+<span class="tool-name">Credit Card Statement Tracker <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Track spends against the real statement cycle, not the calendar month.</span>
+<span class="tool-cat">Money &amp; tax</span>
+</span>
+</a>
+<a class="tool-card" data-cat="money" href="https://tanush.tech/freelance-tax-44ada-estimator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🧾</span>
+<span class="tool-main">
+<span class="tool-name">Freelancer Tax Estimator (44ADA) <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Presumptive tax and advance-tax dates for freelancers.</span>
+<span class="tool-cat">Money &amp; tax</span>
+</span>
+</a>
+<a class="tool-card" data-cat="money" href="https://tanush.tech/hra-exemption-calculator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🏘️</span>
+<span class="tool-main">
+<span class="tool-name">HRA Exemption Calculator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">How much of your HRA is exempt under the old regime.</span>
+<span class="tool-cat">Money &amp; tax</span>
+</span>
+</a>
+<a class="tool-card" data-cat="money" href="https://tanush.tech/hsn-gst-assistant/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🔎</span>
+<span class="tool-main">
+<span class="tool-name">HSN &amp; GST Rate Assistant <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Decode an HSN code and verify the right GST rate.</span>
+<span class="tool-cat">Money &amp; tax</span>
+</span>
+</a>
+<a class="tool-card" data-cat="money" href="https://tanush.tech/loan-prepayment-calculator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🏦</span>
+<span class="tool-main">
+<span class="tool-name">Loan Prepayment Calculator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">What a lump-sum prepayment does to EMI and tenure.</span>
+<span class="tool-cat">Money &amp; tax</span>
+</span>
+</a>
+<a class="tool-card" data-cat="money" href="https://tanush.tech/net-worth-calculator-india/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">📊</span>
+<span class="tool-main">
+<span class="tool-name">Net Worth Snapshot <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Everything you own minus everything you owe, in one number.</span>
+<span class="tool-cat">Money &amp; tax</span>
+</span>
+</a>
+<a class="tool-card" data-cat="money" href="https://tanush.tech/retirement-corpus-calculator-india/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🌅</span>
+<span class="tool-main">
+<span class="tool-name">Retirement Corpus Calculator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">The corpus you need and the monthly saving that gets there.</span>
+<span class="tool-cat">Money &amp; tax</span>
+</span>
+</a>
+<a class="tool-card" data-cat="money" href="https://tanush.tech/finance-tracker/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">💹</span>
+<span class="tool-main">
+<span class="tool-name">Finance Tracker <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Track income and spending, on your device.</span>
+<span class="tool-cat">Money &amp; tax</span>
+</span>
+</a>
+<a class="tool-card" data-cat="money" href="https://tanush.tech/home-loan-prepayment-calculator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🏡</span>
+<span class="tool-main">
+<span class="tool-name">Home Loan Prepayment Calculator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Prepayment maths, plus the Karnataka charges to keep cash aside for.</span>
+<span class="tool-cat">Money &amp; tax</span>
+</span>
+</a>
+<a class="tool-card" data-cat="career" href="https://tanush.tech/gratuity-calculator-india/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🧮</span>
+<span class="tool-main">
+<span class="tool-name">Gratuity Calculator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">What your gratuity adds up to under the statutory formula.</span>
+<span class="tool-cat">Career</span>
+</span>
+</a>
+<a class="tool-card" data-cat="career" href="https://tanush.tech/hybrid-work-day-tracker/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">📅</span>
+<span class="tool-main">
+<span class="tool-name">Hybrid Work Day Tracker <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Office, WFH or leave - tap days and see the month add up.</span>
+<span class="tool-cat">Career</span>
+</span>
+</a>
+<a class="tool-card" data-cat="career" href="https://tanush.tech/job-offer-comparator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">⚖️</span>
+<span class="tool-main">
+<span class="tool-name">Job Offer Comparator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Score two offers on your own weights.</span>
+<span class="tool-cat">Career</span>
+</span>
+</a>
+<a class="tool-card" data-cat="career" href="https://tanush.tech/notice-period-calculator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🗓️</span>
+<span class="tool-main">
+<span class="tool-name">Notice Period Calculator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Your last working day and notice left, without the date maths.</span>
+<span class="tool-cat">Career</span>
+</span>
+</a>
+<a class="tool-card" data-cat="career" href="https://tanush.tech/burnout-and-switch-runway-planner/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🔋</span>
+<span class="tool-main">
+<span class="tool-name">Burnout &amp; Switch Runway Planner <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">How tired you are, and how long your runway lasts.</span>
+<span class="tool-cat">Career</span>
+</span>
+</a>
+<a class="tool-card" data-cat="home" href="https://tanush.tech/noise-event-logger/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🔊</span>
+<span class="tool-main">
+<span class="tool-name">Noise Event Logger <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Timestamped log of loud-noise events, exportable as CSV.</span>
+<span class="tool-cat">Home</span>
+</span>
+</a>
+<a class="tool-card" data-cat="home" href="https://tanush.tech/rent-utility-tracker/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🧰</span>
+<span class="tool-main">
+<span class="tool-name">Rent &amp; Utility Tracker <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Rent, power and water per room, month by month.</span>
+<span class="tool-cat">Home</span>
+</span>
+</a>
+<a class="tool-card" data-cat="home" href="https://tanush.tech/rooftop-solar-subsidy-estimator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">☀️</span>
+<span class="tool-main">
+<span class="tool-name">Rooftop Solar Subsidy Estimator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">PM Surya Ghar subsidy and rough payback for your quote.</span>
+<span class="tool-cat">Home</span>
+</span>
+</a>
+<a class="tool-card" data-cat="home" href="https://tanush.tech/furniture-rent-vs-buy/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🛋️</span>
+<span class="tool-main">
+<span class="tool-name">Furniture: Rent vs Buy <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">When renting furniture stops being cheap.</span>
+<span class="tool-cat">Home</span>
+</span>
+</a>
+<a class="tool-card" data-cat="home" href="https://tanush.tech/plant-watering-tracker/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🪴</span>
+<span class="tool-main">
+<span class="tool-name">Plant Watering Tracker <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Schedules, care notes and progress photos per plant.</span>
+<span class="tool-cat">Home</span>
+</span>
+</a>
+<a class="tool-card" data-cat="home" href="https://tanush.tech/cooker-whistle-counter/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🍲</span>
+<span class="tool-main">
+<span class="tool-name">Cooker Whistle Counter <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Counts pressure-cooker whistles and alerts you at your target.</span>
+<span class="tool-cat">Home</span>
+</span>
+</a>
+<a class="tool-card" data-cat="vehicle" href="https://tanush.tech/car-document-expiry-tracker/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">📄</span>
+<span class="tool-main">
+<span class="tool-name">Vehicle Document Expiry Tracker <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">PUC, insurance, licence - see what expires first.</span>
+<span class="tool-cat">Travel &amp; vehicles</span>
+</span>
+</a>
+<a class="tool-card" data-cat="vehicle" href="https://tanush.tech/fastag-annual-pass-tracker/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🛣️</span>
+<span class="tool-main">
+<span class="tool-name">FASTag Annual Pass Tracker <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Trips left, days left, and whether the pass pays off.</span>
+<span class="tool-cat">Travel &amp; vehicles</span>
+</span>
+</a>
+<a class="tool-card" data-cat="vehicle" href="https://tanush.tech/fuel-mileage-tracker/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">⛽</span>
+<span class="tool-main">
+<span class="tool-name">Fuel Mileage Tracker <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Real km/l and cost per km, tank to tank.</span>
+<span class="tool-cat">Travel &amp; vehicles</span>
+</span>
+</a>
+<a class="tool-card" data-cat="vehicle" href="https://tanush.tech/train-refund-calculator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🚆</span>
+<span class="tool-main">
+<span class="tool-name">Train Refund Calculator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">What cancelling now gets you back under the 2026 rules.</span>
+<span class="tool-cat">Travel &amp; vehicles</span>
+</span>
+</a>
+<a class="tool-card" data-cat="vehicle" href="https://tanush.tech/tyre-date-decoder/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🛞</span>
+<span class="tool-main">
+<span class="tool-name">Tyre Date Decoder <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Decode the DOT code and check tyres are not old stock.</span>
+<span class="tool-cat">Travel &amp; vehicles</span>
+</span>
+</a>
+<a class="tool-card" data-cat="life" href="https://tanush.tech/bereavement-checklist-india/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🕊️</span>
+<span class="tool-main">
+<span class="tool-name">After a Death in the Family <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">The formalities after a death in the family, in order.</span>
+<span class="tool-cat">Life &amp; health</span>
+</span>
+</a>
+<a class="tool-card" data-cat="life" href="https://tanush.tech/india-doc-fix-guide/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🪪</span>
+<span class="tool-main">
+<span class="tool-name">Fix My Documents (India) <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Which portal, what you need, in what order, for document fixes.</span>
+<span class="tool-cat">Life &amp; health</span>
+</span>
+</a>
+<a class="tool-card" data-cat="life" href="https://tanush.tech/lost-pet-poster-generator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🐾</span>
+<span class="tool-main">
+<span class="tool-name">Lost Pet Poster Generator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">A print-ready A4 lost-pet poster in a minute.</span>
+<span class="tool-cat">Life &amp; health</span>
+</span>
+</a>
+<a class="tool-card" data-cat="life" href="https://tanush.tech/workout-assistant/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🏋️</span>
+<span class="tool-main">
+<span class="tool-name">Workout Assistant <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Plan and log workouts in your browser.</span>
+<span class="tool-cat">Life &amp; health</span>
+</span>
+</a>
+<a class="tool-card" data-cat="life" href="https://tanush.tech/weekend-crew-finder/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🎉</span>
+<span class="tool-main">
+<span class="tool-name">Weekend Crew Finder <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Find people to do weekend things with in Bengaluru.</span>
+<span class="tool-cat">Life &amp; health</span>
+</span>
+</a>
+<a class="tool-card" data-cat="life" href="https://tanush.tech/wedding-budget-planner/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">💍</span>
+<span class="tool-main">
+<span class="tool-name">Wedding Budget Planner <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">A 2027-28 Bengaluru wedding budget against what you can save.</span>
+<span class="tool-cat">Life &amp; health</span>
+</span>
+</a>
+<a class="tool-card" data-cat="study" href="https://tanush.tech/nicl-maths-practice/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">➗</span>
+<span class="tool-main">
+<span class="tool-name">NICL AO Maths Practice <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Timed maths sets for the NICL AO Generalist exam.</span>
+<span class="tool-cat">Study</span>
+</span>
+</a>
+<a class="tool-card" data-cat="study" href="https://tanush.tech/upsc-attempt-age-calculator/" rel="noopener" target="_blank">
+<span aria-hidden="true" class="tool-emoji">🏛️</span>
+<span class="tool-main">
+<span class="tool-name">UPSC Attempt &amp; Age Calculator <span class="tool-arrow">↗</span></span>
+<span class="tool-blurb">Your Civil Services age window and attempts left.</span>
+<span class="tool-cat">Study</span>
+</span>
+</a></div><p class="tool-empty" id="toolEmpty" hidden>Nothing matches. Try another word or category.</p></div></details>
+</section>
+
+  <section id="stories">
+    <p class="projects-label">Project stories</p>
+    <h2>Two builds, up close.</h2>
+    <p class="sec-sub">The problem, what I built, and a real screen from each.</p>
+    <div class="story-grid">
+      <article class="story">
+        <img src="story-athlete-atlas.png" alt="Athlete Atlas showing a 3D muscle map with injury heat regions and the knee region detail panel" loading="lazy">
+        <div class="story-body">
+          <span class="projects-label">Sports / research prototype</span>
+          <h3>Athlete Atlas</h3>
+          <p><b>The problem.</b> Injury guidance for athletes is scattered across research papers and generic advice, with no single place to explore where injuries cluster in a sport.</p>
+          <p><b>What I built.</b> An explorer for ten sports. Pick a sport, answer three quick questions, and a rotatable 3D muscle map shows where injuries cluster by body region. Tap a region for the evidence behind it, rehab boundaries and conditioning exercises with how often to do them. HYROX uses one published 12-week cohort study (63 injury episodes among 89 athletes); other sports are clearly labelled demo data. The map shows group patterns from a study, not personal risk or a diagnosis, and any pain marked is self-reported context, not a medical assessment.</p>
+          <a class="story-link" href="https://tanush.tech/athlete-atlas/" target="_blank" rel="noopener">Try Athlete Atlas ↗</a>
+        </div>
+      </article>
+      <article class="story">
+        <img src="story-carscope-india.png" alt="CarScope India market dashboard with model counts, price segments and models-by-manufacturer charts" loading="lazy">
+        <div class="story-body">
+          <span class="projects-label">Data dashboard</span>
+          <h3>CarScope India</h3>
+          <p><b>The problem.</b> Comparing car prices in India means bouncing between portals, with no single view of the market.</p>
+          <p><b>What I built.</b> A dashboard of the Indian car market with price bands, body-type and fuel cuts, per-model data-source labels and CSV export. The current dataset covers 77 active models from 12 manufacturers, last updated 12 Oct 2026. It includes two illustrative sample models, and most prices are portal estimates rather than official list prices.</p>
+          <a class="story-link" href="https://tanush.tech/india-car-market/" target="_blank" rel="noopener">Try CarScope India ↗</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="certifications">
+    <h2>Certifications</h2>
+    <p class="sec-sub">18 earned, 1 in progress. Tap any badge to verify it on Credly.</p>
+    <div class="cert-grid" id="certGrid">
+        <a class="cert-card" href="https://www.credly.com/badges/8560358a-4c3a-46d4-810a-e36a53d6c6e9" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#5B4A8A">PMP</span><img src="https://images.credly.com/images/731e7ef4-9b0c-4d7b-ab65-23cc699c0aa3/blob" alt="PMP badge" onerror="this.style.display='none'"></div>
+          <strong>PMP</strong>
+          <span>Project Management Professional</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/19814f38-955e-4f69-985c-8248a6b34546" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/00634f82-b07f-4bbd-a6bb-53de397fc3a6/image.png" alt="AWS Cloud Practitioner badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Cloud Practitioner</strong>
+          <span>Amazon Web Services</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/27439424-d099-4372-a827-394dddb6c495" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/4d4693bb-530e-4bca-9327-de07f3aa2348/image.png" alt="AWS AI Practitioner badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Certified AI Practitioner</strong>
+          <span>Amazon Web Services</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/5f78fdfa-027d-4918-b24d-a7707c913cff" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#0078B4">PSM</span><img src="https://images.credly.com/images/a2790314-008a-4c3d-9553-f5e84eb359ba/image.png" alt="PSM I badge" onerror="this.style.display='none'"></div>
+          <strong>PSM I</strong>
+          <span>Professional Scrum Master</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/925365e1-e5db-4d1d-9dc5-a81f0e8c67fc" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#D97757">C</span><img src="https://images.credly.com/images/7583afbc-4aab-4c7d-8af4-d9af72786ab3/blob" alt="Claude Architect Professional badge" onerror="this.style.display='none'"></div>
+          <strong>Claude Certified Architect — Professional</strong>
+          <span>Anthropic</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/f57f1d7b-f34e-4f16-bc02-63a36cbe7506" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#D97757">C</span><img src="https://images.credly.com/images/f2040db3-3904-4240-8966-e87b1510bea0/blob" alt="Claude Architect Foundations badge" onerror="this.style.display='none'"></div>
+          <strong>Claude Certified Architect — Foundations</strong>
+          <span>Anthropic</span>
+        </a>
+        <div class="cert-card">
+          <div class="logo-tile"><span class="mono" style="color:#4285F4">G</span><img src="https://cdn.simpleicons.org/googlecloud/4285F4" alt="" onerror="this.style.display='none'"></div>
+          <strong>Google Professional Data Engineer</strong>
+          <span>Google Cloud</span>
+          <span class="pill">In progress</span>
+        </div>
+        <a class="cert-card" href="https://www.credly.com/badges/acab06ab-c407-42c5-93d2-1b77d39d710b" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono small" style="color:#D6336C">Pendo</span><img src="https://images.credly.com/images/d7e06f28-2a0b-41b1-9af3-bcd8024e7627/image.png" alt="AI for Product Management badge" onerror="this.style.display='none'"></div>
+          <strong>Pendo AI for Product Management</strong>
+          <span>Pendo</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/beb9e258-9f26-4fff-93c7-b428168855ec" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono small" style="color:#D6336C">Pendo</span><img src="https://images.credly.com/images/b3c64450-6392-48fc-862e-5945102d1043/image.png" alt="Digital Adoption badge" onerror="this.style.display='none'"></div>
+          <strong>Pendo Digital Adoption</strong>
+          <span>Pendo</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/9a7b49c0-7a43-4273-acd9-7aef1b3c788d" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#5B4A8A">PMI</span><img src="https://images.credly.com/images/f5c094f4-e07c-44e0-b685-4ffd8980fd53/blob" alt="PMI GenAI Overview badge" onerror="this.style.display='none'"></div>
+          <strong>PMI GenAI Overview</strong>
+          <span>For Project Managers</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/1aea6dcc-d6f1-49fe-adb7-7cbd1460d0bb" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#5B4A8A">PMI</span><img src="https://images.credly.com/images/aa42e8b5-b36d-4b8c-abbe-c6a6f51fd7d9/blob" alt="Talking to AI badge" onerror="this.style.display='none'"></div>
+          <strong>Talking to AI: Prompt Engineering</strong>
+          <span>For Project Managers</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/969191c0-f723-4e27-b0ce-16d3a21bba21" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/cb620644-88e4-4ee7-83a2-d33a6181e4b8/blob" alt="AWS Partner Agentic AI Essentials badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Partner: Agentic AI Essentials</strong>
+          <span>AWS Partner</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/e6af2e4d-b93e-433b-a971-43a1be38a8f3" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/4f0015a7-9a28-4f59-b292-95315ec19240/blob" alt="AWS Partner Agentic AI Sales badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Partner: Agentic AI Sales</strong>
+          <span>AWS Partner</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/8fe401ce-d0f4-4c88-a96a-00381f8a5a58" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/4b547104-5ce9-43d5-8708-a7abb4b0c7ec/blob" alt="AWS Partner Generative AI Essentials badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Partner: Generative AI Essentials</strong>
+          <span>AWS Partner</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/63caf126-fcd0-46d1-bcc0-e835044f45a5" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/fe3a7b0a-2856-4f77-bab7-347fa16de82b/blob" alt="AWS Partner Generative AI Sales badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Partner: Generative AI Sales</strong>
+          <span>AWS Partner</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/ef0ebbac-a617-434f-9be8-5eb08cd264c3" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/1ba189ae-4afb-4c3b-ae89-f3da3c054f05/blob" alt="AWS Partner Cloud Economics Essentials badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Partner: Cloud Economics Essentials</strong>
+          <span>AWS Partner</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/e2184fdc-b63d-4ff0-b491-51a63ff0937b" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/e51a8579-188d-4363-8ed1-12ad164ef57b/blob" alt="AWS Educate Cloud 101 badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Educate: Introduction to Cloud 101</strong>
+          <span>AWS Educate</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/52037bbb-a78c-475a-af57-867289e0e40e" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/247efe36-9fa6-4209-ad56-0fd522283872/blob" alt="AWS Educate ML Foundations badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Educate: Machine Learning Foundations</strong>
+          <span>AWS Educate</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/badges/612c1bc5-87da-49d4-8b1d-b3b43933f9f7" target="_blank" rel="noopener">
+          <div class="logo-tile"><span class="mono" style="color:#FF9900">AWS</span><img src="https://images.credly.com/images/e50c657a-edd9-4c93-b1cf-2b6634b54abf/blob" alt="AWS Educate Generative AI badge" onerror="this.style.display='none'"></div>
+          <strong>AWS Educate: Introduction to Generative AI</strong>
+          <span>AWS Educate</span>
+        </a>
+    </div>
+    <div class="cert-toggle-wrap">
+      <button class="cert-toggle" id="certToggle" type="button" aria-expanded="false" aria-controls="certGrid">
+        <span class="cert-toggle-label">Show all 19 certifications</span>
+        <span class="cert-toggle-chev">⌄</span>
+      </button>
+    </div>
+    <p class="credly-note">Verified live on <a href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly ↗</a> — new badges appear there automatically.</p>
+  </section>
+
+
+</div>
+
+
+  <section id="about">
+    <h2>About</h2>
+    <div class="about">
+      <p>
+        <strong>7+ years</strong> delivering technology programs across IT and BPO —
+        Bengaluru.
+        I manage the teams that ship AI, data and cloud systems.
+      </p>
+      <p>
+        Coordination alone is getting automated. So I'm becoming someone who can
+        <strong>both run the program and build the system</strong> — a 26-week
+        hands-on sprint: Python, APIs, AWS, then a production-grade RAG system
+        with real evaluation. This site is my working log: problems solved with AI, and breakdowns of how businesses work.
+      </p>
+    </div>
+  </section>
+
+
+<div class="wrap">
+  <section id="work">
+    <p class="projects-label">Work with me</p>
+    <div class="work-offer">
+      <h2>Have something to build?</h2>
+      <p class="sec-sub">I take on small, well-scoped builds: one-page websites for local businesses, calculators and trackers like the ones on this site, data dashboards, and automations that take repetitive work off your plate. If you have a problem in mind, tell me about it.</p>
+      <a class="beam-btn primary" href="mailto:tanutanush07@gmail.com?subject=Project%20enquiry%20from%20tanush.tech"><span>Discuss a project ↗</span></a>
+    </div>
+  </section>
+</div>
+
+  <section class="cta" id="cta">
+    <canvas class="cove-canvas" id="coveCanvas" aria-hidden="true"></canvas>
+    <div class="cta-inner">
+      <h2>Let&rsquo;s <em>build</em> something.</h2>
+      <p class="cta-sub">Have an idea, a problem that needs solving, or a role that needs a Forward Deployed Engineer? My inbox is open.</p>
+      <div class="cta-buttons">
+        <a class="beam-btn primary" href="#projects"><span>Explore projects ↗</span></a>
+        <a class="beam-btn ghost" href="mailto:tanutanush07@gmail.com"><span>Email me ↗</span></a>
+      </div>
+    </div>
+  </section>
+
+<div class="wrap">
+  <footer id="contact">
+    <div class="row">
+      <div>
+        <a href="https://www.linkedin.com/in/tanush-r/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="https://x.com/tanushR_" target="_blank" rel="noopener">X ↗</a>
+        <a href="https://github.com/Tanush-7" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.credly.com/users/tanush-r" target="_blank" rel="noopener">Credly ↗</a>
+      </div>
+      <div class="quiet">tanush.tech — one week at a time.</div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  (function () {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var words = ['AI systems', 'data platforms', 'the business of health'];
+    var el = document.getElementById('rotator');
+    if (!el) return;
+    var i = 0;
+    setInterval(function () {
+      el.classList.add('fade');
+      setTimeout(function () {
+        i = (i + 1) % words.length;
+        el.textContent = words[i];
+        el.classList.remove('fade');
+      }, 400);
+    }, 2800);
+  })();
+</script>
+<script>
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var panels = Array.prototype.slice.call(document.querySelectorAll(".led canvas"));
+    if (!panels.length) return;
+    var COLORS = ["#E8B84B", "#34D399", "#A78BFA"];
+    function setup(cv) {
+      var ctx = cv.getContext("2d");
+      var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      var w = 0, h = 0, cols = 0, rows = 0, t = Math.random() * 100;
+      var drops = [], bars = [];
+      function size() {
+        var r = cv.parentElement.getBoundingClientRect();
+        w = Math.max(1, Math.floor(r.width)); h = Math.max(1, Math.floor(r.height));
+        cv.width = w * dpr; cv.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        cols = Math.max(1, Math.floor(w / 11)); rows = Math.max(1, Math.floor(h / 11));
+        drops = []; bars = [];
+        for (var i = 0; i < cols; i++) { drops.push({ y: Math.random() * rows, s: 0.2 + Math.random() * 0.5 }); bars.push(Math.random()); }
+      }
+      size();
+      var fx = parseInt(cv.getAttribute("data-fx") || "0", 10) % 3;
+      var color = COLORS[fx];
+      function dot(x, y, a, s) {
+        ctx.globalAlpha = a; ctx.fillStyle = color;
+        ctx.fillRect(x * 11 + 3, y * 11 + 3, s || 4, s || 4);
+      }
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.globalAlpha = 1; ctx.fillStyle = "rgba(255,255,255,0.05)";
+        for (var gy = 0; gy < rows; gy++) for (var gx = 0; gx < cols; gx++) ctx.fillRect(gx * 11 + 4, gy * 11 + 4, 2, 2);
+        t += 0.03;
+        if (fx === 0) {
+          var cx = cols / 2, cy = rows / 2, rx = cols * 0.36, ry = rows * 0.32;
+          for (var k = 0; k < 14; k++) {
+            var a = t * 0.9 - k * 0.16;
+            var px = Math.round(cx + Math.cos(a) * rx), py = Math.round(cy + Math.sin(a) * ry);
+            if (px >= 0 && px < cols && py >= 0 && py < rows) dot(px, py, 1 - k / 14, k === 0 ? 5 : 4);
+          }
+        } else if (fx === 1) {
+          for (var d = 0; d < cols; d++) {
+            var dr = drops[d];
+            dr.y += dr.s * 0.35;
+            if (dr.y > rows + 2) { dr.y = -2; dr.s = 0.2 + Math.random() * 0.5; }
+            var yy = Math.floor(dr.y);
+            for (var trail = 0; trail < 4; trail++) {
+              var ty = yy - trail;
+              if (ty >= 0 && ty < rows) dot(d, ty, 0.9 - trail * 0.22, 3);
+            }
+          }
+        } else {
+          for (var b = 0; b < cols; b++) {
+            var target = 0.25 + 0.75 * Math.abs(Math.sin(t * 1.4 + b * 0.55) * Math.sin(t * 0.7 + b * 0.21));
+            bars[b] += (target - bars[b]) * 0.12;
+            var bh = Math.max(1, Math.floor(bars[b] * rows));
+            for (var by = rows - 1; by >= rows - bh; by--) dot(b, by, 0.25 + 0.75 * ((rows - by) / rows), 4);
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
+      return { draw: draw, size: size };
+    }
+    var items = panels.map(function (cv) { return { cv: cv, p: setup(cv), on: false }; });
+    if (reduce) { items.forEach(function (it) { it.p.draw(); }); return; }
+    var raf = null;
+    function tick() {
+      var any = false;
+      items.forEach(function (it) { if (it.on) { it.p.draw(); any = true; } });
+      if (any) raf = requestAnimationFrame(tick); else raf = null;
+    }
+    function wake() { if (!raf) raf = requestAnimationFrame(tick); }
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          var it = null;
+          items.forEach(function (x) { if (x.cv === e.target) it = x; });
+          if (!it) return;
+          if (e.isIntersecting) { it.p.size(); it.on = true; it.p.draw(); wake(); }
+          else it.on = false;
+        });
+      }, { rootMargin: "80px" });
+      items.forEach(function (it) { io.observe(it.cv); });
+    } else {
+      items.forEach(function (it) { it.on = true; });
+      wake();
+    }
+    window.addEventListener("resize", function () { items.forEach(function (it) { it.p.size(); }); });
+  })();
+</script>
+<script>
+  (function () {
+    var grid = document.getElementById("certGrid");
+    var btn = document.getElementById("certToggle");
+    if (!grid || !btn) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll(".cert-card"));
+    var VISIBLE = 6;
+    var expanded = false;
+    function apply() {
+      cards.forEach(function (c, i) {
+        var hide = !expanded && i >= VISIBLE;
+        c.classList.toggle("is-hidden", hide);
+        c.classList.remove("cert-in");
+        if (!hide && expanded && i >= VISIBLE) {
+          c.style.setProperty("--i", i - VISIBLE);
+          void c.offsetWidth;
+          c.classList.add("cert-in");
+        }
+      });
+      btn.setAttribute("aria-expanded", expanded ? "true" : "false");
+      btn.querySelector(".cert-toggle-label").textContent =
+        expanded ? "Show less" : "Show all 19 certifications";
+    }
+    btn.addEventListener("click", function () { expanded = !expanded; apply(); });
+    apply();
+  })();
+</script>
+<script>
+  (function () {
+    var cv = document.getElementById("coveCanvas");
+    if (!cv) return;
+    var ctx = cv.getContext("2d");
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var W = 0, H = 0, streaks = [], raf = null, visible = false, t0 = null;
+    var COLORS = ["#FF5C1A", "#E8B84B", "#FFFFFF", "#FF8A50", "#C97B2E"];
+    function size() {
+      var r = cv.parentElement.getBoundingClientRect();
+      var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      W = Math.max(1, Math.round(r.width));
+      H = Math.max(1, Math.round(r.height));
+      cv.width = Math.round(W * dpr);
+      cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      build();
+    }
+    function build() {
+      var cx = W / 2, span = W * 0.31;
+      streaks = [];
+      var n = Math.round(Math.max(70, Math.min(130, W / 8)));
+      for (var i = 0; i < n; i++) {
+        var u = Math.random() * 2 - 1;
+        var x = cx + u * span * (0.35 + 0.65 * Math.abs(u));
+        streaks.push({
+          x: x,
+          color: COLORS[(Math.random() * COLORS.length) | 0],
+          w: 0.6 + Math.random() * 1.1,
+          a: 0.25 + Math.random() * 0.55,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.4 + Math.random() * 0.9,
+          flow: Math.random()
+        });
+      }
+    }
+    function draw(t) {
+      ctx.clearRect(0, 0, W, H);
+      var cx = W / 2, bend = H * 0.55;
+      ctx.globalCompositeOperation = "lighter";
+      var g = ctx.createRadialGradient(cx, bend, 0, cx, bend, W * 0.28);
+      g.addColorStop(0, "rgba(255, 92, 26, 0.20)");
+      g.addColorStop(1, "rgba(255, 92, 26, 0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+      for (var i = 0; i < streaks.length; i++) {
+        var s = streaks[i];
+        var pulse = 0.55 + 0.45 * Math.sin(t * s.speed + s.phase);
+        var alpha = s.a * pulse;
+        ctx.strokeStyle = s.color;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = s.w;
+        ctx.beginPath();
+        ctx.moveTo(s.x, -4);
+        ctx.lineTo(s.x, bend);
+        ctx.stroke();
+        var dy = ((t * 0.12 * s.speed + s.flow) % 1) * bend;
+        ctx.globalAlpha = Math.min(1, alpha + 0.45);
+        ctx.lineWidth = s.w + 0.6;
+        ctx.beginPath();
+        ctx.moveTo(s.x, dy - 26);
+        ctx.lineTo(s.x, dy);
+        ctx.stroke();
+        var fx = cx + (s.x - cx) * 2.7;
+        ctx.globalAlpha = alpha * 0.8;
+        ctx.lineWidth = s.w;
+        ctx.beginPath();
+        ctx.moveTo(s.x, bend);
+        ctx.lineTo(fx, H + 4);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = "source-over";
+    }
+    function frame(ts) {
+      if (!visible) { raf = null; return; }
+      if (t0 === null) t0 = ts;
+      draw((ts - t0) / 1000);
+      raf = requestAnimationFrame(frame);
+    }
+    function start() {
+      if (raf !== null || !visible) return;
+      if (reduce) { draw(0); return; }
+      raf = requestAnimationFrame(frame);
+    }
+    function stop() {
+      if (raf !== null) { cancelAnimationFrame(raf); raf = null; }
+      t0 = null;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      visible = entries[0].isIntersecting;
+      if (visible) { size(); start(); } else { stop(); }
+    }, { threshold: 0.05 });
+    io.observe(cv.parentElement);
+    var rt = null;
+    window.addEventListener("resize", function () {
+      if (rt) clearTimeout(rt);
+      rt = setTimeout(function () { if (visible) size(); }, 150);
+    });
+    size();
+    if (reduce) draw(0);
+  })();
+</script>
+
+<script>
+  (function () {
+    var grid = document.getElementById("toolGrid");
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll(".tool-card"));
+    var chips = Array.prototype.slice.call(document.querySelectorAll("#chipRow .chip"));
+    var search = document.getElementById("toolSearch");
+    var empty = document.getElementById("toolEmpty");
+    var f = "all", q = "";
+    function apply() {
+      var n = 0;
+      cards.forEach(function (c) {
+        var okC = f === "all" || c.getAttribute("data-cat") === f;
+        var okQ = !q || c.textContent.toLowerCase().indexOf(q) !== -1;
+        var show = okC && okQ;
+        c.classList.toggle("is-hidden", !show);
+        if (show) n++;
+      });
+      if (empty) empty.hidden = n !== 0;
+    }
+    chips.forEach(function (ch) {
+      ch.addEventListener("click", function () {
+        chips.forEach(function (x) { x.classList.remove("is-on"); });
+        ch.classList.add("is-on");
+        f = ch.getAttribute("data-f");
+        apply();
+      });
+    });
+    if (search) search.addEventListener("input", function () {
+      q = search.value.trim().toLowerCase(); apply();
+    });
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce && "IntersectionObserver" in window) {
+      cards.forEach(function (el, i) {
+        el.classList.add("reveal");
+        el.style.transitionDelay = Math.min(i % 9, 8) * 30 + "ms";
+      });
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+      }, { rootMargin: "60px" });
+      cards.forEach(function (el) { io.observe(el); });
+    }
+  })();
+</script>
+
+</body>
+</html>
