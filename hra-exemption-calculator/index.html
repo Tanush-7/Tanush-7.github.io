@@ -28,8 +28,28 @@ th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
 th{color:var(--muted);font-weight:600}
 .best td{color:var(--good);font-weight:600}
 </style>
+
+<style>
+.tt-brand{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 16px;background:#0a0a0a;color:#a1a1aa;border-bottom:1px solid #1f1f1f;font:500 .85rem -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.tt-brand a{color:#fafafa;text-decoration:none;font-weight:600}
+.tt-brand a:hover{color:#ff5c1a}
+.tt-brand .tt-word b{color:#ff5c1a;font-weight:800}
+.tt-brand .tt-right{font-size:.8rem}
+.tt-brand .tt-right a{color:#a1a1aa;font-weight:500}
+.tt-brand .tt-right a:hover{color:#ff5c1a}
+.tt-more{margin-top:40px;padding:22px 16px 26px;background:#0a0a0a;border-top:1px solid #1f1f1f;text-align:center;font:500 .9rem -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#a1a1aa}
+.tt-more .tt-more-head{font-weight:700;color:#fafafa;margin-bottom:12px;font-size:.95rem}
+.tt-more .tt-more-head a{color:#ff5c1a;text-decoration:none}
+.tt-more .tt-links{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.tt-more .tt-links a{border:1px solid #262626;border-radius:999px;padding:7px 15px;color:#d4d4d8;text-decoration:none;font-size:.84rem;font-weight:600}
+.tt-more .tt-links a:hover{border-color:#ff5c1a;color:#ff5c1a}
+.tt-more .tt-all{display:inline-block;margin-top:2px;color:#ff5c1a;font-weight:700;text-decoration:none;font-size:.9rem}
+.tt-more .tt-all:hover{text-decoration:underline}
+.tt-more .tt-note{margin-top:10px;font-size:.78rem;color:#71717a}
+@media print{.tt-brand,.tt-more{display:none!important}}
+</style>
 </head>
-<body>
+<body><div class="tt-brand"><a class="tt-word" href="https://tanush.tech/">← tanush<b>.tech</b></a><span class="tt-right">A free tool by <a href="https://tanush.tech/#about">Tanush R</a></span></div>
 <div class="wrap">
 <h1>HRA Exemption Calculator</h1>
 <p class="sub">Paying rent and getting HRA? Work out how much of it can be exempt if you opt for the old tax regime.</p>
@@ -100,5 +120,5 @@ document.getElementById('calc').addEventListener('click', () => {
     '<p class="note" style="margin-top:8px">Applies only under the old regime. If your rent changed mid-year or you moved cities, the calculation is done per period, not on annual totals - check with your employer or a CA.</p>';
 });
 </script>
-</body>
+<div class="tt-more"><div class="tt-more-head">More free tools by <a href="https://tanush.tech/">Tanush R</a></div><div class="tt-links"><a href="https://tanush.tech/credit-card-statement-tracker/">💳 Credit Card Statement Tracker</a><a href="https://tanush.tech/freelance-tax-44ada-estimator/">🧾 Freelancer Tax Estimator (44ADA)</a><a href="https://tanush.tech/hsn-gst-assistant/">🔎 HSN &amp; GST Rate Assistant</a></div><a class="tt-all" href="https://tanush.tech/#tools">See all 50+ tools →</a><div class="tt-note">Free, no sign-up. Everything runs in your browser and stays on your device.</div></div></body>
 </html>
