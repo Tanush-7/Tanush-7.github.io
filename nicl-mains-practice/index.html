@@ -134,16 +134,24 @@ const CONFIG={
      for sources). Swap here when official tables arrive. */
   mockMix:{
     reasoning:[["puzzle",20],["critical",10],["syllogism",5],["coding",5],["ds",5],["inequality",2],["direction",1],["alphanumeric",1],["blood",1]],
+    /* Quant: DI stays 26, drawn from six set types (tabular, bar, caselet, line,
+       pie, missing-data) picked at random per set, so any mock can serve any type.
+       Series stays 5: the series generator serves wrong-number and missing-number
+       series in a 3:2 draw, so a typical mock has about 3 wrong-number and
+       2 missing-number questions. */
     quant:[["di",26],["arithmetic",10],["approximation",6],["series",5],["quantity",3]],
-    english:[["rc",14],["error",7],["cloze",6],["rearrange",5],["jumble",5],["swap",4],["match",3],["phrase",3],["usage",3]],
+    /* English: double fillers (3) and vocabulary & idioms (3) added, funded by
+       trimming the largest allocations: RC 14 to 11, error detection 7 to 5,
+       cloze 6 to 5. Total stays exactly 50. */
+    english:[["rc",11],["error",5],["cloze",5],["rearrange",5],["jumble",5],["swap",4],["match",3],["phrase",3],["usage",3],["filler",3],["vocab",3]],
     ga:[["ga",50]],
     computer:[["fundamentals",6],["hardware",6],["memory",5],["os",5],["office",9],["shortcuts",4],["internet",4],["networking",4],["security",4],["dbms",3]]
   },
   /* Practice-menu topic lists per section: [generatorKey, display name]. */
   practiceTopics:{
     reasoning:[["puzzle","Puzzles & seating"],["critical","Critical reasoning"],["syllogism","Syllogism"],["coding","Coding-decoding"],["ds","Data sufficiency"],["inequality","Inequality"],["blood","Blood relations"],["direction","Direction sense"],["alphanumeric","Alphanumeric series"]],
-    quant:[["di","Data interpretation"],["arithmetic","Arithmetic word problems"],["approximation","Approximation"],["series","Wrong number series"],["quantity","Quantity I vs II"]],
-    english:[["rc","Reading comprehension"],["cloze","Cloze test"],["error","Error detection"],["rearrange","Sentence rearrangement"],["jumble","Para jumbles"],["phrase","Phrase replacement"],["filler","Double fillers"],["swap","Word swap"],["usage","Word usage"],["match","Match the column"]],
+    quant:[["di","Data interpretation"],["arithmetic","Arithmetic word problems"],["approximation","Approximation"],["series","Number series (wrong & missing)"],["quantity","Quantity I vs II"],["boats","Boats & streams"],["pipes","Pipes & cisterns"],["probability","Probability"],["perm","Permutation & combination"]],
+    english:[["rc","Reading comprehension"],["cloze","Cloze test"],["error","Error detection"],["rearrange","Sentence rearrangement"],["jumble","Para jumbles"],["phrase","Phrase replacement"],["filler","Double fillers"],["swap","Word swap"],["usage","Word usage"],["match","Match the column"],["vocab","Vocabulary & idioms"]],
     ga:[["ga","Static, insurance & banking concepts"]],
     computer:[["fundamentals","Fundamentals"],["hardware","Hardware"],["memory","Memory & storage"],["os","Operating systems"],["office","MS Office"],["shortcuts","Shortcut keys"],["internet","Internet & email"],["networking","Networking"],["security","Cyber security"],["dbms","DBMS basics"]]
   },
@@ -633,10 +641,96 @@ const GEN_ARITH=[
    const correctP=frac(red,tot);
    const poolP=[frac(blue,tot),frac(green,tot),frac(red+blue,tot),frac(red+green,tot),frac(blue+green,tot),frac(red,blue+green),frac(tot-red,tot),frac(red+1,tot),frac(red,tot+red)];
    const dsP=[...new Set(poolP)].filter(s=>s!==correctP).slice(0,3);
-   return bkq("quant:arithmetic","probability",`A bag contains ${red} red, ${blue} blue and ${green} green balls. One ball is drawn at random. What is the probability that it is red?`,correctP,dsP,"Probability = favourable outcomes ÷ total outcomes.",[`Total balls = ${tot}. Red balls = ${red}. Probability = ${correctP}.`])}
+   return bkq("quant:arithmetic","probability",`A bag contains ${red} red, ${blue} blue and ${green} green balls. One ball is drawn at random. What is the probability that it is red?`,correctP,dsP,"Probability = favourable outcomes ÷ total outcomes.",[`Total balls = ${tot}. Red balls = ${red}. Probability = ${correctP}.`])},
+ ()=>genBoats(),
+ ()=>genPipes(),
+ ()=>genPerm(),
+ ()=>genProbability()
 ];
 function gcd(a,b){return b?gcd(b,a%b):a}
 function genArithmetic(){return pick(GEN_ARITH)()}
+function fact(n){let f=1;for(let i=2;i<=n;i++)f*=i;return f}
+/* --- boats & streams --- */
+function genBoats(){
+  const kind=ri(0,2);
+  if(kind===0){ /* time downstream: distance chosen so the time is a whole number */
+    const b=pick([10,12,14,15,16,18,20,22,24]),s=pick([2,3,4,5,6].filter(x=>x<b));
+    const ds=b+s,t=pick([2,3,4,5,6]),d=ds*t;
+    return mkq("quant:boats","boats-time",`A boat whose speed in still water is ${b} km/h goes downstream in a river flowing at ${s} km/h. How long will it take to cover ${d} km downstream?`,t,[d/(b-s),d/b,t+2],x=>`${num(x)} hours`,"Downstream speed = boat speed + stream speed.",[`Downstream speed = ${b} + ${s} = ${ds} km/h.`,`Time = ${d} ÷ ${ds} = ${t} hours.`]);
+  }
+  if(kind===1){ /* stream speed or boat speed from downstream/upstream speeds */
+    const b=pick([9,11,13,14,16,17,19,21]),s=pick([2,3,4,5]);
+    const ds=b+s,us=b-s;
+    if(ri(0,1)===0)return mkq("quant:boats","boats-stream",`A boat travels downstream at ${ds} km/h and upstream at ${us} km/h. What is the speed of the stream?`,s,[b,ds-us,(ds+us)/2],x=>`${num(x)} km/h`,"Stream speed = (downstream − upstream) ÷ 2.",[`Stream speed = (${ds} − ${us}) ÷ 2 = ${s} km/h.`]);
+    return mkq("quant:boats","boats-boat",`A boat travels downstream at ${ds} km/h and upstream at ${us} km/h. What is the speed of the boat in still water?`,b,[s,(ds-us)/2,ds],x=>`${num(x)} km/h`,"Boat speed in still water = (downstream + upstream) ÷ 2.",[`Boat speed = (${ds} + ${us}) ÷ 2 = ${b} km/h.`]);
+  }
+  /* distance upstream in a given time */
+  const b=pick([12,14,15,16,18,20,24]),s=pick([2,3,4,5,6].filter(x=>x<b));
+  const us=b-s,t=pick([2,3,4,5]),d=us*t;
+  return mkq("quant:boats","boats-dist",`A motorboat whose speed in still water is ${b} km/h moves upstream against a current of ${s} km/h. How far will it go in ${t} hours?`,d,[(b+s)*t,b*t,d+us],x=>`${num(x)} km`,"Upstream speed = boat speed − stream speed.",[`Upstream speed = ${b} − ${s} = ${us} km/h.`,`Distance = ${us} × ${t} = ${d} km.`]);
+}
+/* --- pipes & cisterns --- */
+function genPipes(){
+  const kind=ri(0,2);
+  if(kind===0){ /* two filling pipes together */
+    const a=pick([6,8,10,12,15,20]),b=pick([10,12,15,20,30].filter(x=>x!==a));
+    const t=(a*b)/(a+b);
+    return mkq("quant:pipes","pipes-together",`Pipe A can fill a tank in ${a} hours and pipe B can fill the same tank in ${b} hours. If both pipes are opened together, in how many hours will the tank be filled?`,Math.round(t*100)/100,[a+b,(a+b)/2,Math.abs(a-b)],x=>`${num(x)} hours`,"Add the part of the tank each pipe fills in one hour.",[`In one hour, A fills 1/${a} and B fills 1/${b} of the tank; together ${a+b}/${a*b}.`,`Time = ${a*b} ÷ ${a+b} = ${num(Math.round(t*100)/100)} hours.`]);
+  }
+  if(kind===1){ /* one filler, one emptier: pairs chosen for a whole-number answer */
+    const [a,b]=pick([[6,12],[8,24],[10,15],[12,20],[15,30],[20,30],[12,60],[10,30]]);
+    const t=(a*b)/(b-a);
+    return mkq("quant:pipes","pipes-leak",`A pipe can fill a tank in ${a} hours, but a leak at the bottom can empty the full tank in ${b} hours. If the pipe is opened with the leak open, in how many hours will the tank be filled?`,t,[a*b/(a+b),b-a,t+a],x=>`${num(x)} hours`,"Net filling rate = filling rate − emptying rate.",[`Net rate = 1/${a} − 1/${b} = ${b-a}/${a*b} of the tank per hour.`,`Time = ${a*b} ÷ ${b-a} = ${t} hours.`]);
+  }
+  /* time from capacity and rate */
+  const rate=pick([15,20,25,30,40,50,60]),t=pick([4,5,6,8,10,12]),cap=rate*t;
+  return mkq("quant:pipes","pipes-rate",`A pipe fills a tank at the rate of ${rate} litres per minute. How long will it take to fill a tank of capacity ${cap} litres?`,t,[cap/(rate+10),t*2,cap/rate+5],x=>`${num(x)} minutes`,"Time = capacity ÷ rate.",[`Time = ${cap} ÷ ${rate} = ${t} minutes.`]);
+}
+/* --- permutation & combination basics --- */
+function genPerm(){
+  const kind=ri(0,2);
+  if(kind===0){ /* nPr: arrangements of r out of n */
+    const n=pick([5,6,7,8]),r=pick([2,3]),ans=fact(n)/fact(n-r),ncr=fact(n)/(fact(r)*fact(n-r));
+    return mkq("quant:perm","npr",`In how many ways can ${r} prizes be awarded among ${n} students (first, second${r===3?", third":""}), if no student gets more than one prize?`,ans,[ncr,Math.pow(n,r),ans+n],x=>String(x),"Order matters here, so use permutations: nPr = n! / (n - r)!.",[`${n}P${r} = ${r===3?n+" x "+(n-1)+" x "+(n-2):n+" x "+(n-1)} = ${ans}.`]);
+  }
+  if(kind===1){ /* nCr: committee selection */
+    const n=pick([6,7,8,9,10]),r=pick([2,3]),ans=fact(n)/(fact(r)*fact(n-r)),npr=fact(n)/fact(n-r);
+    return mkq("quant:perm","ncr",`In how many ways can a committee of ${r} members be selected from a group of ${n} people?`,ans,[npr,ans+r,ans*2],x=>String(x),"Order does not matter in a selection, so use combinations: nCr = n! ÷ (r! × (n − r)!).",[`${n}C${r} = ${fact(n)} ÷ (${fact(r)} × ${fact(n-r)}) = ${ans}.`]);
+  }
+  /* arranging all n in a row */
+  const n=pick([4,5,6]),ans=fact(n);
+  return mkq("quant:perm","factorial",`In how many different ways can ${n} people be seated in a row of ${n} chairs?`,ans,[ans/n,ans*2,n*n],x=>String(x),"Every seat can be filled in turn: n × (n − 1) × … × 1 = n!.",[`${n}! = ${ans}.`]);
+}
+/* --- probability: single event and simple combined events, answers as simplified fractions --- */
+function probQ(variant,text,numFav,den,steps){
+  const frac=(n,d)=>{const g=gcd(n,d);return `${n/g}/${d/g}`};
+  const correct=frac(numFav,den);
+  const pool=[frac(den-numFav,den),frac(numFav,den+numFav),frac(numFav+1,den),frac(numFav,den-numFav),frac(1,2),frac(1,3),frac(1,4),frac(2,5),frac(3,10),frac(numFav+1,den+1),frac(den,den+numFav)];
+  const ds=[...new Set(pool)].filter(s=>{if(s===correct)return false;const p=s.split("/");return (+p[0])<=(+p[1])}).slice(0,3);
+  return bkq("quant:probability",variant,text,correct,ds,"Probability = favourable outcomes ÷ total outcomes. Simplify the fraction.",steps);
+}
+function genProbability(){
+  const kind=ri(0,4);
+  if(kind===0){ /* two coins */
+    const ev=pick([["both heads",1],["both tails",1],["exactly one head",2],["at least one head",3]]);
+    return probQ("prob-coins",`Two coins are tossed together. What is the probability of getting ${ev[0]}?`,ev[1],4,[`There are 4 equally likely outcomes: HH, HT, TH, TT. Favourable outcomes for '${ev[0]}' = ${ev[1]}. Probability = ${ev[1]}/4.`]);
+  }
+  if(kind===1){ /* one die */
+    const ev=pick([["an even number",3],["a number greater than 4",2],["a prime number",3],["a number less than 3",2],["a multiple of 3",2]]);
+    return probQ("prob-die",`A die is thrown once. What is the probability of getting ${ev[0]}?`,ev[1],6,[`A die has 6 outcomes. Favourable outcomes for '${ev[0]}' = ${ev[1]}. Probability = ${ev[1]}/6, simplified.`]);
+  }
+  if(kind===2){ /* cards, curated standard counts out of 52 */
+    const ev=pick([["a king",4],["an ace",4],["a red card",26],["a face card (king, queen or jack)",12],["a black card",26],["a queen",4]]);
+    return probQ("prob-card",`One card is drawn at random from a well-shuffled pack of 52 cards. What is the probability that it is ${ev[0]}?`,ev[1],52,[`There are ${ev[1]} such cards in a pack of 52. Probability = ${ev[1]}/52, simplified.`]);
+  }
+  if(kind===3){ /* bag: either of two colours (simple combined event) */
+    const r=ri(2,6),b=ri(2,6),g=ri(1,5),tot=r+b+g;
+    return probQ("prob-bag-either",`A bag contains ${r} red, ${b} blue and ${g} green balls. One ball is drawn at random. What is the probability that it is red or blue?`,r+b,tot,[`Total balls = ${tot}. Red or blue balls = ${r} + ${b} = ${r+b}. Probability = ${r+b}/${tot}, simplified.`]);
+  }
+  /* bag: not a colour */
+  const r=ri(2,6),b=ri(2,6),g=ri(1,5),tot=r+b+g;
+  return probQ("prob-bag-not",`A bag contains ${r} red, ${b} blue and ${g} green balls. One ball is drawn at random. What is the probability that the ball is not green?`,tot-g,tot,[`Total balls = ${tot}. Balls that are not green = ${tot} − ${g} = ${tot-g}. Probability = ${tot-g}/${tot}, simplified.`]);
+}
 /* --- approximation --- */
 function genApproximation(){
   const kind=ri(0,3);
@@ -663,6 +757,23 @@ function genWrongSeries(){
   const others=shuffle(series.filter((_,i)=>i!==wi)).slice(0,3);
   return mkq("quant:series","wrong-series",`Find the wrong number in the series:\n${shown.join(", ")}`,wrongVal,others,x=>String(x),"Check the pattern step by step; exactly one term breaks it.",[`Following the pattern, the term at position ${wi+1} should be ${correctVal}, not ${wrongVal}. The series is ${series.join(", ")}.`]);
 }
+/* --- missing number series --- */
+function genMissingSeries(){
+  const kind=ri(0,4); let series=[],pattern="";
+  if(kind===0){const s=ri(2,15),d=ri(2,6),inc=ri(1,4);let v=s,diff=d;series=[s];for(let i=0;i<5;i++){v+=diff;series.push(v);diff+=inc}pattern=`the gaps grow steadily: +${d}, +${d+inc}, +${d+2*inc}, …`}
+  else if(kind===1){const s=ri(2,9),c=pick([1,2,3]);let v=s;series=[s];for(let i=0;i<5;i++){v=v*2+c;series.push(v)}pattern=`each term is ×2 + ${c}`}
+  else if(kind===2){const s=ri(3,20);series=[s];for(let i=1;i<=5;i++)series.push(series[i-1]+i*i);pattern="the gaps are 1, 4, 9, 16, 25 (squares)"}
+  else if(kind===3){const primes=[2,3,5,7,11],s=ri(2,15);series=[s];for(const p of primes)series.push(series[series.length-1]+p);pattern="the gaps are prime numbers: +2, +3, +5, +7, +11"}
+  else {const s=ri(2,10),d=pick([3,5,7]);let v=s;series=[s];for(let i=0;i<5;i++){v+=d+i*2;series.push(v)}pattern=`the gaps grow by 2 each step, starting at +${d}`}
+  const mi=ri(1,4), missing=series[mi];
+  const shown=series.map((v,i)=>i===mi?"?":String(v));
+  const step=Math.max(2,Math.abs(series[mi+1]-series[mi-1]));
+  const ds=[missing+step,missing-step,missing+2*step].filter(x=>x!==missing&&!series.includes(x));
+  while(ds.length<3)ds.push(missing+3*step+ds.length);
+  return mkq("quant:series","missing-series",`Find the missing number in the series:\n${shown.join(", ")}`,missing,ds.slice(0,3),x=>String(x),"Work out the gap pattern from the terms you can see.",[`Pattern: ${pattern}. So the missing term at position ${mi+1} is ${missing}. The series is ${series.join(", ")}.`]);
+}
+/* Series topic serves both kinds: wrong-number and missing-number in a 3:2 draw. */
+function genSeries(){return pick([genWrongSeries,genWrongSeries,genWrongSeries,genMissingSeries,genMissingSeries])()}
 /* --- quantity I / II --- */
 const QTY_OPTS=["Quantity I > Quantity II","Quantity I < Quantity II","Quantity I = Quantity II","Relationship cannot be established"];
 function qtyQ(qiText,qiiText,qi,qii,steps){
@@ -754,7 +865,75 @@ function diCaseletSet(){
   qs.push(mkq("quant:di","di-case-diff",`${intro}\n\nWhat is the difference between the number of male employees in department P and the number of female employees in department R?`,Math.abs(depts[0].male-depts[2].female),[Math.abs(depts[0].male-depts[2].female)+20,Math.abs(depts[0].female-depts[2].male),depts[0].male+depts[2].female],x=>num(x),"Pull the two values from different departments carefully.",[`Males in P = ${num(depts[0].male)}. Females in R = ${num(depts[2].female)}. Difference = ${num(Math.abs(depts[0].male-depts[2].female))}.`]));
   return qs;
 }
-const GEN_QUANT={di:()=>pick([diTabularSet,diBarSet,diCaseletSet])(),approximation:genApproximation,series:genWrongSeries,quantity:genQuantity,arithmetic:genArithmetic};
+function diLineSet(){
+  const years=[2019,2020,2021,2022,2023,2024];
+  let vals=years.map(()=>ri(18,60)*10);
+  if(vals[5]<=vals[0])vals[5]=vals[0]+pick([50,80,100]);
+  const intro=`The line graph shows the production of a factory (in units) over six years.\n\n${years.map((y,i)=>`${y}: ${vals[i]} units`).join("\n")}`;
+  const qs=[];
+  const sum=vals.reduce((s,v)=>s+v,0), mx=Math.max(...vals), mn=Math.min(...vals);
+  qs.push(mkq("quant:di","di-line-total",`${intro}\n\nWhat was the total production of the factory in the six years together?`,sum,[sum+100,sum-80,sum/6*5],x=>`${num(x)} units`,"Add the production of all six years.",[`Total = ${vals.join(" + ")} = ${sum} units.`]));
+  qs.push(mkq("quant:di","di-line-avg",`${intro}\n\nWhat was the average annual production over the six years?`,Math.round(sum/6*100)/100,[Math.round(sum/5*100)/100,Math.round(sum/6*100)/100+25,mx],x=>`${num(x)} units`,"Average = total ÷ number of years.",[`Total = ${sum} units over 6 years. Average = ${num(Math.round(sum/6*100)/100)} units.`]));
+  qs.push(mkq("quant:di","di-line-diff",`${intro}\n\nWhat is the difference between the production in the highest year and the production in the lowest year?`,mx-mn,[mx-mn+40,mx,mn],x=>`${num(x)} units`,"Find the largest and smallest values on the graph first.",[`Highest = ${mx} units, lowest = ${mn} units. Difference = ${mx-mn} units.`]));
+  const pct=Math.round((vals[5]-vals[0])/vals[0]*10000)/100, altPct=Math.round((vals[5]-vals[0])/vals[5]*10000)/100;
+  qs.push(mkq("quant:di","di-line-pct",`${intro}\n\nThe production in 2024 is what percent more than the production in 2019?`,pct,[altPct===pct?pct+8:altPct,pct+10,pct-5],x=>`${num(x)}%`,"Percentage increase is worked out on the earlier (2019) value.",[`Increase = ${vals[5]} − ${vals[0]} = ${vals[5]-vals[0]}. Percent = ${vals[5]-vals[0]} ÷ ${vals[0]} × 100 = ${num(pct)}%.`]));
+  const i1=ri(0,5); let i2=ri(0,5); if(i2===i1)i2=(i1+2)%6;
+  { const g=gcd(vals[i1],vals[i2]);
+    qs.push(ratioQ("quant:di","di-line-ratio",`${intro}\n\nWhat is the ratio of the production in ${years[i1]} to the production in ${years[i2]}?`,vals[i1],vals[i2],"Divide both values by their highest common factor.",`Production: ${years[i1]} = ${vals[i1]}, ${years[i2]} = ${vals[i2]}. Dividing by ${g} gives ${vals[i1]/g} : ${vals[i2]/g}.`)) }
+  const i3=ri(0,5); let i4=ri(0,5); if(i4===i3)i4=(i3+3)%6;
+  qs.push(mkq("quant:di","di-line-sum",`${intro}\n\nWhat was the total production in ${years[i3]} and ${years[i4]} together?`,vals[i3]+vals[i4],[vals[i3]+vals[i4]+60,vals[i3]*2,vals[i4]*2],x=>`${num(x)} units`,"Read the two years off the graph and add.",[`${years[i3]} = ${vals[i3]} and ${years[i4]} = ${vals[i4]}. Total = ${vals[i3]+vals[i4]} units.`]));
+  return qs;
+}
+function diPieSet(){
+  const money=ri(0,1)===0;
+  const cats=money?["Rent","Food","Transport","Education","Savings"]:["Arts","Science","Commerce","Engineering","Medicine"];
+  const pcts=shuffle(pick([[30,25,20,15,10],[40,20,15,15,10],[35,25,20,10,10],[45,20,15,10,10],[30,20,20,20,10],[25,25,20,15,15],[40,25,15,10,10],[35,30,15,10,10]]));
+  const total=money?pick([24000,30000,36000,40000,48000,60000]):pick([800,1000,1200,1500,2000,2400]);
+  const segs=cats.map((c,i)=>({c,p:pcts[i],v:total*pcts[i]/100}));
+  const head=money?`The pie chart shows the percentage distribution of a family's monthly expenditure. The family's total monthly income is ${rupee(total)}, and the whole of it is accounted for below.`:`The pie chart shows the percentage distribution of students of a college across five courses. The college has ${total} students in all.`;
+  const intro=`${head}\n\n${segs.map(s=>`${s.c}: ${s.p}%`).join("\n")}`;
+  const unit=money?rupee:(x=>`${num(x)} students`);
+  const qs=[];
+  const s1=pick(segs);
+  qs.push(mkq("quant:di","di-pie-value",`${intro}\n\n${money?`How much does the family spend on ${s1.c} in a month?`:`How many students study ${s1.c}?`}`,s1.v,[s1.v+total/20,total/2,s1.v*2],x=>unit(x),"Value = total × percentage ÷ 100.",[`${s1.c} = ${s1.p}% of ${num(total)} = ${num(s1.v)}.`]));
+  const s2=pick(segs);
+  qs.push(mkq("quant:di","di-pie-angle",`${intro}\n\nWhat is the central angle of the sector for ${s2.c} in the pie chart?`,s2.p*3.6,[s2.p*3.6+18,s2.p*3.6-18,s2.p],x=>`${num(x)}°`,"A full circle is 360°, so each percent is worth 3.6°.",[`${s2.p}% of 360° = ${num(s2.p*3.6)}°.`]));
+  const s3=pick(segs), s4=pick(segs.filter(s=>s!==s3));
+  qs.push(mkq("quant:di","di-pie-diff",`${intro}\n\nWhat is the difference between the ${money?"amounts spent on":"numbers of students in"} ${s3.c} and ${s4.c}?`,Math.abs(s3.v-s4.v),[Math.abs(s3.v-s4.v)+total/20,s3.v+s4.v,Math.abs(s3.p-s4.p)],x=>unit(x),"Find both values from their percentages first.",[`${s3.c} = ${num(s3.v)} and ${s4.c} = ${num(s4.v)}. Difference = ${num(Math.abs(s3.v-s4.v))}.`]));
+  const s5=pick(segs), s6=pick(segs.filter(s=>s!==s5));
+  { const g=gcd(s5.v,s6.v);
+    qs.push(ratioQ("quant:di","di-pie-ratio",`${intro}\n\nWhat is the ratio of ${money?"the amount spent on":"the number of students in"} ${s5.c} to that ${money?"spent on":"in"} ${s6.c}?`,s5.v,s6.v,"The ratio of the values is the same as the ratio of their percentages.",`${s5.c} = ${num(s5.v)} and ${s6.c} = ${num(s6.v)}. Dividing by ${g} gives ${s5.v/g} : ${s6.v/g}.`)) }
+  const s7=pick(segs), s8=pick(segs.filter(s=>s!==s7));
+  qs.push(mkq("quant:di","di-pie-combo",`${intro}\n\n${money?`How much does the family spend on ${s7.c} and ${s8.c} together?`:`How many students study ${s7.c} and ${s8.c} together?`}`,s7.v+s8.v,[s7.v+s8.v+total/20,(s7.p+s8.p),total-s7.v],x=>unit(x),"Add the two percentages first, then take that share of the total.",[`${s7.c} + ${s8.c} = ${s7.p+s8.p}% of ${num(total)} = ${num(s7.v+s8.v)}.`]));
+  const s9=pick(segs.filter(s=>s.p>=15)), s10=pick(segs.filter(s=>s!==s9));
+  const pctOf=Math.round(s9.v/s10.v*10000)/100;
+  qs.push(mkq("quant:di","di-pie-pctof",`${intro}\n\n${money?`The amount spent on ${s9.c} is what percent of the amount spent on ${s10.c}?`:`The number of students in ${s9.c} is what percent of the number of students in ${s10.c}?`}`,pctOf,[Math.round(s10.v/s9.v*10000)/100,pctOf+10,100],x=>`${num(x)}%`,"Percent = first value ÷ second value × 100. The percentages can be compared directly.",[`${s9.c} is ${s9.p}% and ${s10.c} is ${s10.p}%. Percent = ${s9.p} ÷ ${s10.p} × 100 = ${num(pctOf)}%.`]));
+  return qs;
+}
+function diMissingSet(){
+  const names=["A","B","C","D","E"];
+  const totals=shuffle([400,500,600,800,1000]);
+  const soldPct=pick([40,50,60,70,80]);
+  const dPct=pick([50,60,70,80]);
+  const eUnsold=pick([50,100,150,200].filter(u=>u<totals[4]));
+  const rows=names.map((n,i)=>{
+    if(i<3)return{n,total:totals[i],sold:totals[i]*soldPct/100};
+    if(i===3)return{n,total:totals[i],sold:totals[i]*dPct/100};
+    return{n,total:totals[i],sold:totals[i]-eUnsold};
+  });
+  const intro=`The table shows the number of articles with five shops and the number of articles sold by each shop. Two values are missing from the table and must be worked out from the additional information given below it.\n\n${rows.map((r,i)=>`Shop ${r.n}: ${r.total} articles in total, ${i<3?r.sold+" sold":"? sold"}`).join("\n")}\n\nAdditional information: In shop D, ${dPct}% of the articles were sold. In shop E, ${eUnsold} articles remained unsold.`;
+  const qs=[];
+  const totSold=rows.reduce((s,r)=>s+r.sold,0);
+  qs.push(mkq("quant:di","di-miss-d",`${intro}\n\nHow many articles were sold by shop D?`,rows[3].sold,[rows[3].total-rows[3].sold,rows[3].sold+50,rows[3].sold+100],x=>num(x),"Use the additional information: sold in D is a percentage of D's total.",[`Sold in D = ${dPct}% of ${rows[3].total} = ${num(rows[3].sold)}.`]));
+  qs.push(mkq("quant:di","di-miss-e",`${intro}\n\nHow many articles were sold by shop E?`,rows[4].sold,[eUnsold,rows[4].sold+50,rows[4].total/2===rows[4].sold?rows[4].sold+80:rows[4].total/2],x=>num(x),"Sold = total − unsold, using the additional information for E.",[`Sold in E = ${rows[4].total} − ${eUnsold} = ${num(rows[4].sold)}.`]));
+  qs.push(mkq("quant:di","di-miss-total",`${intro}\n\nWhat is the total number of articles sold by all five shops together?`,totSold,[totSold+100,totSold-60,rows.reduce((s,r)=>s+r.total,0)],x=>num(x),"First work out the two missing sold values, then add all five.",[`Sold: ${rows.map(r=>`${r.n} = ${num(r.sold)}`).join(", ")}. Total = ${num(totSold)}.`]));
+  qs.push(mkq("quant:di","di-miss-diff",`${intro}\n\nWhat is the difference between the articles sold by shop D and the articles sold by shop B?`,Math.abs(rows[3].sold-rows[1].sold),[Math.abs(rows[3].sold-rows[1].sold)+40,rows[3].sold+rows[1].sold,Math.abs(rows[3].total-rows[1].total)],x=>num(x),"Shop D's sold value has to be derived before comparing.",[`Sold in D = ${num(rows[3].sold)} and in B = ${num(rows[1].sold)}. Difference = ${num(Math.abs(rows[3].sold-rows[1].sold))}.`]));
+  qs.push(mkq("quant:di","di-miss-avg",`${intro}\n\nWhat is the average number of articles sold by the five shops?`,totSold/5,[totSold/4,totSold/5+20,rows.reduce((s,r)=>s+r.total,0)/5],x=>num(x),"Average sold = total sold ÷ 5.",[`Total sold = ${num(totSold)}. Average = ${num(totSold)} ÷ 5 = ${num(totSold/5)}.`]));
+  { const g=gcd(rows[4].sold,rows[0].sold);
+    qs.push(ratioQ("quant:di","di-miss-ratio",`${intro}\n\nWhat is the ratio of articles sold by shop E to articles sold by shop A?`,rows[4].sold,rows[0].sold,"Derive E's sold value first, then simplify the ratio.",`Sold: E = ${num(rows[4].sold)}, A = ${num(rows[0].sold)}. Dividing by ${g} gives ${rows[4].sold/g} : ${rows[0].sold/g}.`)) }
+  return qs;
+}
+const GEN_QUANT={di:()=>pick([diTabularSet,diBarSet,diCaseletSet,diLineSet,diPieSet,diMissingSet])(),approximation:genApproximation,series:genSeries,quantity:genQuantity,arithmetic:genArithmetic,boats:genBoats,pipes:genPipes,probability:genProbability,perm:genPerm};
 
 /* ============ ENGLISH banks and generators (authored, self-contained) ============ */
 const RC_PASSAGES=[
@@ -951,13 +1130,90 @@ function genMatch(item){
   while(wrongs.size<3){const p=shuffle([1,2,3]);const s=`A-${p[0]}, B-${p[1]}, C-${p[2]}`;if(s!==it.pairs)wrongs.add(s)}
   return bkq("english:match","match",text,it.pairs,[...wrongs],"Join each start with the only ending that fits it.",[it.w]);
 }
+/* --- vocabulary & idioms bank: [kind, prompt, correct, distractor1, distractor2, distractor3, explanation]
+   Only common, unambiguous items are used. kind: syn / ant / idiom / oneword. --- */
+const VOCAB_BANK=[
+ ["syn","Abundant","Plentiful","Scarce","Rare","Meagre","'Abundant' means existing in large amounts, so 'plentiful' is closest. The others mean the opposite."],
+ ["syn","Candid","Frank","Secretive","Shy","Rude","'Candid' means open and honest in speech, so 'frank' is closest."],
+ ["syn","Diminish","Decrease","Increase","Expand","Grow","'Diminish' means to become less, so 'decrease' is closest."],
+ ["syn","Essential","Necessary","Optional","Extra","Useless","'Essential' means absolutely needed, so 'necessary' is closest."],
+ ["syn","Fragile","Delicate","Sturdy","Tough","Strong","'Fragile' means easily broken, so 'delicate' is closest."],
+ ["syn","Gather","Collect","Scatter","Spread","Divide","'Gather' means to bring together, so 'collect' is closest."],
+ ["syn","Honest","Truthful","Cunning","False","Clever","'Honest' means telling the truth, so 'truthful' is closest."],
+ ["syn","Keen","Eager","Unwilling","Bored","Dull","'Keen' here means enthusiastic, so 'eager' is closest."],
+ ["syn","Lucid","Clear","Vague","Confusing","Dark","'Lucid' means easy to understand, so 'clear' is closest."],
+ ["syn","Modest","Humble","Proud","Arrogant","Bold","'Modest' means not boasting about oneself, so 'humble' is closest."],
+ ["syn","Obstacle","Hurdle","Advantage","Support","Aid","An 'obstacle' is something that blocks progress, so 'hurdle' is closest."],
+ ["syn","Precise","Exact","Rough","Vague","Loose","'Precise' means accurate in every detail, so 'exact' is closest."],
+ ["syn","Rapid","Swift","Slow","Gradual","Steady","'Rapid' means happening quickly, so 'swift' is closest."],
+ ["syn","Commence","Begin","Conclude","Delay","Halt","'Commence' means to start, so 'begin' is closest."],
+ ["syn","Vivid","Bright","Dull","Faint","Pale","'Vivid' (of colours or descriptions) means strong and clear, so 'bright' is closest."],
+ ["syn","Reluctant","Unwilling","Eager","Ready","Glad","'Reluctant' means not wanting to do something, so 'unwilling' is closest."],
+ ["ant","Ancient","Modern","Antique","Aged","Old","The opposite of 'ancient' (very old) is 'modern'."],
+ ["ant","Brave","Cowardly","Bold","Heroic","Daring","The opposite of 'brave' is 'cowardly'."],
+ ["ant","Expand","Contract","Enlarge","Extend","Stretch","The opposite of 'expand' (grow bigger) is 'contract' (grow smaller)."],
+ ["ant","Guilty","Innocent","Accused","Blamed","Punished","The opposite of 'guilty' is 'innocent'."],
+ ["ant","Include","Exclude","Add","Contain","Comprise","The opposite of 'include' is 'exclude' (leave out)."],
+ ["ant","Knowledge","Ignorance","Wisdom","Learning","Awareness","The opposite of 'knowledge' is 'ignorance' (lack of knowledge)."],
+ ["ant","Maximum","Minimum","Highest","Peak","Utmost","The opposite of 'maximum' is 'minimum'."],
+ ["ant","Permanent","Temporary","Lasting","Fixed","Eternal","The opposite of 'permanent' is 'temporary' (for a short time)."],
+ ["ant","Transparent","Opaque","Clear","Obvious","Fragile","The opposite of 'transparent' (see-through) is 'opaque'."],
+ ["ant","Victory","Defeat","Triumph","Success","Glory","The opposite of 'victory' is 'defeat'."],
+ ["ant","Scarce","Abundant","Rare","Meagre","Insufficient","The opposite of 'scarce' (hard to find) is 'abundant' (plentiful)."],
+ ["ant","Deep","Shallow","Profound","Wide","Bottomless","The opposite of 'deep' is 'shallow'."],
+ ["ant","Generous","Stingy","Kind","Liberal","Charitable","The opposite of 'generous' is 'stingy' (unwilling to give)."],
+ ["ant","Arrival","Departure","Entry","Coming","Approach","The opposite of 'arrival' is 'departure'."],
+ ["ant","Artificial","Natural","Synthetic","Man-made","Fake","The opposite of 'artificial' (made by humans) is 'natural'."],
+ ["ant","Praise","Criticise","Admire","Applaud","Honour","The opposite of 'praise' is 'criticise'."],
+ ["idiom","Break the ice","To start a conversation in a social setting","To break something that is frozen","To end a friendship","To remain silent","'Break the ice' means to ease the first awkward moments and get people talking."],
+ ["idiom","A blessing in disguise","A hidden benefit in something that first seemed bad","A gift given by a priest","A person in a costume","A loss that cannot be recovered","A 'blessing in disguise' is a good thing that first appeared to be bad."],
+ ["idiom","Hit the books","To start studying","To throw books away","To buy new books","To close a library","'Hit the books' means to begin studying seriously."],
+ ["idiom","Once in a blue moon","Very rarely","Every full moon","Once every month","Very often","'Once in a blue moon' means something that happens very rarely."],
+ ["idiom","A piece of cake","Something very easy to do","A slice of dessert","A difficult task","A birthday gift","'A piece of cake' means a task that is very easy."],
+ ["idiom","Under the weather","Feeling slightly ill","Standing in the rain","Enjoying good health","Watching the forecast","'Under the weather' means feeling unwell."],
+ ["idiom","Cost an arm and a leg","Be very expensive","Cause an injury","Be sold cheaply","Need repairs","If something 'costs an arm and a leg', it is very expensive."],
+ ["idiom","Beat around the bush","Avoid saying what one really means","Cut the bushes in a garden","Speak very directly","Win a game easily","'Beat around the bush' means to avoid coming to the point."],
+ ["idiom","The ball is in your court","It is your turn to take action","The match has been cancelled","You have won the game","The ball is lost","'The ball is in your court' means the next step is yours to take."],
+ ["idiom","Spill the beans","Reveal a secret","Drop food on the floor","Cook a meal","Tell a lie","'Spill the beans' means to give away a secret."],
+ ["idiom","Rain cats and dogs","Rain very heavily","Rain only a little","Snow in winter","Stop raining","'Rain cats and dogs' means to rain heavily."],
+ ["idiom","Break a leg","Good luck","Be careful on stage","Suffer an injury","Stop performing","'Break a leg' is a way of wishing a performer good luck."],
+ ["idiom","Cry over spilt milk","Waste time worrying about a past mistake","Ask for more milk","Complain about the weather","Feel thirsty","'Cry over spilt milk' means to waste time regretting something that cannot be changed."],
+ ["idiom","In the same boat","In the same difficult situation","Travelling together","Working in a team","Sailing for the first time","'In the same boat' means facing the same difficulty as others."],
+ ["idiom","Burn the midnight oil","Work or study late into the night","Light a lamp at midnight","Waste oil carelessly","Sleep very late","'Burn the midnight oil' means to work late into the night."],
+ ["idiom","A fish out of water","A person in an uncomfortable situation","A good swimmer","A rare kind of fish","A person who talks too much","'A fish out of water' is someone who feels out of place and uncomfortable."],
+ ["oneword","A person who speaks many languages","Polyglot","Orator","Monolingual","Bilingual","A 'polyglot' is a person who knows or speaks several languages. (A bilingual person speaks exactly two.)"],
+ ["oneword","A government run by the people","Democracy","Monarchy","Dictatorship","Bureaucracy","'Democracy' is government of, by and for the people."],
+ ["oneword","A place where birds are kept","Aviary","Apiary","Aquarium","Stable","Birds are kept in an 'aviary'; bees in an apiary, fish in an aquarium, horses in a stable."],
+ ["oneword","A person who cannot read or write","Illiterate","Ignorant","Literate","Novice","An 'illiterate' person cannot read or write."],
+ ["oneword","A speech made without preparation","Extempore","Manuscript","Memorised","Oration","An 'extempore' speech is spoken without preparation."],
+ ["oneword","One who can use both hands equally well","Ambidextrous","Ambiguous","Versatile","Skilful","'An 'ambidextrous' person uses both hands with equal ease."],
+ ["oneword","A person who looks at the bright side of things","Optimist","Pessimist","Realist","Idealist","An 'optimist' expects good things to happen."],
+ ["oneword","A person who looks at the dark side of things","Pessimist","Optimist","Critic","Sceptic","A 'pessimist' expects the worst to happen."],
+ ["oneword","The story of a person's life written by that person","Autobiography","Biography","Novel","Diary","An 'autobiography' is written by the person himself or herself; a biography is written by another."],
+ ["oneword","The story of a person's life written by someone else","Biography","Autobiography","Novel","Journal","A 'biography' is written by another person."],
+ ["oneword","A person who is new to a profession or activity","Novice","Veteran","Expert","Mentor","A 'novice' is a beginner."],
+ ["oneword","An animal that eats only plants","Herbivore","Carnivore","Omnivore","Scavenger","A 'herbivore' eats only plants; a carnivore eats flesh; an omnivore eats both."],
+ ["oneword","An animal that eats only flesh","Carnivore","Herbivore","Omnivore","Parasite","A 'carnivore' eats only flesh."],
+ ["oneword","A person who does not believe in the existence of God","Atheist","Theist","Saint","Pilgrim","An 'atheist' does not believe in God; a theist does."],
+ ["oneword","A collection of listeners at a speech or performance","Audience","Crowd","Spectators","Congregation","An 'audience' is the group of people who listen to or watch a performance."],
+ ["oneword","A person who walks on the road","Pedestrian","Passenger","Traveller","Driver","A 'pedestrian' is a person walking, especially along a road."]
+];
+function genVocab(){
+  const it=pick(VOCAB_BANK);
+  const kindName={"syn":"Synonym","ant":"Antonym","idiom":"Idiom","oneword":"One-word substitution"}[it[0]];
+  const text=it[0]==="syn"?`Choose the word closest in meaning to '${it[1].toUpperCase()}'.`
+    :it[0]==="ant"?`Choose the word opposite in meaning to '${it[1].toUpperCase()}'.`
+    :it[0]==="idiom"?`What does the idiom '${it[1]}' mean?`
+    :`Choose the one word that best fits this description:\n${it[1]}`;
+  return bkq("english:vocab",it[0],text,it[2],[it[3],it[4],it[5]],kindName+": fix the meaning in one line before looking at the options.",[it[6]]);
+}
 const GEN_ENGLISH={
   rc:()=>genRC(), cloze:()=>genCloze(), error:()=>genError(),
   rearrange:()=>orderQuestion("english:rearrange","rearrange",pick(REARRANGE_BANK),"The parts of a sentence are given in a jumbled order. Choose the correct order of the labelled parts."),
   jumble:()=>orderQuestion("english:jumble","jumble",pick(JUMBLE_BANK),"Five sentences are given in a jumbled order. Choose the order that makes a meaningful paragraph."),
   phrase:()=>{const it=pick(PHRASE_BANK);return bkq("english:phrase","phrase",`Which of the options should replace the part in brackets to make the sentence grammatically correct? If the sentence is already correct, choose 'No correction required'.\n\n${it.s}`,it.c,it.d,"Check the bracketed part against the rule it tests.",[it.w])},
   filler:()=>{const it=pick(FILLER_BANK);return bkq("english:filler","filler",`Fill in the two blanks with the most suitable pair of words.\n\n${it.s}`,it.c,it.d,"Both words of the pair must fit; test each pair in both blanks.",[it.w])},
-  swap:()=>genSwap(), usage:()=>genUsage(), match:()=>genMatch()
+  swap:()=>genSwap(), usage:()=>genUsage(), match:()=>genMatch(), vocab:()=>genVocab()
 };
 
 /* ============ COMPUTER KNOWLEDGE bank (authored; standard, well-established facts only) ============ */
