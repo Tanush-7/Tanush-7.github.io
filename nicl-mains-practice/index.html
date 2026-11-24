@@ -103,6 +103,10 @@ textarea.write:focus{outline:2px solid var(--teal);outline-offset:1px}
    NOTE: no historical cutoff figures are stored anywhere in this file. The targets
    below are user-editable practice targets, labelled on screen as
    "indicative practice target, not an official cutoff".
+   GA items carry a metadata schema (category, source_ref, verified, month_year /
+   event_date, evergreen). The allowed categories are CONFIG.gaCategories; the
+   ingestion contract for adding curated current-affairs items is documented in
+   the comment block above GA_BANK ("GA DATA SCHEMA / INGESTION CONTRACT").
    ===================================================================================== */
 const CONFIG={
   examName:"NICL AO Phase II (Mains) — Generalist",
@@ -156,7 +160,11 @@ const CONFIG={
     computer:[["fundamentals","Fundamentals"],["hardware","Hardware"],["memory","Memory & storage"],["os","Operating systems"],["office","MS Office"],["shortcuts","Shortcut keys"],["internet","Internet & email"],["networking","Networking"],["security","Cyber security"],["dbms","DBMS basics"]]
   },
   /* Error taxonomy for wrong answers (telemetry field error_root_cause). */
-  errorCauses:[["concept","Conceptual gap"],["calc","Calculation slip"],["misread","Misread condition"],["time","Time crunch"]]
+  errorCauses:[["concept","Conceptual gap"],["calc","Calculation slip"],["misread","Misread condition"],["time","Time crunch"]],
+  /* GA categories: the ONLY values allowed in a GA_BANK item's category field.
+     The full GA schema and ingestion contract are documented in the comment
+     block above GA_BANK (see "GA DATA SCHEMA / INGESTION CONTRACT"). */
+  gaCategories:["Insurance & IRDAI","NICL & Public Sector Insurers","Banking & Economy","Budget & Schemes","National/International","Reports","Awards & Appointments"]
 };
 /* ============ utilities (same conventions as the Phase I tool) ============ */
 const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
@@ -1333,7 +1341,42 @@ GEN_COMPUTER.memory=()=>Math.random()<0.45?genNumericComputer():genComputerBank(
    honestly. So this section has two parts: (1) a weighted topic checklist and study
    plan for the current-affairs bulk, and (2) practice questions ONLY on static,
    insurance and banking concepts whose facts are well-established and do not go
-   stale. No current officeholders, no current rates, no invented news. */
+   stale. No current officeholders, no current rates, no invented news.
+
+   GA DATA SCHEMA / INGESTION CONTRACT — read this before adding GA items.
+   Every GA_BANK item is an object with these fields:
+     topic      short stable key used in the question id ("insurance", "banking"
+                or "static" in the evergreen bank).
+     q, a, d    question text, the correct answer, and an array of exactly 3
+                distractor strings.
+     why        one-line explanation shown with the solution.
+     category   one of CONFIG.gaCategories ("Insurance & IRDAI",
+                "NICL & Public Sector Insurers", "Banking & Economy",
+                "Budget & Schemes", "National/International", "Reports",
+                "Awards & Appointments"). No other value is allowed.
+     source_ref where the fact comes from. For curated current-affairs items it
+                must name the actual source: an official notification, an
+                IRDAI/RBI circular, a PIB or other official release, or a
+                verified past paper. For evergreen items it is an honest generic
+                descriptor of the fact type (e.g. "Static fact — IRDAI
+                organisational history", "Government scheme factsheet figure").
+                NEVER invent a document name, circular number or date.
+     verified   true only when the fact and its source have actually been
+                checked. Only verified items may sit in GA_BANK, because the
+                question draw reads GA_BANK only.
+     month_year e.g. "Oct 2026". Required for current-affairs items; null for
+                evergreen items.
+     event_date optional exact date ("2026-10-14") when the source gives one;
+                null otherwise.
+     evergreen  true for static facts that do not go stale; evergreen items
+                carry month_year: null and event_date: null.
+   When Tanush supplies curated material (current-affairs notes, monthly
+   digests, IRDAI/NICL updates, past-paper GA questions), structure each item
+   into exactly this shape with its real source_ref and date attached — guess
+   neither dates nor facts. Unverified or not-yet-checked material must NEVER
+   be added to GA_BANK: put it in GA_TEMPLATES instead, with verified: false,
+   practice_template: true and unverified_date: true. Templates are study
+   prompts shown only in Exam & plan; they are never served as questions. */
 const GA_CHECKLIST=[
  ["Current affairs (last 6 months; the 2025 paper leaned heavily on the last 2 months)","Very high","Read a daily current-affairs compilation and revise weekly. In the memory-based analysis of the 31 Aug 2025 Mains paper, almost all GA questions were current affairs."],
  ["Insurance awareness (terms, regulator, schemes, industry basics)","Very high","Preparation guides rate this very high for NICL even though the 2025 paper itself reportedly carried few insurance-specific questions. Cover it; do not skip it."],
@@ -1344,73 +1387,102 @@ const GA_CHECKLIST=[
  ["Static GK (geography, polity, history, science basics)","Moderate","About 5–7 questions in the 2025 paper were static GK. Evergreen facts only."]
 ];
 const GA_BANK=[
-["insurance","IRDAI stands for","Insurance Regulatory and Development Authority of India","Indian Insurance Regulatory and Development Agency","Insurance Regulation and Development Association of India","International Insurance Regulatory Authority of India","IRDAI is the insurance regulator of India."],
-["insurance","The headquarters of IRDAI is located at","Hyderabad","Mumbai","New Delhi","Kolkata","IRDAI's head office is in Hyderabad, Telangana."],
-["insurance","IRDAI was set up under an Act of Parliament passed in","1999","1956","1972","2001","The IRDA Act was passed in 1999."],
-["insurance","The Life Insurance Corporation of India (LIC) was established in","1956","1947","1969","1972","LIC was created in 1956 by nationalising life insurance."],
-["insurance","LIC was formed by nationalising how many insurers and provident societies?","245","154","191","286","LIC was formed in 1956 by nationalising 245 insurers and provident societies."],
-["insurance","The General Insurance Corporation of India (GIC) was established in","1972","1956","1964","1980","GIC was incorporated in 1972 when general insurance was nationalised."],
-["insurance","National Insurance Company Limited (NICL) was founded in","1906","1919","1947","1972","NICL was founded on 5 December 1906."],
-["insurance","The headquarters of National Insurance Company Limited is at","Kolkata","Delhi","Mumbai","Chennai","NICL is headquartered in Kolkata."],
-["insurance","The foreign direct investment (FDI) limit in the insurance sector was raised to 74% in","2021","2015","2019","2023","The limit was raised from 49% to 74% in 2021."],
-["insurance","Under PMJJBY (Pradhan Mantri Jeevan Jyoti Bima Yojana), the life cover provided is","₹2 lakh","₹1 lakh","₹5 lakh","₹50,000","PMJJBY provides ₹2 lakh life cover."],
-["insurance","Under PMSBY (Pradhan Mantri Suraksha Bima Yojana), the accidental death cover is","₹2 lakh","₹1 lakh","₹5 lakh","₹10 lakh","PMSBY provides ₹2 lakh for accidental death or full disability."],
-["insurance","The Pradhan Mantri Fasal Bima Yojana (PMFBY), the crop insurance scheme, was launched in","2016","2014","2018","2020","PMFBY was launched in 2016."],
-["insurance","Ayushman Bharat PM-JAY provides health cover per family per year of","₹5 lakh","₹2 lakh","₹1 lakh","₹10 lakh","PM-JAY provides ₹5 lakh per family per year for hospitalisation."],
-["insurance","Ayushman Bharat (PM-JAY) was launched in","2018","2015","2020","2016","PM-JAY was launched in September 2018."],
-["insurance","In insurance, a 'premium' is","the amount the insured pays the insurer for cover","the amount the insurer pays after a loss","a tax paid to the government","the commission of the agent","The premium is the price of the insurance cover."],
-["insurance","A term insurance policy pays the benefit when","the policyholder dies during the policy term","the policyholder survives the full term","the policyholder takes a loan","the premium is paid late","Term insurance is pure protection: it pays on death during the term."],
-["insurance","'Reinsurance' means","an insurer insuring part of its own risk with another insurer","buying a second policy on the same life","renewing an expired policy","cancelling a policy early","Reinsurance spreads an insurer's risk to other insurers."],
-["insurance","An endowment policy is best described as one that","pays on death during the term or on survival to maturity","pays only on death","covers only fire risks","has no fixed term","Endowment plans combine protection with savings."],
-["insurance","The IRDAI vision of 'Insurance for All' is targeted for the year","2047","2030","2040","2050","IRDAI's stated goal is 'Insurance for All by 2047'."],
-["insurance","Which of the following is a part of IRDAI's 'Bima Trinity'?","Bima Sugam","Bima Setu","Bima Bandhu","Bima Mitra","The Bima Trinity is Bima Sugam, Bima Vistaar and Bima Vaahaks."],
-["insurance","In insurance, a 'claim' is","a demand by the policyholder for payment under the policy","the first premium of a policy","the document that starts a policy","a discount on the premium","A claim asks the insurer to pay for a covered loss."],
-["insurance","General insurance covers","non-life risks such as motor, fire and health","only life risks","only crop risks","only marine risks","General insurance is the non-life branch of insurance."],
-["insurance","The person who owns an insurance policy is called the","policyholder","beneficiary agent","underwriter","surveyor","The policyholder owns the policy and pays the premium."],
-["insurance","'Sum assured' in a life policy means","the guaranteed amount payable under the policy on the insured event","the total premium paid over the term","the bonus declared every year","the surrender value of the policy","The sum assured is the guaranteed cover amount."],
-["banking","The Reserve Bank of India was established in","1935","1947","1950","1934","The RBI began operations on 1 April 1935."],
-["banking","The Reserve Bank of India was nationalised in","1949","1935","1951","1969","The RBI was nationalised on 1 January 1949."],
-["banking","The headquarters of the Reserve Bank of India is at","Mumbai","New Delhi","Kolkata","Chennai","The RBI's central office is in Mumbai."],
-["banking","SEBI was given statutory powers through an Act passed in","1992","1988","1995","2000","The SEBI Act was passed in 1992."],
-["banking","NABARD, the bank for agriculture and rural development, was established in","1982","1975","1990","1969","NABARD was established in 1982."],
-["banking","The repo rate is the rate at which","the RBI lends money to commercial banks","banks lend money to the RBI","banks lend to customers","the government borrows from the public","Repo rate is the RBI's lending rate to banks against securities."],
-["banking","CRR (Cash Reserve Ratio) is the portion of deposits that banks must","keep with the RBI as cash","lend to farmers","invest in shares","keep in their own vaults only","CRR is held with the RBI, not lent out."],
-["banking","KYC stands for","Know Your Customer","Know Your Cash","Keep Your Capital","Know Your Credit","KYC is the customer identification process."],
-["banking","NEFT stands for","National Electronic Funds Transfer","National Express Fund Transfer","Net Electronic Fund Transaction","National Electronic Finance Transfer","NEFT is the nationwide electronic fund transfer system."],
-["banking","An IFSC code is used to","identify a specific bank branch in electronic transfers","identify a bank customer","set the interest rate of an account","identify an ATM machine","IFSC (Indian Financial System Code) identifies the branch."],
-["banking","The State Bank of India was created in 1955 by nationalising the","Imperial Bank of India","Bank of Bengal","Presidency Bank","Central Bank of India","The Imperial Bank of India became the State Bank of India in 1955."],
-["banking","A cheque dated later than the date on which it is presented is called a","post-dated cheque","stale cheque","crossed cheque","bearer cheque","A cheque bearing a future date is post-dated."],
-["static","Who was the first President of India?","Dr Rajendra Prasad","Dr S. Radhakrishnan","Dr Zakir Husain","Dr A. P. J. Abdul Kalam","Dr Rajendra Prasad was the first President (1950–1962)."],
-["static","The Constitution of India came into force on","26 January 1950","15 August 1947","26 November 1949","2 October 1950","It was adopted on 26 November 1949 and came into force on 26 January 1950."],
-["static","Which is the largest state of India by area?","Rajasthan","Madhya Pradesh","Maharashtra","Uttar Pradesh","Rajasthan is the largest state by area."],
-["static","The national animal of India is the","Bengal tiger","Asiatic lion","Indian elephant","One-horned rhinoceros","The Bengal tiger is India's national animal."],
-["static","The national bird of India is the","Indian peacock","Parrot","Sparrow","Eagle","The Indian peacock is the national bird."],
-["static","The currency of Japan is the","Yen","Won","Yuan","Ringgit","Japan's currency is the yen."],
-["static","The capital of Australia is","Canberra","Sydney","Melbourne","Perth","Canberra is the capital; Sydney is the largest city."],
-["static","Which is the longest river flowing through India?","Ganga","Godavari","Yamuna","Brahmaputra","The Ganga is the longest river of India; the Godavari is the longest peninsular river."],
-["static","Who was the first woman to receive the Bharat Ratna?","Indira Gandhi","Mother Teresa","Lata Mangeshkar","Sarojini Naidu","Indira Gandhi received the Bharat Ratna in 1971."],
-["static","The Tropic of Cancer passes through how many Indian states?","8","6","7","9","It passes through 8 states, from Gujarat to Mizoram."],
-["static","Vitamin D is produced in the human body with the help of","sunlight","milk","green vegetables","exercise","The skin makes vitamin D when exposed to sunlight."],
-["static","Anaemia is mainly caused by the deficiency of","iron","calcium","vitamin C","iodine","Iron deficiency is the commonest cause of anaemia."],
-["static","The 2024 Olympic Games were held in","Paris","Tokyo","Los Angeles","London","The 2024 Summer Olympics were held in Paris."],
-["static","Who was the first Indian woman to win an Olympic medal?","Karnam Malleswari","P. T. Usha","Mary Kom","Saina Nehwal","Karnam Malleswari won a weightlifting bronze at Sydney 2000."],
-["static","'Jana Gana Mana', the national anthem, was written by","Rabindranath Tagore","Bankim Chandra Chatterjee","Subhas Chandra Bose","Sarojini Naidu","Rabindranath Tagore wrote the national anthem."],
-["static","NITI Aayog replaced the Planning Commission in the year","2015","2014","2016","2013","NITI Aayog was formed on 1 January 2015."],
-["static","NITI stands for","National Institution for Transforming India","National Institute for Technology of India","National Initiative for Trade in India","National Institution for Training India","NITI is the National Institution for Transforming India."],
-["static","The first Census of independent India was conducted in","1951","1947","1961","1931","The first post-independence census was in 1951."],
-["static","Which is the largest planet in the solar system?","Jupiter","Saturn","Neptune","Earth","Jupiter is the largest planet."],
-["static","The chemical symbol for gold is","Au","Ag","Gd","Go","Au comes from 'aurum', the Latin name for gold."],
-["static","The hardest naturally occurring substance is","diamond","iron","quartz","platinum","Diamond is the hardest natural substance."],
-["static","The Indian national calendar is based on the","Saka era","Vikram era","Hijri era","Gregorian era","The national calendar uses the Saka era."],
-["static","Goa was liberated from Portuguese rule in","1961","1947","1956","1971","Goa was liberated in December 1961."],
-["static","The first railway in India (1853) ran between","Mumbai and Thane","Delhi and Agra","Kolkata and Howrah","Chennai and Arcot","The first train ran from Bori Bunder (Mumbai) to Thane in 1853."],
-["static","Article 370 of the Indian Constitution was related to the special status of","Jammu and Kashmir","Punjab","Nagaland","Goa","Article 370 gave special status to Jammu and Kashmir."]
+ {"topic":"insurance","q":"IRDAI stands for","a":"Insurance Regulatory and Development Authority of India","d":["Indian Insurance Regulatory and Development Agency","Insurance Regulation and Development Association of India","International Insurance Regulatory Authority of India"],"why":"IRDAI is the insurance regulator of India.","category":"Insurance & IRDAI","source_ref":"Static fact — IRDAI organisational history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"The headquarters of IRDAI is located at","a":"Hyderabad","d":["Mumbai","New Delhi","Kolkata"],"why":"IRDAI's head office is in Hyderabad, Telangana.","category":"Insurance & IRDAI","source_ref":"Static fact — IRDAI organisational history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"IRDAI was set up under an Act of Parliament passed in","a":"1999","d":["1956","1972","2001"],"why":"The IRDA Act was passed in 1999.","category":"Insurance & IRDAI","source_ref":"Static fact — IRDAI organisational history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"The Life Insurance Corporation of India (LIC) was established in","a":"1956","d":["1947","1969","1972"],"why":"LIC was created in 1956 by nationalising life insurance.","category":"NICL & Public Sector Insurers","source_ref":"Static fact — public-sector insurer history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"LIC was formed by nationalising how many insurers and provident societies?","a":"245","d":["154","191","286"],"why":"LIC was formed in 1956 by nationalising 245 insurers and provident societies.","category":"NICL & Public Sector Insurers","source_ref":"Static fact — public-sector insurer history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"The General Insurance Corporation of India (GIC) was established in","a":"1972","d":["1956","1964","1980"],"why":"GIC was incorporated in 1972 when general insurance was nationalised.","category":"NICL & Public Sector Insurers","source_ref":"Static fact — public-sector insurer history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"National Insurance Company Limited (NICL) was founded in","a":"1906","d":["1919","1947","1972"],"why":"NICL was founded on 5 December 1906.","category":"NICL & Public Sector Insurers","source_ref":"Static fact — public-sector insurer history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"The headquarters of National Insurance Company Limited is at","a":"Kolkata","d":["Delhi","Mumbai","Chennai"],"why":"NICL is headquartered in Kolkata.","category":"NICL & Public Sector Insurers","source_ref":"Static fact — public-sector insurer history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"The foreign direct investment (FDI) limit in the insurance sector was raised to 74% in","a":"2021","d":["2015","2019","2023"],"why":"The limit was raised from 49% to 74% in 2021.","category":"Insurance & IRDAI","source_ref":"Static fact — insurance FDI policy history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"Under PMJJBY (Pradhan Mantri Jeevan Jyoti Bima Yojana), the life cover provided is","a":"₹2 lakh","d":["₹1 lakh","₹5 lakh","₹50,000"],"why":"PMJJBY provides ₹2 lakh life cover.","category":"Budget & Schemes","source_ref":"Government scheme factsheet figure","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"Under PMSBY (Pradhan Mantri Suraksha Bima Yojana), the accidental death cover is","a":"₹2 lakh","d":["₹1 lakh","₹5 lakh","₹10 lakh"],"why":"PMSBY provides ₹2 lakh for accidental death or full disability.","category":"Budget & Schemes","source_ref":"Government scheme factsheet figure","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"The Pradhan Mantri Fasal Bima Yojana (PMFBY), the crop insurance scheme, was launched in","a":"2016","d":["2014","2018","2020"],"why":"PMFBY was launched in 2016.","category":"Budget & Schemes","source_ref":"Government scheme factsheet figure","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"Ayushman Bharat PM-JAY provides health cover per family per year of","a":"₹5 lakh","d":["₹2 lakh","₹1 lakh","₹10 lakh"],"why":"PM-JAY provides ₹5 lakh per family per year for hospitalisation.","category":"Budget & Schemes","source_ref":"Government scheme factsheet figure","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"Ayushman Bharat (PM-JAY) was launched in","a":"2018","d":["2015","2020","2016"],"why":"PM-JAY was launched in September 2018.","category":"Budget & Schemes","source_ref":"Government scheme factsheet figure","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"In insurance, a 'premium' is","a":"the amount the insured pays the insurer for cover","d":["the amount the insurer pays after a loss","a tax paid to the government","the commission of the agent"],"why":"The premium is the price of the insurance cover.","category":"Insurance & IRDAI","source_ref":"Static fact — insurance terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"A term insurance policy pays the benefit when","a":"the policyholder dies during the policy term","d":["the policyholder survives the full term","the policyholder takes a loan","the premium is paid late"],"why":"Term insurance is pure protection: it pays on death during the term.","category":"Insurance & IRDAI","source_ref":"Static fact — insurance terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"'Reinsurance' means","a":"an insurer insuring part of its own risk with another insurer","d":["buying a second policy on the same life","renewing an expired policy","cancelling a policy early"],"why":"Reinsurance spreads an insurer's risk to other insurers.","category":"Insurance & IRDAI","source_ref":"Static fact — insurance terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"An endowment policy is best described as one that","a":"pays on death during the term or on survival to maturity","d":["pays only on death","covers only fire risks","has no fixed term"],"why":"Endowment plans combine protection with savings.","category":"Insurance & IRDAI","source_ref":"Static fact — insurance terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"The IRDAI vision of 'Insurance for All' is targeted for the year","a":"2047","d":["2030","2040","2050"],"why":"IRDAI's stated goal is 'Insurance for All by 2047'.","category":"Insurance & IRDAI","source_ref":"Static fact — IRDAI stated goal","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"Which of the following is a part of IRDAI's 'Bima Trinity'?","a":"Bima Sugam","d":["Bima Setu","Bima Bandhu","Bima Mitra"],"why":"The Bima Trinity is Bima Sugam, Bima Vistaar and Bima Vaahaks.","category":"Insurance & IRDAI","source_ref":"Static fact — IRDAI stated initiatives","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"In insurance, a 'claim' is","a":"a demand by the policyholder for payment under the policy","d":["the first premium of a policy","the document that starts a policy","a discount on the premium"],"why":"A claim asks the insurer to pay for a covered loss.","category":"Insurance & IRDAI","source_ref":"Static fact — insurance terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"General insurance covers","a":"non-life risks such as motor, fire and health","d":["only life risks","only crop risks","only marine risks"],"why":"General insurance is the non-life branch of insurance.","category":"Insurance & IRDAI","source_ref":"Static fact — insurance terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"The person who owns an insurance policy is called the","a":"policyholder","d":["beneficiary agent","underwriter","surveyor"],"why":"The policyholder owns the policy and pays the premium.","category":"Insurance & IRDAI","source_ref":"Static fact — insurance terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"insurance","q":"'Sum assured' in a life policy means","a":"the guaranteed amount payable under the policy on the insured event","d":["the total premium paid over the term","the bonus declared every year","the surrender value of the policy"],"why":"The sum assured is the guaranteed cover amount.","category":"Insurance & IRDAI","source_ref":"Static fact — insurance terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"The Reserve Bank of India was established in","a":"1935","d":["1947","1950","1934"],"why":"The RBI began operations on 1 April 1935.","category":"Banking & Economy","source_ref":"Static fact — banking institution history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"The Reserve Bank of India was nationalised in","a":"1949","d":["1935","1951","1969"],"why":"The RBI was nationalised on 1 January 1949.","category":"Banking & Economy","source_ref":"Static fact — banking institution history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"The headquarters of the Reserve Bank of India is at","a":"Mumbai","d":["New Delhi","Kolkata","Chennai"],"why":"The RBI's central office is in Mumbai.","category":"Banking & Economy","source_ref":"Static fact — banking institution history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"SEBI was given statutory powers through an Act passed in","a":"1992","d":["1988","1995","2000"],"why":"The SEBI Act was passed in 1992.","category":"Banking & Economy","source_ref":"Static fact — banking institution history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"NABARD, the bank for agriculture and rural development, was established in","a":"1982","d":["1975","1990","1969"],"why":"NABARD was established in 1982.","category":"Banking & Economy","source_ref":"Static fact — banking institution history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"The repo rate is the rate at which","a":"the RBI lends money to commercial banks","d":["banks lend money to the RBI","banks lend to customers","the government borrows from the public"],"why":"Repo rate is the RBI's lending rate to banks against securities.","category":"Banking & Economy","source_ref":"Static fact — banking terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"CRR (Cash Reserve Ratio) is the portion of deposits that banks must","a":"keep with the RBI as cash","d":["lend to farmers","invest in shares","keep in their own vaults only"],"why":"CRR is held with the RBI, not lent out.","category":"Banking & Economy","source_ref":"Static fact — banking terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"KYC stands for","a":"Know Your Customer","d":["Know Your Cash","Keep Your Capital","Know Your Credit"],"why":"KYC is the customer identification process.","category":"Banking & Economy","source_ref":"Static fact — banking terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"NEFT stands for","a":"National Electronic Funds Transfer","d":["National Express Fund Transfer","Net Electronic Fund Transaction","National Electronic Finance Transfer"],"why":"NEFT is the nationwide electronic fund transfer system.","category":"Banking & Economy","source_ref":"Static fact — banking terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"An IFSC code is used to","a":"identify a specific bank branch in electronic transfers","d":["identify a bank customer","set the interest rate of an account","identify an ATM machine"],"why":"IFSC (Indian Financial System Code) identifies the branch.","category":"Banking & Economy","source_ref":"Static fact — banking terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"The State Bank of India was created in 1955 by nationalising the","a":"Imperial Bank of India","d":["Bank of Bengal","Presidency Bank","Central Bank of India"],"why":"The Imperial Bank of India became the State Bank of India in 1955.","category":"Banking & Economy","source_ref":"Static fact — banking institution history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"banking","q":"A cheque dated later than the date on which it is presented is called a","a":"post-dated cheque","d":["stale cheque","crossed cheque","bearer cheque"],"why":"A cheque bearing a future date is post-dated.","category":"Banking & Economy","source_ref":"Static fact — banking terminology and concepts","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"Who was the first President of India?","a":"Dr Rajendra Prasad","d":["Dr S. Radhakrishnan","Dr Zakir Husain","Dr A. P. J. Abdul Kalam"],"why":"Dr Rajendra Prasad was the first President (1950–1962).","category":"National/International","source_ref":"Static fact — Indian polity basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The Constitution of India came into force on","a":"26 January 1950","d":["15 August 1947","26 November 1949","2 October 1950"],"why":"It was adopted on 26 November 1949 and came into force on 26 January 1950.","category":"National/International","source_ref":"Static fact — Indian polity basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"Which is the largest state of India by area?","a":"Rajasthan","d":["Madhya Pradesh","Maharashtra","Uttar Pradesh"],"why":"Rajasthan is the largest state by area.","category":"National/International","source_ref":"Static fact — Indian geography basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The national animal of India is the","a":"Bengal tiger","d":["Asiatic lion","Indian elephant","One-horned rhinoceros"],"why":"The Bengal tiger is India's national animal.","category":"National/International","source_ref":"Static fact — national symbols","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The national bird of India is the","a":"Indian peacock","d":["Parrot","Sparrow","Eagle"],"why":"The Indian peacock is the national bird.","category":"National/International","source_ref":"Static fact — national symbols","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The currency of Japan is the","a":"Yen","d":["Won","Yuan","Ringgit"],"why":"Japan's currency is the yen.","category":"National/International","source_ref":"Static fact — world capitals and currencies","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The capital of Australia is","a":"Canberra","d":["Sydney","Melbourne","Perth"],"why":"Canberra is the capital; Sydney is the largest city.","category":"National/International","source_ref":"Static fact — world capitals and currencies","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"Which is the longest river flowing through India?","a":"Ganga","d":["Godavari","Yamuna","Brahmaputra"],"why":"The Ganga is the longest river of India; the Godavari is the longest peninsular river.","category":"National/International","source_ref":"Static fact — Indian geography basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"Who was the first woman to receive the Bharat Ratna?","a":"Indira Gandhi","d":["Mother Teresa","Lata Mangeshkar","Sarojini Naidu"],"why":"Indira Gandhi received the Bharat Ratna in 1971.","category":"Awards & Appointments","source_ref":"Static fact — national honours history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The Tropic of Cancer passes through how many Indian states?","a":"8","d":["6","7","9"],"why":"It passes through 8 states, from Gujarat to Mizoram.","category":"National/International","source_ref":"Static fact — Indian geography basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"Vitamin D is produced in the human body with the help of","a":"sunlight","d":["milk","green vegetables","exercise"],"why":"The skin makes vitamin D when exposed to sunlight.","category":"National/International","source_ref":"Static fact — general science basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"Anaemia is mainly caused by the deficiency of","a":"iron","d":["calcium","vitamin C","iodine"],"why":"Iron deficiency is the commonest cause of anaemia.","category":"National/International","source_ref":"Static fact — general science basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The 2024 Olympic Games were held in","a":"Paris","d":["Tokyo","Los Angeles","London"],"why":"The 2024 Summer Olympics were held in Paris.","category":"National/International","source_ref":"Static fact — sports history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"Who was the first Indian woman to win an Olympic medal?","a":"Karnam Malleswari","d":["P. T. Usha","Mary Kom","Saina Nehwal"],"why":"Karnam Malleswari won a weightlifting bronze at Sydney 2000.","category":"Awards & Appointments","source_ref":"Static fact — sports honours history","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"'Jana Gana Mana', the national anthem, was written by","a":"Rabindranath Tagore","d":["Bankim Chandra Chatterjee","Subhas Chandra Bose","Sarojini Naidu"],"why":"Rabindranath Tagore wrote the national anthem.","category":"National/International","source_ref":"Static fact — national symbols","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"NITI Aayog replaced the Planning Commission in the year","a":"2015","d":["2014","2016","2013"],"why":"NITI Aayog was formed on 1 January 2015.","category":"National/International","source_ref":"Static fact — Indian polity basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"NITI stands for","a":"National Institution for Transforming India","d":["National Institute for Technology of India","National Initiative for Trade in India","National Institution for Training India"],"why":"NITI is the National Institution for Transforming India.","category":"National/International","source_ref":"Static fact — Indian polity basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The first Census of independent India was conducted in","a":"1951","d":["1947","1961","1931"],"why":"The first post-independence census was in 1951.","category":"National/International","source_ref":"Static fact — Indian history basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"Which is the largest planet in the solar system?","a":"Jupiter","d":["Saturn","Neptune","Earth"],"why":"Jupiter is the largest planet.","category":"National/International","source_ref":"Static fact — general science basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The chemical symbol for gold is","a":"Au","d":["Ag","Gd","Go"],"why":"Au comes from 'aurum', the Latin name for gold.","category":"National/International","source_ref":"Static fact — general science basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The hardest naturally occurring substance is","a":"diamond","d":["iron","quartz","platinum"],"why":"Diamond is the hardest natural substance.","category":"National/International","source_ref":"Static fact — general science basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The Indian national calendar is based on the","a":"Saka era","d":["Vikram era","Hijri era","Gregorian era"],"why":"The national calendar uses the Saka era.","category":"National/International","source_ref":"Static fact — Indian history basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"Goa was liberated from Portuguese rule in","a":"1961","d":["1947","1956","1971"],"why":"Goa was liberated in December 1961.","category":"National/International","source_ref":"Static fact — Indian history basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"The first railway in India (1853) ran between","a":"Mumbai and Thane","d":["Delhi and Agra","Kolkata and Howrah","Chennai and Arcot"],"why":"The first train ran from Bori Bunder (Mumbai) to Thane in 1853.","category":"National/International","source_ref":"Static fact — Indian history basics","verified":true,"evergreen":true,"month_year":null,"event_date":null},
+ {"topic":"static","q":"Article 370 of the Indian Constitution was related to the special status of","a":"Jammu and Kashmir","d":["Punjab","Nagaland","Goa"],"why":"Article 370 gave special status to Jammu and Kashmir.","category":"National/International","source_ref":"Static fact — Indian polity basics","verified":true,"evergreen":true,"month_year":null,"event_date":null}
 ];
 function genGA(){
   const item=pick(GA_BANK);
-  return bkq("ga:"+item[0],"ga",item[1],item[2],[item[3],item[4],item[5]],"These are evergreen facts; the real section is mostly recent current affairs, so pair this with the checklist plan.",[item[6]]);
+  const q=bkq("ga:"+item.topic,"ga",item.q,item.a,item.d,"These are evergreen facts; the real section is mostly recent current affairs, so pair this with the checklist plan.",[item.why]);
+  /* Schema metadata rides along for display only; the draw ignores it. */
+  q.gaMeta={category:item.category,source_ref:item.source_ref,verified:item.verified,evergreen:!!item.evergreen,month_year:item.month_year||null,event_date:item.event_date||null};
+  return q;
 }
 const GEN_GA={ga:genGA};
+/* Display-only helper: a small factual label for a verified GA item — its
+   category, plus month_year where the item has one. Returns null for every
+   other question, so non-GA sections are untouched. */
+function gaMetaEl(q){
+  if(!q||!q.gaMeta||!q.gaMeta.verified)return null;
+  return el("p",{class:"caption"},"GA category: "+q.gaMeta.category+(q.gaMeta.month_year?" · "+q.gaMeta.month_year:""));
+}
+/* GA study templates: generic fill-in prompts for structuring your own
+   current-affairs notes. They are NOT facts and NOT questions: verified is
+   false, they are tagged practice_template / unverified_date, and they are
+   rendered only in the Exam & plan view. The question draw reads GA_BANK
+   only, so a template can never be served in practice or a mock. */
+const GA_TEMPLATES=[
+ {stem:"In [month, year], IRDAI issued [a circular / a regulation / an exposure draft] on ___. Note what changed, who it applies to, and the effective date.",category:"Insurance & IRDAI",verified:false,practice_template:true,unverified_date:true},
+ {stem:"The FDI / licensing rule for ___ changed to ___ with effect from [date]. Note the notification or circular it came from before noting the new limit.",category:"Insurance & IRDAI",verified:false,practice_template:true,unverified_date:true},
+ {stem:"NICL announced ___ in [month, year]. Note the scheme, product or initiative name, its target segment, and one key figure exactly as announced.",category:"NICL & Public Sector Insurers",verified:false,practice_template:true,unverified_date:true},
+ {stem:"[A public- or private-sector insurer] reported ___ for [quarter, year]. Note the figure and whether it rose or fell against the same period last year.",category:"NICL & Public Sector Insurers",verified:false,practice_template:true,unverified_date:true},
+ {stem:"In [month, year], the RBI [kept / changed] ___ at ___%. Record the value only from the official release, never from a headline summary.",category:"Banking & Economy",verified:false,practice_template:true,unverified_date:true},
+ {stem:"___ merged with / was acquired by ___ in [month, year]. Note which regulator's approval was involved and when it took effect.",category:"Banking & Economy",verified:false,practice_template:true,unverified_date:true},
+ {stem:"In the Union Budget [year], the proposal or allocation for ___ (insurance / finance) was ___. Note the exact figure as announced in the Budget documents.",category:"Budget & Schemes",verified:false,practice_template:true,unverified_date:true},
+ {stem:"Under [government scheme], the eligibility is ___, the cover or benefit is ___, and it is run by [ministry]. Fill every blank from the scheme factsheet only.",category:"Budget & Schemes",verified:false,practice_template:true,unverified_date:true},
+ {stem:"A summit or meeting of [grouping] was held at [place] in [month, year] with the theme ___. Note one outcome relevant to India.",category:"National/International",verified:false,practice_template:true,unverified_date:true},
+ {stem:"The ___ report / index, published by [body] in [month, year], placed India at ___. Note what the report measures before noting the number.",category:"Reports",verified:false,practice_template:true,unverified_date:true},
+ {stem:"___ was appointed as [Chairperson / MD & CEO / Whole-time Member] of [organisation] in [month, year]. Note the predecessor and the tenure.",category:"Awards & Appointments",verified:false,practice_template:true,unverified_date:true},
+ {stem:"___ received [award / honour] in [month, year] for ___. Note the awarding body.",category:"Awards & Appointments",verified:false,practice_template:true,unverified_date:true}
+];
 
 /* ============ DESCRIPTIVE test data (self-evaluation only — no auto-marking) ============ */
 /* Expected themes from prep-site guidance, labelled as expected, NOT confirmed asked
@@ -1664,6 +1736,7 @@ function viewPractice(){
     topicsWrap.append(el("p",{class:"caption"},sec.name+" · "+sec.minutes+" minutes for 50 in the real exam · "+sec.lang));
     if(secId==="ga"){
       topicsWrap.append(el("div",{class:"callout warning"},el("p",null,"The real General Awareness section is mostly recent current affairs, which cannot be practised honestly from generated questions. Use the checklist and plan in Exam & plan, and drill the evergreen slice here: static GK, insurance and banking concepts only.")));
+      topicsWrap.append(el("div",{class:"callout"},el("p",null,"Pacing for the real section: 50 questions in 30 minutes is about 36 seconds per question — recall it or move on. With −0.25 for a wrong answer, a guess pays only above a 20% hit rate, so if a headline feels familiar but you cannot pin down the specific figure, scheme rule or organisation it asks for, that is a below-break-even guess: skip it rather than erode your score and risk the 30-minute sectional gate. Flag every guess as you attempt; the guess analytics in Profile and after each mock measure exactly this.")));
     }
     const grid=el("div",{class:"topics"});
     for(const [key,name] of CONFIG.practiceTopics[secId]){
@@ -1718,6 +1791,7 @@ function renderPracQuestion(){
     a.append(el("p",null,ok?"Correct.":"Wrong — the correct answer is "+LETTERS[q.answer]+". "+q.correctText));
     if(q.hint)a.append(el("p",{class:"caption"},"Hint: "+q.hint));
     if(q.steps&&q.steps.length)a.append(el("ol",{class:"steps"},q.steps.map(s=>el("li",null,s))));
+    const gmP=gaMetaEl(q);if(gmP)a.append(gmP);
     if(!ok)a.append(causeChips(prac.secId,()=>{prac.tagged=true}));
     const last=prac.idx>=prac.qs.length-1;
     a.append(el("div",{class:"actions"},
@@ -1874,6 +1948,7 @@ function renderMockResults(){
       det.append(el("p",null,sel==null?"Not attempted. The correct answer is "+LETTERS[q.answer]+". "+q.correctText
         :ok?"Correct.":"Wrong — the correct answer is "+LETTERS[q.answer]+". "+q.correctText));
       if(q.steps&&q.steps.length)det.append(el("ol",{class:"steps"},q.steps.map(x=>el("li",null,x))));
+      const gmR=gaMetaEl(q);if(gmR)det.append(gmR);
       if(sel!=null&&!ok){
         const key=si+":"+qi;
         if(!mock.reviewTagged.has(key)){
@@ -1998,7 +2073,17 @@ function viewExam(){
   gg.append(el("p",null,"Do not look for generated current-affairs questions — invented 'facts' would teach you wrong answers. The real section is mostly current affairs of the last six months (the 2025 paper leaned on the last two). Work the checklist; drill the evergreen slice in Practice."));
   const gt=el("table",{class:"pat"},el("tr",null,el("th",null,"Topic"),el("th",null,"Weight"),el("th",null,"How to cover it")));
   for(const [topic,weight,note] of GA_CHECKLIST)gt.append(el("tr",null,el("td",null,topic),el("td",null,weight),el("td",null,note)));
-  gg.append(gt);a.append(gg);
+  gg.append(gt);
+  gg.append(el("p",null,"Pacing rule for this section: 50 questions in 30 minutes is about 36 seconds per item, so GA is recall-or-move-on — there is no time to deliberate. With −0.25 for a wrong answer and a 20% guess break-even, a vague-headline guess is a net loss: if you recognise a headline but cannot verify the specific figure, scheme rule or entity the question asks for, skip it. One stuck item must never eat the time of three others, because GA has its own sectional gate. Flag every guess while attempting; your guess analytics in Profile and after each mock show whether GA guessing is gaining or losing you marks."));
+  a.append(gg);
+  /* GA study templates (never questions) */
+  const tg=el("div",{class:"group"});tg.append(el("p",{class:"label"},"General Awareness"),el("h2",null,"Study templates — not facts, never questions"));
+  tg.append(el("p",null,"Curated current-affairs items enter this tool only in the GA schema: a category, a source reference (an official notification, a circular, a PIB or other official release, or a verified past paper), a month_year, and verified set true only after the fact has actually been checked. Until that material is supplied, use these fill-in templates to structure your own current-affairs notes. Each template below is a study prompt only — unverified and undated — and templates are never served as practice or mock questions."));
+  const tl=el("ul",{class:"rows"});
+  for(const t of GA_TEMPLATES)tl.append(el("li",null,el("span",null,t.stem),el("span",{class:"val"},t.category)));
+  tg.append(tl);
+  tg.append(el("p",{class:"caption"},"Every template is stored with verified: false and tagged practice_template / unverified_date. Only verified items with a source_ref sit in the question bank (GA_BANK), which is the only thing the practice and mock draws read."));
+  a.append(tg);
   /* 4-week plan */
   const pg=el("div",{class:"group"});pg.append(el("p",{class:"label"},"Study plan"),el("h2",null,"Four weeks, from whenever you start"));
   pg.append(el("p",{class:"fact"},"The Mains date has not been announced, so this plan is framed in weeks, not dates. Repeat week 3–4 patterns if you get more time."));
@@ -2039,7 +2124,7 @@ function boot(){
 }
 if(typeof document!=="undefined"&&document.getElementById&&document.getElementById("app"))boot();
 globalThis.__NICL={CONFIG,GEN_REASONING,GEN_QUANT,GEN_ENGLISH,GEN_GA,GEN_COMPUTER,SET_GEN,SINGLE_GEN,
-  buildQuestions,buildMockSections,evalGate,DESCRIPTIVE,GA_BANK,GA_CHECKLIST,COMPUTER_BANK};
+  buildQuestions,buildMockSections,evalGate,DESCRIPTIVE,GA_BANK,GA_CHECKLIST,GA_TEMPLATES,COMPUTER_BANK};
 </script>
 </body>
 </html>
